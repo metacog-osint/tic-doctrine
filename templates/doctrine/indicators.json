@@ -1,0 +1,89 @@
+{
+  "program": "example",
+  "indicator_rule": "Indicators meet Gentry's test (predictive, diagnostic, unambiguous, collectable). Lists stay flat, not tiered by time (Grabo). Readouts count changed indicators per hypothesis; no weighted threat score.",
+  "indicators": [
+    {
+      "id": "EX-IND-1",
+      "text": "Severe GPS error over the area on at least 5 of the last 7 days",
+      "series": "daily severe-share cells",
+      "rule": "severe share > 20% in the cell group, k-of-n 5 of 7",
+      "baseline": "28-day rolling and fixed Oct 2025 reference",
+      "gentry": {
+        "predictive": true,
+        "diagnostic": false,
+        "unambiguous": true,
+        "collectable": true
+      }
+    },
+    {
+      "id": "EX-IND-2",
+      "text": "Space-weather indices disturbed at the same hours",
+      "series": "NOAA SWPC Kp",
+      "rule": "Kp >= 5 within 3 hours of the observed degradation",
+      "gentry": {
+        "predictive": false,
+        "diagnostic": true,
+        "unambiguous": true,
+        "collectable": true
+      }
+    },
+    {
+      "id": "EX-IND-3",
+      "text": "Degradation reported by only one feeder or one aircraft type",
+      "series": "per-feeder and per-type breakdown",
+      "rule": "more than 80% of degraded reports from one receiver or one aircraft family",
+      "gentry": {
+        "predictive": false,
+        "diagnostic": true,
+        "unambiguous": true,
+        "collectable": true
+      }
+    }
+  ],
+  "warning_problems": [
+    {
+      "id": "EX-WP-1",
+      "title": "Persistent GNSS interference over the Gulf of Finland",
+      "frozen": "2026-10-30",
+      "watch_condition": {
+        "current": "elevated",
+        "levels": [
+          "normal",
+          "elevated",
+          "warning"
+        ]
+      },
+      "issue_on_change": "Issue a warning notice only when the watch condition changes; stay silent while unchanged (ICD 203 allows silence for recurring products).",
+      "deactivation": "Return to normal after 14 days with the indicator absent and coverage above 50%.",
+      "hypotheses": [
+        {
+          "id": "EX-WP-1-H1",
+          "statement": "Deliberate jamming or spoofing persists",
+          "emerging": [
+            "EX-IND-1"
+          ],
+          "not_emerging": [
+            "EX-IND-2"
+          ]
+        },
+        {
+          "id": "EX-WP-1-H2",
+          "statement": "Natural cause (space weather)",
+          "emerging": [
+            "EX-IND-2"
+          ],
+          "not_emerging": []
+        },
+        {
+          "id": "EX-WP-1-H3",
+          "statement": "Artefact or data failure",
+          "emerging": [
+            "EX-IND-3"
+          ],
+          "not_emerging": []
+        }
+      ]
+    }
+  ],
+  "emerging_concerns": "Anomalies outside these warning problems go to the review queue. Promote one to a warning problem after it recurs on 3 separate weeks; demote after 60 quiet days."
+}

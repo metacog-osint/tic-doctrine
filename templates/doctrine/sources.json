@@ -1,0 +1,37 @@
+{
+  "program": "example",
+  "sources": [
+    {
+      "id": "adsblol-archive",
+      "name": "adsb.lol daily archive",
+      "publisher": "adsb.lol",
+      "licence": "ODbL 1.0",
+      "use": "ingest",
+      "grade": "B2",
+      "independence_group": "adsb-feeders",
+      "ease_of_faking": "medium",
+      "cadence_s": 86400,
+      "probe": {
+        "url": "https://api.github.com/repos/adsblol/globe_history_2026/releases/latest",
+        "expect": "json",
+        "time_path": "published_at"
+      }
+    },
+    {
+      "id": "swpc-kp",
+      "name": "NOAA SWPC planetary K index",
+      "publisher": "NOAA SWPC",
+      "licence": "US government work",
+      "use": "ingest",
+      "grade": "A1",
+      "independence_group": "noaa",
+      "ease_of_faking": "low",
+      "cadence_s": 10800,
+      "probe": {
+        "url": "https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json",
+        "expect": "json",
+        "time_path": "-1.0"
+      }
+    }
+  ]
+}

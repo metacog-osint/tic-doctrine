@@ -1,0 +1,23 @@
+{
+  "program": "example",
+  "note": "Deterministic: the event type sets the functions. No AI calls.",
+  "rules": [
+    {
+      "match": {
+        "event_type": "gnss_degradation"
+      },
+      "ncf": [
+        "provide_pnt",
+        "transport_by_air"
+      ]
+    },
+    {
+      "match": {
+        "event_type": "kev_added"
+      },
+      "ncf": [
+        "provide_it_products"
+      ]
+    }
+  ]
+}

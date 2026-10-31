@@ -1,0 +1,31 @@
+{
+  "program": "example",
+  "assumptions": [
+    {
+      "id": "EX-AS-1",
+      "text": "Aircraft-reported navigation accuracy falls when GNSS is jammed or spoofed, not for other reasons.",
+      "test": {
+        "type": "auto",
+        "rule": "Degradation share in a quiet control region stays below 2%"
+      },
+      "status": "holds",
+      "reviewed": "2026-10-30",
+      "linked": [
+        "EX-WP-1"
+      ]
+    },
+    {
+      "id": "EX-AS-2",
+      "text": "Feeder coverage over the area does not change sharply from week to week.",
+      "test": {
+        "type": "auto",
+        "rule": "Aircraft count per cell within 30% of its 28-day median"
+      },
+      "status": "holds",
+      "reviewed": "2026-10-30",
+      "linked": [
+        "EX-WP-1"
+      ]
+    }
+  ]
+}
