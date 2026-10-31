@@ -1,0 +1,10 @@
+{
+  "status": "proposed 29 Oct 2026; Tom to confirm",
+  "questions": [
+    { "id": "SQ1", "question": "Is a zone escalating?", "programs": ["Watchfloor", "Context", "Tempo"] },
+    { "id": "SQ2", "question": "Is critical infrastructure (PNT, internet, power) being degraded, and where?", "programs": ["Noisefloor", "Blackout", "FieldCast", "Elements"] },
+    { "id": "SQ3", "question": "What changed in orbit, and is anyone maneuvering near something that matters?", "programs": ["Orbit"] },
+    { "id": "SQ4", "question": "Is cyber and financial pressure rising on a target set?", "programs": ["Vigil", "Headwind"] },
+    { "id": "SQ5", "question": "Will GNSS hold for valley users tomorrow?", "programs": ["FieldCast"] }
+  ]
+}

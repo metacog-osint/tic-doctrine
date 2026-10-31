@@ -1,0 +1,36 @@
+{
+  "program": "example",
+  "customer": "Public readers, analysts and COP. Requirements are written by the program owner, not collected from a customer.",
+  "reviewed": "2026-10-30",
+  "review_by": "2027-01-31",
+  "standing_questions": "The suite's five standing questions (proposed 29 Oct 2026, Tom to confirm) live in the kit's templates/standing_questions.json.",
+  "requirements": [
+    {
+      "id": "EX-SQ-1",
+      "type": "standing",
+      "question": "Is critical infrastructure (PNT, internet, power) being degraded, and where?",
+      "standing_question": "SQ2"
+    },
+    {
+      "id": "EX-PIR-1",
+      "type": "pir",
+      "question": "Where is GNSS interference affecting aircraft today, and is it worse than usual?",
+      "parent": "EX-SQ-1",
+      "series": [
+        "daily severe-share cells"
+      ],
+      "warning_problems": [
+        "EX-WP-1"
+      ]
+    },
+    {
+      "id": "EX-EEI-1",
+      "type": "eei",
+      "question": "Share of aircraft in each cell reporting position error worse than 93 m.",
+      "parent": "EX-PIR-1",
+      "series": [
+        "daily severe-share cells"
+      ]
+    }
+  ]
+}
