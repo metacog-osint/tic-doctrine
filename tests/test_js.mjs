@@ -24,6 +24,9 @@ assert.ok(indicatorStyle(undefined).grey, "missing state draws as no data");
 assert.equal(Object.keys(VOCAB.lifelines).length, 8);
 assert.deepEqual(countryPoint("ua"), [49.725, 32.141], "label point, lower-case code accepted");
 assert.equal(countryPoint("ZZ"), null);
+assert.ok(countryPoint("TW"), "Taiwan has a label point under its ISO code");
+assert.equal(countryPoint("CN-TW"), null, "Natural Earth's CN-TW is not a code the kit emits");
+for (const cc of Object.keys(VOCAB.points)) assert.match(cc, /^[A-Z]{2}$/, cc);
 
 // Actors: frames are unknown or neutral only; claims draw hollow.
 for (const [k, r] of Object.entries(VOCAB.actor_roles)) assert.ok(["unknown", "neutral"].includes(r.frame), k);
