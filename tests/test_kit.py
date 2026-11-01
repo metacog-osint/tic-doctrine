@@ -224,10 +224,48 @@ class Linter(unittest.TestCase):
 class Geo(unittest.TestCase):
     def test_points_sit_inside_their_country(self):
         from tic_doctrine import geo
-        for cc in ("UA", "US", "DE", "BR", "JP", "ZA", "XK"):
+        for cc in ("UA", "US", "DE", "BR", "JP", "ZA", "XK", "TW"):
             lat, lon = geo.point(cc)
             self.assertEqual(geo.country_at(lat, lon), cc)
         self.assertIsNone(geo.point("ZZ"))
+
+    def test_codes_pass_the_feed_contract(self):
+        """Every code geo can emit passes the contract's ISO 3166-1 alpha-2 check (Natural Earth's CN-TW did not)."""
+        from tic_doctrine import geo
+        countries = json.loads(geo.FILE.read_text(encoding="utf-8"))["countries"]
+        points = json.loads(geo.POINTS.read_text(encoding="utf-8"))["points"]
+        bad = [c["cc"] for c in countries if not contract.COUNTRY_RE.match(c["cc"])]
+        bad += [cc for cc in points if not contract.COUNTRY_RE.match(cc)]
+        self.assertEqual(bad, [])
+        self.assertEqual(sorted({c["cc"] for c in countries}), sorted(points), "one label point per code")
+        self.assertEqual(geo.country_at(25.03, 121.56), "TW")       # Taipei
+        self.assertEqual(geo.countries_in([(25.03, 121.56), (39.9, 116.4)]), ["CN", "TW"])
+
+    def test_names_are_full(self):
+        """Natural Earth's map labels ("S. Sudan", "Dem. Rep. Congo") are written out."""
+        from tic_doctrine import geo
+        countries = json.loads(geo.FILE.read_text(encoding="utf-8"))["countries"]
+        short = [c["name"] for c in countries if "." in c["name"] or c["name"].startswith("St-") or "." in c.get("part", "")]
+        self.assertEqual(short, [])
+        for cc, want in (("SS", "South Sudan"), ("CD", "Democratic Republic of the Congo"),
+                         ("CG", "Republic of the Congo"), ("BA", "Bosnia and Herzegovina"), ("TW", "Taiwan"),
+                         ("AU", "Australia"), ("au", "Australia"), ("BR", "Brazil")):
+            self.assertEqual(geo.name(cc), want, cc)
+        self.assertIsNone(geo.name("ZZ"))
+        self.assertIsNone(geo.name(None))
+
+    def test_builder_rules(self):
+        """A rebuild from Natural Earth keeps TW and the full names (tools/build_countries.py)."""
+        sys.path.insert(0, str(ROOT / "tools"))
+        import build_countries as bc
+        self.assertEqual(bc.code({"ISO_A2": "CN-TW", "ISO_A2_EH": "-99"}), "TW")
+        self.assertEqual(bc.code({"ISO_A2": "CN-TW", "ISO_A2_EH": "TW"}), "TW")
+        self.assertEqual(bc.code({"ISO_A2": "-99", "ISO_A2_EH": "FR"}), "FR")
+        self.assertIsNone(bc.code({"ISO_A2": "-99", "ISO_A2_EH": "-99"}))
+        self.assertEqual(bc.entry("SS", "S. Sudan"), {"cc": "SS", "name": "South Sudan"})
+        self.assertEqual(bc.entry("AU", "Ashmore and Cartier Is."),
+                         {"cc": "AU", "name": "Australia", "part": "Ashmore and Cartier Islands"})
+        self.assertEqual(bc.entry("BR", "Brazil"), {"cc": "BR", "name": "Brazil"})
 
 
 class Registers(unittest.TestCase):
