@@ -19,6 +19,8 @@ assert.equal(lifelineStatus("nonsense").letter, "U", "unknown status falls back 
 assert.equal(ladderRung("pager:orange").severity, 3);
 assert.equal(ladderRung("state_travel_advisory:level_4").meaning, "Do not travel.");
 assert.equal(ladderRung("pager:purple"), null);
+assert.equal(ladderRung("usgs_volcano:warning").severity, 4);
+assert.equal(ladderRung("usgs_volcano:unassigned"), null, "UNASSIGNED is not a rung");
 assert.equal(changeText({ change_from_prior: "raised", probability: 0.7 }, 0.5).text, "Up from Roughly even chance to Likely");
 assert.ok(indicatorStyle(undefined).grey, "missing state draws as no data");
 assert.equal(Object.keys(VOCAB.lifelines).length, 8);

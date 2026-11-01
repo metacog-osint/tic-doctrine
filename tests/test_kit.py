@@ -121,6 +121,18 @@ class Contract(unittest.TestCase):
         for needle in ("us_person_data", "data_as_of", "sector does not match", "response_stage"):
             self.assertIn(needle, msgs)
 
+    def test_usgs_volcano_ladder(self):
+        """USGS Volcano Alert Levels are a response_stage; UNASSIGNED is not a rung."""
+        for value in ("normal", "advisory", "watch", "warning"):
+            f = copy.deepcopy(GOOD["features"][0])
+            f["properties"]["response_stage"] = f"usgs_volcano:{value}"
+            self.assertNotIn("response_stage", " ".join(m for _, m in self.problems(f)), value)
+        f = copy.deepcopy(GOOD["features"][0])
+        f["properties"]["response_stage"] = "usgs_volcano:unassigned"
+        self.assertIn("response_stage", " ".join(m for _, m in self.problems(f)))
+        rungs = vocab.ladders()["usgs_volcano"]["values"]
+        self.assertEqual([rungs[v]["severity"] for v in ("normal", "advisory", "watch", "warning")], [0, 1, 2, 4])
+
     def test_us_person_data_is_a_label(self):
         for value in ("none", "organizations", "individuals"):
             f = copy.deepcopy(GOOD["features"][0])
