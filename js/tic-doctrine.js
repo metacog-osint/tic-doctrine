@@ -1457,3 +1457,75 @@ export function indicatorStyle(state) {
     no_data: { label: "No data", fill: "hatched", grey: true },
   }[state] || { label: "No data", fill: "hatched", grey: true };
 }
+
+// ---------- Tips: one program reading another's findings (python/tic_doctrine/tips.py) ----------
+// The same matching rules as the Python module, for pages that draw tips from the bus themselves. Change detection,
+// staleness by the registry and citation stay in Python, where the feeds are built.
+
+function tipPath(item, path) {
+  let cur = item;
+  for (const part of path.split(".")) {
+    if (!cur || typeof cur !== "object" || !(part in cur)) return null;
+    cur = cur[part];
+  }
+  return cur;
+}
+
+function tipCompare(v, op, want) {
+  if (v === null || v === undefined) return false;
+  switch (op) {
+    case "eq": return v === want;
+    case "ne": return v !== want;
+    case "gt": return v > want;
+    case "gte": return v >= want;
+    case "lt": return v < want;
+    case "lte": return v <= want;
+    case "in": return Array.isArray(want) && want.includes(v);
+    case "contains": return (Array.isArray(v) || typeof v === "string") ? v.includes(want) : false;
+    default: return false;
+  }
+}
+
+/** Whether a bus item (feature properties) meets one interest from doctrine/interests.json. */
+export function tipMatches(item, interest) {
+  const program = item.program || item.cop_program;
+  if (!(interest.programs || []).includes(program)) return false;
+  for (const [key, field] of [["tiers", "tier"], ["kinds", "kind"], ["status_class", "status_class"]]) {
+    if (interest[key] && interest[key].length && !interest[key].includes(item[field])) return false;
+  }
+  if (interest.response_stage_prefix && interest.response_stage_prefix.length) {
+    const stage = item.response_stage || "";
+    if (!interest.response_stage_prefix.some((p) => stage.startsWith(p))) return false;
+  }
+  const title = (item.title || "").toLowerCase();
+  if (interest.title_any && interest.title_any.length && !interest.title_any.some((t) => title.includes(t.toLowerCase()))) return false;
+  if ((interest.title_none || []).some((t) => title.includes(t.toLowerCase()))) return false;
+  return (interest.where || []).every((w) => tipCompare(tipPath(item, w.path), w.op, w.value));
+}
+
+/** Tips for one program from bus items: [{interest_id, areas, program, item}], never the program's own items. */
+export function tips(items, interestsDoc) {
+  const me = interestsDoc.program;
+  const areas = interestsDoc.areas || {};
+  const out = [];
+  for (const interest of interestsDoc.interests || []) {
+    const wanted = interest.areas && interest.areas.length ? interest.areas : Object.keys(areas);
+    for (const item of items) {
+      const program = item.program || item.cop_program;
+      if (program === me || !tipMatches(item, interest)) continue;
+      const cc = item.countries || [];
+      let hit;
+      if (interest.anywhere) hit = wanted.filter((a) => (areas[a] || []).some((c) => cc.includes(c)));
+      else if (!cc.length) hit = interest.global ? [] : null;
+      else if (!wanted.length) hit = [];
+      else {
+        hit = wanted.filter((a) => (areas[a] || []).some((c) => cc.includes(c)));
+        if (!hit.length) hit = null;
+      }
+      if (hit === null) continue;
+      out.push({ interest_id: interest.id, indicator_id: interest.indicator_id || null, areas: hit, program,
+        stale: Boolean(item.cop_stale), item });
+    }
+  }
+  return out;
+}

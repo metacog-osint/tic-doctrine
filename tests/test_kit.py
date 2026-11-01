@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from tic_doctrine import confidence, contract, likelihood, lint, registers, vocab, withhold  # noqa: E402
+from tic_doctrine import confidence, contract, likelihood, lint, registers, tips, vocab, withhold  # noqa: E402
 from tic_doctrine.confidence import Evidence  # noqa: E402
 
 GOOD = json.loads((ROOT / "tests" / "fixtures" / "good.geojson").read_text(encoding="utf-8"))
@@ -284,6 +284,176 @@ class Registers(unittest.TestCase):
     def test_template_registers_pass(self):
         errs = registers.check(ROOT / "templates" / "doctrine")
         self.assertEqual(errs, [])
+
+
+def _bus_item(program, iid, title, countries, tier="routine", **extra):
+    p = {"program": program, "id": iid, "title": title, "countries": countries, "tier": tier, "kind": "observation",
+         "status_class": "reported", "data_as_of": "2026-11-01T00:00:00Z", "published_at": "2026-11-01T00:05:00Z",
+         "sources": [{"publisher": "Upstream", "licence": "x", "lineage_id": f"up:{iid}", "independence_group": "upstream"}]}
+    p.update(extra)
+    return {"type": "Feature", "geometry": None, "properties": p}
+
+
+BUS = {"type": "FeatureCollection", "contract": "tic-feed/2", "program": "cop", "features": [
+    _bus_item("cordon", "c1", "Ukraine: Level 4, Do Not Travel", ["UA"], response_stage="state_travel_advisory:level_4",
+              measures={"level": 4}),
+    _bus_item("cordon", "c2", "Poland: Level 1, Exercise Normal Precautions", ["PL"],
+              response_stage="state_travel_advisory:level_1", measures={"level": 1}),
+    _bus_item("cordon", "c3", "Sudan: US embassy has suspended operations", ["SD"],
+              response_stage="state_post_posture:suspended_operations"),
+    _bus_item("noisefloor", "n1", "GPS interference newly seen near Kaliningrad", ["RU", "LT"], tier="anomaly"),
+    _bus_item("noisefloor", "n2", "GPS interference newly seen near Las Vegas", ["US"], tier="anomaly"),
+    _bus_item("vigil", "v1", "Group escalating", [], tier="anomaly"),
+    _bus_item("watchfloor", "w1", "Ukraine Conflict: attention 2x normal", ["UA"], tier="anomaly"),
+]}
+for f in BUS["features"][3:4]:
+    f["properties"]["cop_program"] = f["properties"].pop("program")  # the bus may carry only COP's tag
+INTERESTS = {"program": "watchfloor",
+             "areas": {"WF-WP-Z01": ["UA"], "WF-WP-Z07": ["RU", "PL", "LT"], "WF-WP-Z13": ["SD"]},
+             "interests": [
+                 {"id": "WF-INT-1", "about": "Advisories at level 3 or 4", "programs": ["cordon"],
+                  "response_stage_prefix": ["state_travel_advisory:"],
+                  "where": [{"path": "measures.level", "op": "gte", "value": 3}], "fingerprint": ["measures.level"]},
+                 {"id": "WF-INT-2", "about": "Embassy posture", "programs": ["cordon"],
+                  "response_stage_prefix": ["state_post_posture:"]},
+                 {"id": "WF-INT-3", "about": "New GPS interference", "programs": ["noisefloor"], "tiers": ["anomaly"]},
+                 {"id": "WF-INT-4", "about": "Cyber surges anywhere", "programs": ["vigil"], "tiers": ["anomaly"],
+                  "global": True},
+                 {"id": "WF-INT-5", "about": "own items never tip", "programs": ["cordon", "noisefloor", "vigil"],
+                  "title_any": ["attention"]}]}
+NOW = __import__("datetime").datetime(2026, 11, 1, 3, 0, tzinfo=__import__("datetime").timezone.utc)
+
+
+class Tips(unittest.TestCase):
+    def items(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "bus.geojson"
+            p.write_text(json.dumps(BUS), encoding="utf-8")
+            return tips.load(str(p))[1]
+
+    def test_registry(self):
+        reg = tips.registry()
+        ids = [p["id"] for p in reg["programs"]]
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(reg["bus"]["url"].startswith("https://"))
+        for p in reg["programs"]:
+            self.assertIn(p["status"], {"live", "planned"})
+            self.assertTrue(p.get("owns"), p["id"])
+            if p["status"] == "live":
+                self.assertTrue(p["feed"].startswith("https://") and p.get("terms") and p.get("stale_hours"), p["id"])
+
+    def test_matching_areas_and_self(self):
+        found = tips.tips(self.items(), INTERESTS, now=NOW)
+        got = {(t["interest_id"], t["item_id"], tuple(t["areas"])) for t in found}
+        self.assertEqual(got, {("WF-INT-1", "c1", ("WF-WP-Z01",)),          # level 4 in Ukraine; level 1 Poland fails where
+                               ("WF-INT-2", "c3", ("WF-WP-Z13",)),
+                               ("WF-INT-3", "n1", ("WF-WP-Z07",)),          # Las Vegas is outside every area
+                               ("WF-INT-4", "v1", ())})                    # global: no country needed
+        self.assertFalse(any(t["program"] == "watchfloor" for t in found))
+        self.assertEqual(next(t for t in found if t["item_id"] == "n1")["program"], "noisefloor")  # from cop_program
+
+    def test_gather_reads_programs_the_bus_lacks(self):
+        bus_items = self.items()
+        verdict_feed = "https://metacog-osint.github.io/verdict/data/calendar.geojson"
+        calls = []
+
+        def fetch(src):
+            calls.append(src)
+            if src == "BUS":
+                return {}, bus_items
+            if src == verdict_feed:
+                return {}, [{"_program": "verdict", "id": "e1", "title": "EASA bulletin expires", "countries": ["UA"]}]
+            raise OSError("down")
+        doc = copy.deepcopy(INTERESTS)
+        doc["interests"].append({"id": "WF-INT-9", "about": "dates", "programs": ["verdict", "elements"]})
+        items, problems = tips.gather(doc, bus="BUS", fetch=fetch)
+        self.assertIn(verdict_feed, calls)                                   # not on the bus: read directly
+        self.assertNotIn(tips.program_entry("cordon")["feed"], calls)       # on the bus: not fetched again
+        self.assertEqual([p["source"] for p in problems], ["elements"])     # a failed feed is reported, not hidden
+        self.assertIn("e1", {i["id"] for i in items})
+        items, problems = tips.gather(doc, bus="DOWN", fetch=fetch)          # bus down: direct feeds for everything
+        self.assertEqual(problems[0]["source"], "bus")
+        self.assertIn("e1", {i["id"] for i in items})
+
+    def test_anywhere(self):
+        doc = {"program": "watchfloor", "areas": INTERESTS["areas"],
+               "interests": [{"id": "WF-INT-6", "about": "GPS interference worldwide", "programs": ["noisefloor"],
+                              "tiers": ["anomaly"], "anywhere": True}]}
+        items = self.items() + [{"_program": "noisefloor", "id": "n3", "title": "no place", "tier": "anomaly",
+                                 "countries": []}]
+        got = {t["item_id"]: t["areas"] for t in tips.tips(items, doc, now=NOW)}
+        self.assertEqual(got, {"n1": ["WF-WP-Z07"], "n2": [], "n3": []})  # inside an area, outside, no country
+
+    def test_stale(self):
+        items = self.items()
+        items[0]["cop_stale"] = True                                # COP kept this feed's last good items
+        items[2]["_feed_generated"] = "2026-10-01T00:00:00Z"        # read directly from a feed built a month ago
+        items[3]["cop_stale"] = False
+        items[3]["data_as_of"] = "2023-05-01T00:00:00Z"             # an old standing notice is still current
+        found = {t["item_id"]: t["stale"] for t in tips.tips(items, INTERESTS, now=NOW)}
+        self.assertTrue(found["c1"] and found["c3"])
+        self.assertFalse(found["n1"])
+
+    def test_diff_ignores_title_counts(self):
+        before = tips.tips(self.items(), INTERESTS, now=NOW)
+        items = self.items()
+        items[0]["title"] = "Ukraine: Level 4, Do Not Travel (text revised)"
+        items[0]["measures"] = {"level": 4}
+        same = tips.diff(before, tips.tips(items, INTERESTS, now=NOW))
+        self.assertEqual((same["new"], same["changed"], same["ended"]), ([], [], []))
+        items[3]["tier"] = "routine"  # interference no longer an anomaly: the tip ends
+        items[2]["response_stage"] = "state_post_posture:ordered_departure"
+        d = tips.diff(before, tips.tips(items, INTERESTS, now=NOW))
+        self.assertEqual([t["item_id"] for t in d["changed"]], ["c3"])
+        self.assertEqual([t["item_id"] for t in d["ended"]], ["n1"])
+
+    def test_cite_passes_the_contract(self):
+        tip = next(t for t in tips.tips(self.items(), INTERESTS, now=NOW) if t["item_id"] == "c1")
+        src = tips.cite(tip, accessed_at=NOW)
+        self.assertEqual((src["lineage_id"], src["independence_group"]), ("up:c1", "upstream"))  # upstream carried
+        self.assertEqual(src["publisher"], "Cordon, The Intelligence Company")
+        self.assertEqual(src["url"], "https://cordon.theintelligence.company/data/feed.geojson")  # no item link: the feed
+        item = copy.deepcopy(GOOD["features"][0])
+        item["properties"]["sources"] = [src]
+        self.assertEqual([e for e in contract.check(item) if e[0] == "sources" and e[1] == "error"], [])
+        item["properties"]["sources"] = [{"publisher": "x"}]  # the check itself catches a bare source
+        self.assertTrue([e for e in contract.check(item) if e[0] == "sources" and e[1] == "error"])
+        tip["upstream"] = [{"lineage_id": "a", "independence_group": "g1"}, {"lineage_id": "b", "independence_group": "g2"}]
+        src = tips.cite(tip, accessed_at=NOW)
+        self.assertEqual((src["lineage_id"], src["independence_group"]), ("cordon:c1", "g1+g2"))
+
+    def test_check_interests(self):
+        self.assertEqual(tips.check_interests(INTERESTS), [])
+        bad = copy.deepcopy(INTERESTS)
+        bad["interests"] += [{"id": "WF-INT-1", "about": "dup", "programs": ["watchfloor", "nosuch"],
+                              "areas": ["WF-WP-Z99"], "tiers": ["loud"], "where": [{"path": "x", "op": "~"}]}]
+        bad["areas"]["X"] = ["ukr"]
+        errs = " | ".join(tips.check_interests(bad))
+        for want in ("duplicate id", "unknown program 'nosuch'", "does not tip itself", "unknown area 'WF-WP-Z99'",
+                     "tiers has unknown values", "where needs", "ISO alpha-2"):
+            self.assertIn(want, errs)
+
+    def test_registers_check_interests(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as d:
+            folder = Path(d) / "doctrine"
+            shutil.copytree(ROOT / "templates" / "doctrine", folder)
+            doc = copy.deepcopy(INTERESTS)
+            doc["interests"][0]["indicator_id"] = "XX-IND-404"
+            (folder / "interests.json").write_text(json.dumps(doc), encoding="utf-8")
+            errs = registers.check(folder)
+            self.assertTrue(any("XX-IND-404" in e for e in errs), errs)
+
+    def test_cli(self):
+        with tempfile.TemporaryDirectory() as d:
+            folder = Path(d) / "doctrine"
+            folder.mkdir()
+            (folder / "interests.json").write_text(json.dumps(INTERESTS), encoding="utf-8")
+            bus = Path(d) / "bus.geojson"
+            bus.write_text(json.dumps(BUS), encoding="utf-8")
+            out = Path(d) / "tips.json"
+            self.assertEqual(tips.main([str(folder), "--bus", str(bus), "--json", str(out)]), 0)
+            self.assertEqual(len(json.loads(out.read_text(encoding="utf-8"))), 4)
 
 
 class Withhold(unittest.TestCase):
