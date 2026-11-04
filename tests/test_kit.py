@@ -384,6 +384,25 @@ class Tips(unittest.TestCase):
         got = {t["item_id"]: t["areas"] for t in tips.tips(items, doc, now=NOW)}
         self.assertEqual(got, {"n1": ["WF-WP-Z07"], "n2": [], "n3": []})  # inside an area, outside, no country
 
+    def test_geometry_and_boxes_place_offshore_and_land_items(self):
+        doc = {"program": "watchfloor",
+               "areas": {"WF-WP-Z01": ["UA"], "WF-WP-Z02": ["TW"]},
+               "boxes": {"WF-WP-Z02": [117.0, 21.0, 123.5, 26.5]},
+               "interests": [{"id": "WF-INT-4", "about": "NGA warnings", "programs": ["cordon"], "anywhere": True}]}
+        items = [
+            {"_program": "cordon", "id": "g1", "title": "Black Sea / Odesa coast", "tier": "routine", "countries": [],
+             "_geometry": {"type": "Point", "coordinates": [30.73, 46.48]}},  # Odesa land point -> UA
+            {"_program": "cordon", "id": "g2", "title": "Taiwan Strait firing exercise", "tier": "anomaly",
+             "countries": [], "_geometry": {"type": "Polygon", "coordinates": [[[119.5, 24.0], [120.2, 24.0],
+                                                                                [120.2, 24.6], [119.5, 24.6],
+                                                                                [119.5, 24.0]]]}},  # at sea inside box
+            {"_program": "cordon", "id": "g3", "title": "Mid-Atlantic buoy", "tier": "routine", "countries": [],
+             "_geometry": {"type": "Point", "coordinates": [-40.0, 30.0]}},
+        ]
+        got = {t["item_id"]: t["areas"] for t in tips.tips(items, doc, now=NOW)}
+        self.assertEqual(got, {"g1": ["WF-WP-Z01"], "g2": ["WF-WP-Z02"], "g3": []})
+        self.assertEqual(tips.check_interests(doc), [])
+
     def test_stale(self):
         items = self.items()
         items[0]["cop_stale"] = True                                # COP kept this feed's last good items

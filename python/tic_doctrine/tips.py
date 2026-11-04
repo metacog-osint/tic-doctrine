@@ -44,7 +44,7 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-from . import vocab
+from . import geo, vocab
 
 ID_RE = re.compile(r"^[A-Z][A-Z0-9]*(-[A-Z0-9]+)+$")
 CC_RE = re.compile(r"^[A-Z]{2}$")
@@ -90,6 +90,8 @@ def load(src: str, timeout: float = 60) -> tuple[dict, list[dict]]:
     for f in doc.get("features") or []:
         p = dict(f.get("properties") or {})
         p["_program"] = p.get("program") or p.get("cop_program") or header.get("program")
+        if f.get("geometry"):
+            p["_geometry"] = f["geometry"]
         if "cop_stale" not in p:  # read directly: the feed's own build time says whether the producer is current
             p["_feed_generated"] = header.get("generated_at")
         items.append(p)
@@ -171,19 +173,42 @@ def matches(item: dict, interest: dict) -> bool:
     return all(_cmp(_get(item, w["path"]), w["op"], w.get("value")) for w in interest.get("where", []))
 
 
-def areas_for(item: dict, interest: dict, areas: dict[str, list[str]]) -> list[str] | None:
-    """The interest's areas that share a country with the item; [] for a matching item with no country when the
-    interest is global; None when the item falls outside every area."""
+def _area_boxes(boxes: dict | None, area: str) -> list[list[float]]:
+    raw = (boxes or {}).get(area)
+    if not raw or not isinstance(raw, list):
+        return []
+    if len(raw) == 4 and all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in raw):
+        return [[float(x) for x in raw]]
+    return [[float(x) for x in b] for b in raw if isinstance(b, list) and len(b) == 4]
+
+
+def areas_for(item: dict, interest: dict, areas: dict[str, list[str]], boxes: dict | None = None) -> list[str] | None:
+    """The interest's areas that share a country or bounding box with the item; [] for a matching item with no country
+    when the interest is global; None when the item falls outside every area."""
     wanted = interest.get("areas") or list(areas)
+    geom = item.get("_geometry") or item.get("geometry")
     cc = set(item.get("countries") or [])
+    if not cc and geom:
+        cc = set(geo.countries_for_geometry(geom))
+    ibbox = geo.geometry_bbox(geom) if geom else None
+
+    def _in_area(a: str) -> bool:
+        if cc & set(areas.get(a, [])):
+            return True
+        if ibbox is not None:
+            return any(geo.boxes_intersect(ibbox, b) for b in _area_boxes(boxes, a))
+        return False
+
     if interest.get("anywhere"):  # worldwide: keep every match, labelled with any areas it falls in
-        return [a for a in wanted if cc & set(areas.get(a, []))]
-    if not cc:
+        return [a for a in wanted if _in_area(a)]
+    hit = [a for a in wanted if _in_area(a)]
+    if hit:
+        return hit
+    if not cc and ibbox is None:
         return [] if interest.get("global") else None
     if not wanted:  # a program with no named areas takes items from anywhere
         return []
-    hit = [a for a in wanted if cc & set(areas.get(a, []))]
-    return hit or None
+    return None
 
 
 def fingerprint(item: dict, extra=()) -> str:
@@ -209,12 +234,13 @@ def tips(items: list[dict], interests_doc: dict, now: datetime | None = None) ->
     now = now or datetime.now(timezone.utc)
     me = interests_doc.get("program")
     areas = interests_doc.get("areas") or {}
+    boxes = interests_doc.get("boxes") or {}
     out = []
     for interest in interests_doc.get("interests", []):
         for item in items:
             if item.get("_program") == me or not matches(item, interest):
                 continue
-            hit = areas_for(item, interest, areas)
+            hit = areas_for(item, interest, areas, boxes)
             if hit is None:
                 continue
             upstream = [{"lineage_id": s.get("lineage_id"), "independence_group": s.get("independence_group"),
@@ -284,6 +310,16 @@ def check_interests(doc: dict) -> list[str]:
         bad = [c for c in cc if not isinstance(c, str) or not CC_RE.match(c)]
         if bad or not cc:
             errs.append(f"interests area {a}: needs ISO alpha-2 country codes (bad: {bad or 'empty'})")
+    boxes = doc.get("boxes") or {}
+    if not isinstance(boxes, dict):
+        errs.append("interests boxes: must be an object mapping area ids to [west, south, east, north] boxes")
+    else:
+        for a, raw in boxes.items():
+            if a not in areas:
+                errs.append(f"interests box {a!r}: unknown area")
+            blist = _area_boxes(boxes, a)
+            if not blist or any(not (-180 <= b[0] <= b[2] <= 180 and -90 <= b[1] <= b[3] <= 90) for b in blist):
+                errs.append(f"interests box {a}: needs [west, south, east, north] with west<=east and south<=north")
     seen = set()
     for i in doc.get("interests", []):
         iid = i.get("id")
