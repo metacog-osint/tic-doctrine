@@ -59,7 +59,8 @@ const got = tips(bus, interests).map((t) => `${t.interest_id}:${t.item.id}:${t.a
 assert.deepEqual(got, ["WF-INT-1:c1:WF-WP-Z01:false", "WF-INT-3:n1:WF-WP-Z07:true", "WF-INT-4:v1::false"],
   "level filter, areas, stale bus items, global items, and never the program's own items");
 assert.ok(!tipMatches(bus[1], interests.interests[0]), "level 1 fails the where test");
-const anywhere = { ...interests, interests: [{ id: "WF-INT-6", programs: ["noisefloor"], tiers: ["anomaly"], anywhere: true }] };
-assert.deepEqual(tips(bus, anywhere).map((t) => `${t.item.id}:${t.areas.join(",")}`), ["n1:WF-WP-Z07", "n2:"],
-  "anywhere keeps matches outside every area, labelled when inside one");
+const anywhere = { ...interests, boxes: { "WF-WP-Z01": [22, 44, 41, 53] }, interests: [{ id: "WF-INT-6", programs: ["noisefloor"], tiers: ["anomaly"], anywhere: true }] };
+const geomItem = { program: "noisefloor", id: "n3", title: "Black Sea jamming", countries: [], tier: "anomaly", geometry: { type: "Point", coordinates: [31.5, 45.2] } };
+assert.deepEqual(tips([...bus, geomItem], anywhere).map((t) => `${t.item.id}:${t.areas.join(",")}`), ["n1:WF-WP-Z07", "n2:", "n3:WF-WP-Z01"],
+  "anywhere keeps matches outside every area, labelled when inside one by country or bbox");
 console.log("test_js.mjs: all passed");

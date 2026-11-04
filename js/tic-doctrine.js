@@ -1503,10 +1503,49 @@ export function tipMatches(item, interest) {
   return (interest.where || []).every((w) => tipCompare(tipPath(item, w.path), w.op, w.value));
 }
 
+function geomBbox(geom) {
+  if (!geom || typeof geom !== "object") return null;
+  const pts = [];
+  function walk(c) {
+    if (!Array.isArray(c) || !c.length) return;
+    if (typeof c[0] === "number" && c.length >= 2) { pts.push([c[0], c[1]]); return; }
+    for (const x of c) walk(x);
+  }
+  if (geom.type === "GeometryCollection") {
+    for (const g of geom.geometries || []) {
+      const b = geomBbox(g);
+      if (b) { pts.push([b[0], b[1]], [b[2], b[3]]); }
+    }
+  } else {
+    walk(geom.coordinates);
+  }
+  if (!pts.length) return null;
+  let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity;
+  for (const [lon, lat] of pts) {
+    if (lon < w) w = lon;
+    if (lon > e) e = lon;
+    if (lat < s) s = lat;
+    if (lat > n) n = lat;
+  }
+  return [w, s, e, n];
+}
+
+function areaBoxes(boxes, a) {
+  const raw = boxes && boxes[a];
+  if (!Array.isArray(raw) || !raw.length) return [];
+  if (raw.length === 4 && typeof raw[0] === "number") return [raw];
+  return raw.filter((b) => Array.isArray(b) && b.length === 4);
+}
+
+function boxesOverlap(a, b) {
+  return a[0] <= b[2] && a[2] >= b[0] && a[1] <= b[3] && a[3] >= b[1];
+}
+
 /** Tips for one program from bus items: [{interest_id, areas, program, item}], never the program's own items. */
 export function tips(items, interestsDoc) {
   const me = interestsDoc.program;
   const areas = interestsDoc.areas || {};
+  const boxes = interestsDoc.boxes || {};
   const out = [];
   for (const interest of interestsDoc.interests || []) {
     const wanted = interest.areas && interest.areas.length ? interest.areas : Object.keys(areas);
@@ -1514,13 +1553,18 @@ export function tips(items, interestsDoc) {
       const program = item.program || item.cop_program;
       if (program === me || !tipMatches(item, interest)) continue;
       const cc = item.countries || [];
+      const ibbox = geomBbox(item._geometry || item.geometry);
+      const inArea = (a) => (areas[a] || []).some((c) => cc.includes(c)) ||
+        (ibbox !== null && areaBoxes(boxes, a).some((b) => boxesOverlap(ibbox, b)));
       let hit;
-      if (interest.anywhere) hit = wanted.filter((a) => (areas[a] || []).some((c) => cc.includes(c)));
-      else if (!cc.length) hit = interest.global ? [] : null;
-      else if (!wanted.length) hit = [];
+      if (interest.anywhere) hit = wanted.filter(inArea);
       else {
-        hit = wanted.filter((a) => (areas[a] || []).some((c) => cc.includes(c)));
-        if (!hit.length) hit = null;
+        hit = wanted.filter(inArea);
+        if (!hit.length) {
+          if (!cc.length && ibbox === null) hit = interest.global ? [] : null;
+          else if (!wanted.length) hit = [];
+          else hit = null;
+        }
       }
       if (hit === null) continue;
       out.push({ interest_id: interest.id, indicator_id: interest.indicator_id || null, areas: hit, program,
