@@ -497,7 +497,8 @@ class Vendoring(unittest.TestCase):
                                            capture_output=True).returncode
             self.assertEqual(check(), 0)
             doc = kit / "docs" / "language-key.md"
-            doc.write_bytes(doc.read_bytes().replace(b"\n", b"\r\n"))  # what a Windows checkout does
+            # what a Windows checkout does: LF first, so a file that is already CRLF stays CRLF, not \r\r\n
+            doc.write_bytes(doc.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
             self.assertEqual(check(), 0)
             doc.write_bytes(doc.read_bytes() + b"edited\r\n")
             self.assertEqual(check(), 1)
