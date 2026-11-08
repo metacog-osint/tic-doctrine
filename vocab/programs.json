@@ -53,6 +53,14 @@
                "EASA conflict-zone information bulletins", "NGA navigational warnings (MSI)", "planned: FAA NOTAMs, NAVAREA text"]
     },
     {
+      "id": "vis", "name": "Vis", "status": "live", "family": "Weather",
+      "feed": "https://vis.theintelligence.company/data/feed.geojson", "site": "https://vis.theintelligence.company",
+      "terms": "Vis code GNU AGPL-3.0; Open-Meteo ensemble data CC BY 4.0 (free for non-commercial use), carrying NOAA NCEP GEFS (US public domain) and ECMWF open data (CC BY 4.0)",
+      "fresh_hours": 20, "stale_hours": 48, "warning_problem_prefix": "VS-WP",
+      "owns": ["ensemble weather forecasts (Open-Meteo: NOAA GEFS, ECMWF IFS) at named airfields and ports in Watchfloor's zones",
+               "sun and moon illumination at those points (computed)", "planned: scoring against station METARs"]
+    },
+    {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
       "feed": "https://metacog-osint.github.io/verdict/data/calendar.geojson", "site": "https://metacog-osint.github.io/verdict/",
       "terms": "Verdict ledger (public)", "fresh_hours": 48, "stale_hours": 168,
@@ -89,10 +97,6 @@
      "terms": "Headwind code MIT; US public domain (OFAC, Federal Register); FAO CC BY-NC-SA 3.0 IGO", "fresh_hours": 24, "stale_hours": 72,
      "extra": {"events": "https://headwind.theintelligence.company/data/events.json"},
      "owns": ["sanctions lists and deltas", "export controls", "commodity and energy prices", "critical minerals"]},
-    {"id": "vis", "name": "Vis", "status": "planned", "status_note": "prototype in D:\\Projects\\weather-impact (local only); not deployed. Set live when its address serves a real feed", "family": "Weather", "warning_problem_prefix": "VS-WP",
-     "feed": "https://vis.theintelligence.company/data/feed.geojson", "site": "https://vis.theintelligence.company",
-     "terms": "Vis code MIT; CC BY 4.0 (Open-Meteo, ECMWF); NOAA NCEP public domain", "fresh_hours": 18, "stale_hours": 48,
-     "owns": ["theatre weather and illumination effects by zone"]},
     {"id": "humanitarian", "name": "Humanitarian response (working label)", "status": "planned", "family": "Humanitarian",
      "owns": ["HDX HAPI", "IFRC GO", "WHO disease outbreak news", "ReliefWeb reports (Watchfloor reads its headlines until this ships)", "IPC food insecurity"]},
     {"id": "dead-drop", "name": "Dead Drop", "status": "planned", "family": "Dissemination",
