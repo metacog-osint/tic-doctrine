@@ -63,7 +63,7 @@
     {
       "id": "blackout", "name": "Blackout", "status": "live", "family": "Networks",
       "feed": "https://blackout.theintelligence.company/data/feed.geojson", "site": "https://blackout.theintelligence.company",
-      "terms": "Blackout code MIT; CC BY 4.0 (IODA, OONI)",
+      "terms": "Blackout code MIT; OONI data CC BY-NC-SA 4.0; IODA (Georgia Tech) states no data licence, so it is credited, not relicensed; providers' status feeds quoted and linked",
       "fresh_hours": 12, "stale_hours": 48, "warning_problem_prefix": "BO-WP",
       "owns": ["IODA internet outage signals (BGP, active probing, darknet) by country, and on watched networks (Starlink, Amazon, Microsoft, Google, Google Cloud ASNs)",
                "OONI censorship measurements by country",
