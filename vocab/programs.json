@@ -61,6 +61,17 @@
                "sun and moon illumination at those points (computed)", "planned: scoring against station METARs"]
     },
     {
+      "id": "blackout", "name": "Blackout", "status": "live", "family": "Networks",
+      "feed": "https://blackout.theintelligence.company/data/feed.geojson", "site": "https://blackout.theintelligence.company",
+      "terms": "Blackout code MIT; CC BY 4.0 (IODA, OONI)",
+      "fresh_hours": 12, "stale_hours": 48, "warning_problem_prefix": "BO-WP",
+      "owns": ["IODA internet outage signals (BGP, active probing, darknet) by country, and on watched networks (Starlink, Amazon, Microsoft, Google, Google Cloud ASNs)",
+               "OONI censorship measurements by country",
+               "cloud and satellite providers' own status feeds (AWS, Google Cloud, Azure, Starlink Statuspage)",
+               "the submarine cable corridor register (hand-compiled; no TeleGeography data ingested)",
+               "planned: Cloudflare Radar, NASA Black Marble night lights, BGP routing beyond IODA's signal, power-grid state"]
+    },
+    {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
       "feed": "https://metacog-osint.github.io/verdict/data/calendar.geojson", "site": "https://metacog-osint.github.io/verdict/",
       "terms": "Verdict ledger (public)", "fresh_hours": 48, "stale_hours": 168,
@@ -78,10 +89,6 @@
      "feed": "https://orbit.theintelligence.company/data/feed.geojson", "site": "https://orbit.theintelligence.company",
      "terms": "Orbit code MIT; GCAT CC BY 4.0; CelesTrak public", "fresh_hours": 24, "stale_hours": 72,
      "owns": ["satellite catalog changes (CelesTrak, Space-Track)", "launches", "manoeuvres", "counterspace events"]},
-    {"id": "blackout", "name": "Blackout", "status": "planned", "status_note": "built 1 Nov 2026 with seed (made-up) sample data; not deployed. Set live when it publishes real data at its address", "family": "Networks", "warning_problem_prefix": "BO-WP",
-     "feed": "https://blackout.theintelligence.company/data/feed.geojson", "site": "https://blackout.theintelligence.company",
-     "terms": "Blackout code MIT; CC BY 4.0 (IODA, OONI); CC BY-SA 4.0 (TeleGeography)", "fresh_hours": 12, "stale_hours": 48,
-     "owns": ["internet outages and shutdowns (IODA, Cloudflare Radar, OONI)", "NASA Black Marble night lights", "BGP routing", "power-grid state"]},
     {"id": "wake", "name": "Wake", "status": "planned", "status_note": "built 1 Nov 2026 with seed (made-up) sample data; not deployed. Set live when it publishes real data at its address", "family": "Maritime", "warning_problem_prefix": "WK-WP",
      "feed": "https://wake.theintelligence.company/data/feed.geojson", "site": "https://wake.theintelligence.company",
      "terms": "Wake code MIT; IMF PortWatch public terms; CC BY 4.0 (Digitraffic AIS)", "fresh_hours": 24, "stale_hours": 72,
