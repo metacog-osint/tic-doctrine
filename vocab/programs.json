@@ -87,6 +87,16 @@
                "US mineral import reliance (USGS)"]
     },
     {
+      "id": "orbit", "name": "Orbit", "status": "live", "family": "Spectrum and space",
+      "feed": "https://orbit.theintelligence.company/data/feed.geojson", "site": "https://orbit.theintelligence.company",
+      "terms": "GCAT data CC BY 4.0 (J. McDowell, planet4589.org/space/gcat); Launch Library 2 data from The Space Devs (free access, no licence stated)",
+      "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "OR-WP",
+      "owns": ["orbital launches (GCAT launch list)",
+               "launches scheduled in the next 14 days (Launch Library 2)",
+               "reentries (GCAT)",
+               "satellite catalog changes between Orbit's own readings of GCAT, and objects in orbit by owner code"]
+    },
+    {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
       "feed": "https://metacog-osint.github.io/verdict/data/calendar.geojson", "site": "https://metacog-osint.github.io/verdict/",
       "terms": "Verdict ledger (public)", "fresh_hours": 48, "stale_hours": 168,
@@ -100,10 +110,6 @@
     },
     {"id": "fieldcast", "name": "FieldCast", "status": "planned", "family": "Spectrum and space",
      "owns": ["GNSS ionospheric disturbance (ROTI) from public base stations", "NANU"]},
-    {"id": "orbit", "name": "Orbit", "status": "planned", "status_note": "built 1 Nov 2026 with seed (made-up) sample data; not deployed. Set live when it publishes real data at its address", "family": "Spectrum and space", "warning_problem_prefix": "OR-WP",
-     "feed": "https://orbit.theintelligence.company/data/feed.geojson", "site": "https://orbit.theintelligence.company",
-     "terms": "Orbit code MIT; GCAT CC BY 4.0; CelesTrak public", "fresh_hours": 24, "stale_hours": 72,
-     "owns": ["satellite catalog changes (CelesTrak, Space-Track)", "launches", "manoeuvres", "counterspace events"]},
     {"id": "wake", "name": "Wake", "status": "planned", "status_note": "built 1 Nov 2026 with seed (made-up) sample data; not deployed. Set live when it publishes real data at its address", "family": "Maritime", "warning_problem_prefix": "WK-WP",
      "feed": "https://wake.theintelligence.company/data/feed.geojson", "site": "https://wake.theintelligence.company",
      "terms": "Wake code MIT; IMF PortWatch public terms; CC BY 4.0 (Digitraffic AIS)", "fresh_hours": 24, "stale_hours": 72,
