@@ -38,7 +38,7 @@ runs. A stale producer gives stale tips, drawn grey.
 countries their points fall in, or through `boxes` in `interests.json` (`[west, south, east, north]` per area, one box
 or a list). Matching uses bounding boxes, so a very large warning area can land in two neighbouring areas, and boxes do
 not cross the 180° meridian. A registry entry stays `planned` (with a `status_note`) until its program publishes real
-data at its address. Vis went live on 8 Nov 2026 (0.4.2), Blackout on 12 Nov 2026 (0.4.3); 0.4.4 (13 Nov 2026) adds Blackout's Cloudflare Radar data and its eleven provider status feeds to its entry.
+data at its address. Vis went live on 8 Nov 2026 (0.4.2), Blackout on 12 Nov 2026 (0.4.3); 0.4.4 (13 Nov 2026) adds Blackout's Cloudflare Radar data and its eleven provider status feeds to its entry. 0.4.5 (13 Nov 2026) adds Blackout's routing, power and context lanes (Radar BGP, the IAEA's Zaporizhzhya updates, ODIN, EIA-930, NASA Black Marble, Access Now STOP, Citizen Lab test lists) to its `owns`, and each new source's licence, as Blackout's `doctrine/sources.json` states it, to its `terms`.
 
 ```
 python doctrine/kit/tic.py tips doctrine                  # against the bus
