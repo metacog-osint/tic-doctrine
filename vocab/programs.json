@@ -63,13 +63,14 @@
     {
       "id": "blackout", "name": "Blackout", "status": "live", "family": "Networks",
       "feed": "https://blackout.theintelligence.company/data/feed.geojson", "site": "https://blackout.theintelligence.company",
-      "terms": "Blackout code MIT; OONI data CC BY-NC-SA 4.0; IODA (Georgia Tech) states no data licence, so it is credited, not relicensed; providers' status feeds quoted and linked",
+      "terms": "Blackout code MIT; OONI data CC BY-NC-SA 4.0; IODA (Georgia Tech) states no data licence, so it is credited, not relicensed; providers' status feeds quoted and linked; Cloudflare Radar data CC BY-NC 4.0",
       "fresh_hours": 12, "stale_hours": 48, "warning_problem_prefix": "BO-WP",
       "owns": ["IODA internet outage signals (BGP, active probing, darknet) by country, and on watched networks (Starlink, Amazon, Microsoft, Google, Google Cloud ASNs)",
                "OONI censorship measurements by country",
-               "cloud and satellite providers' own status feeds (AWS, Google Cloud, Azure, Starlink Statuspage)",
+               "Cloudflare Radar outages Cloudflare annotates (with the cause Cloudflare states) and its verified traffic anomalies, by country",
+               "cloud, software and satellite providers' own status feeds (AWS, Google Cloud, Google Workspace, Azure, Microsoft 365, Apple, Cloudflare, Akamai, Slack, Zoom, Starlink Statuspage)",
                "the submarine cable corridor register (hand-compiled; no TeleGeography data ingested)",
-               "planned: Cloudflare Radar, NASA Black Marble night lights, BGP routing beyond IODA's signal, power-grid state"]
+               "planned: NASA Black Marble night lights, BGP routing beyond IODA's signal, power-grid state"]
     },
     {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
