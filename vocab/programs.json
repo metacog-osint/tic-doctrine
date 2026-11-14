@@ -97,6 +97,15 @@
                "satellite catalog changes between Orbit's own readings of GCAT, and objects in orbit by owner code"]
     },
     {
+      "id": "launch", "name": "Launch", "status": "live", "family": "Spectrum and space",
+      "feed": "https://launch.theintelligence.company/data/feed.geojson", "site": "https://launch.theintelligence.company",
+      "terms": "FAA TFRs: US Government work. Orbit's items keep their sources' terms (GCAT CC BY 4.0).",
+      "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "LA-WP",
+      "owns": ["FAA space-operations temporary flight restrictions (tfr.faa.gov)",
+               "scheduled launches that coincide with a closure area in time and place, or that GCAT has dated inside its window",
+               "launch and reentry closure history from Launch's charted notices, 2023 onward, with per-pad azimuth corridors and recurring drop zones"]
+    },
+    {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
       "feed": "https://metacog-osint.github.io/verdict/data/calendar.geojson", "site": "https://metacog-osint.github.io/verdict/",
       "terms": "Verdict ledger (public)", "fresh_hours": 48, "stale_hours": 168,
