@@ -10,10 +10,10 @@ drawn on one map (COP) and scored (Verdict).
 |---|---|
 | `vocab/` | Reference vocabularies: ICD 203 likelihood with UK and Kent crosswalks; the confidence rubric; contract enums; JP 3-04 information aspects, PMESII-PT, ASCOPE, the competition continuum; CISA's 55 National Critical Functions with a published sector and lifeline crosswalk; FEMA's eight lifelines and status colours; response ladders (PAGER, USGS volcano alert levels, GDACS, Copernicus EMS, IFRC, EASA, State Department); Admiralty grades; ICD 203's nine tradecraft standards; actor roles and types, and source owners, for characterising entities and sides without friend-or-foe labels |
 | `schema/` | Feed contract v2 as JSON Schema |
-| `python/tic_doctrine/` | Likelihood, confidence, contract checks, the tradecraft linter, register checks, source health, withholding counts, tips between programs (standard library only) |
+| `python/tic_doctrine/` | Likelihood, confidence, contract checks, the tradecraft linter, register checks, source health, withholding counts, tips between programs, the history log (standard library only) |
 | `js/tic-doctrine.js` | The same likelihood, confidence, lifeline, ladder and tip-matching logic for web pages (ES module, no dependencies) |
 | `vocab/programs.json` | The suite registry: every program, its feed, and the datasets it owns |
-| `docs/` | The contract, the reader's language key, the confidence rubric, the sources-and-withholding page |
+| `docs/` | The contract, the reader's language key, the confidence rubric, the sources-and-withholding page, the history log format |
 | `templates/doctrine/` | A program's registers: requirements, indicators and warning problems, assumptions, function map, sources, method |
 | `tools/` | `sync.py` copies the kit into a program as `doctrine/kit/`; `build_js.py` and `build_schema.py` regenerate from `vocab/` |
 
@@ -24,6 +24,7 @@ python tools/sync.py [local path]<program>            # vendor the kit into <pro
 python doctrine/kit/tic.py lint <feed>.geojson --doctrine doctrine
 python doctrine/kit/tic.py registers doctrine
 python doctrine/kit/tic.py health doctrine/sources.json --out doctrine/health.json
+python doctrine/kit/tic.py history site/data/feed.geojson --dir history --ended site/data/ended.geojson
 ```
 
 **Tips between programs (0.4.0, 1 Nov 2026).** Each dataset is collected once, by the program that owns it
@@ -45,7 +46,13 @@ python doctrine/kit/tic.py tips doctrine                  # against the bus
 python doctrine/kit/tic.py tips doctrine --feed <url>     # against one program's feed
 ```
 
-**Tests:** `python tests/test_kit.py` and `node tests/test_js.mjs`.
+**History (0.5.0, 14 Nov 2026).** A feed carries what is active now; `history` keeps what was. Each run compares the
+feed just built with the last run and logs one line per item that is new, changed (tier or response stage) or ended,
+with the full item, to `history/log/YYYY/MM/DD.jsonl` (format `tic-history/1`, first written for Elements). An item
+ends only when its source was read well on that run. The program serves the last 7 days of ended items beside its
+feed as `data/ended.geojson`. Format and adoption steps: `docs/history-log.md`.
+
+**Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
 Community elements only; this is an independent, non-commercial research effort, so it never claims compliance. Only
