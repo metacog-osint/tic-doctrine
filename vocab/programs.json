@@ -77,11 +77,11 @@
     {
       "id": "headwind", "name": "Headwind", "status": "live", "family": "Economy",
       "feed": "https://headwind.theintelligence.company/data/feed.geojson", "site": "https://headwind.theintelligence.company",
-      "terms": "Headwind code MIT; ECB reference rates free to reuse with credit; EIA data US public domain; FAO CC BY 4.0; WFP food prices CC BY-IGO; OFAC list, Consolidated Screening List and Federal Register US public domain; UN Security Council list, no licence stated",
+      "terms": "Headwind code MIT; ECB reference rates free to reuse with credit; EIA data US public domain; FAO CC BY 4.0; WFP food prices CC BY-IGO; OFAC list, Consolidated Screening List and Federal Register US public domain; UN Security Council list, no licence stated; EU financial sanctions list, European Commission reuse notice; UK Sanctions List, Open Government Licence v3.0; USGS data CC0 1.0",
       "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "HW-WP",
       "extra": {"events": "https://headwind.theintelligence.company/data/events.json"},
       "owns": ["currency, energy and food prices against their own range",
-               "OFAC and UN sanctions-list changes",
+               "OFAC, UN, EU and UK sanctions-list changes",
                "US screening-list changes (trade.gov)",
                "BIS and OFAC rules (Federal Register)",
                "US mineral import reliance (USGS)"]

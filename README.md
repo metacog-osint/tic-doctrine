@@ -52,6 +52,8 @@ with the full item, to `history/log/YYYY/MM/DD.jsonl` (format `tic-history/1`, f
 ends only when its source was read well on that run. The program serves the last 7 days of ended items beside its
 feed as `data/ended.geojson`. Format and adoption steps: `docs/history-log.md`. 0.5.1 (14 Nov 2026): a health entry's own
 `state`, when it gives one, must be fresh, late or up for its items to end (Cordon withholds a stale source's items).
+0.5.2 (14 Nov 2026): Headwind's entry adds the EU and UK sanctions lists to its `owns`, and their licences and USGS's
+(CC0 1.0) to its `terms`.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
