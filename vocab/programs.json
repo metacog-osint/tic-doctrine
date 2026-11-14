@@ -106,6 +106,16 @@
                "launch and reentry closure history from Launch's charted notices, 2023 onward, with per-pad azimuth corridors and recurring drop zones"]
     },
     {
+      "id": "undertow", "name": "Undertow", "status": "live", "family": "Information",
+      "feed": "https://undertow.theintelligence.company/data/feed.geojson", "site": "https://undertow.theintelligence.company",
+      "terms": "Meta threat-research repository MIT; Google, OpenAI (RSS only) and TikTok (via the EU Code of Conduct Transparency Centre) facts and counts only, no text republished; EEAS reuse authorised with acknowledgement; DISARM framework CC BY-SA 4.0",
+      "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "UT-WP",
+      "extra": {"events": "https://undertow.theintelligence.company/data/events.json", "stix": "https://undertow.theintelligence.company/data/stix.json"},
+      "owns": ["publicly disclosed covert influence operations and platform takedowns, at operation level (Meta, Google, OpenAI, TikTok, EEAS)",
+               "DISARM technique tags for influence operations",
+               "the STIX 2.1 export of influence operations"]
+    },
+    {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
       "feed": "https://metacog-osint.github.io/verdict/data/calendar.geojson", "site": "https://metacog-osint.github.io/verdict/",
       "terms": "Verdict ledger (public)", "fresh_hours": 48, "stale_hours": 168,

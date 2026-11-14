@@ -54,6 +54,8 @@ feed as `data/ended.geojson`. Format and adoption steps: `docs/history-log.md`. 
 `state`, when it gives one, must be fresh, late or up for its items to end (Cordon withholds a stale source's items).
 0.5.2 (14 Nov 2026): Headwind's entry adds the EU and UK sanctions lists to its `owns`, and their licences and USGS's
 (CC0 1.0) to its `terms`.
+0.5.3 (14 Nov 2026): Undertow is live (influence operations, family Information, prefix `UT-WP`), with its
+events and STIX files in `extra`.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
