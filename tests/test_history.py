@@ -103,6 +103,19 @@ class Update(unittest.TestCase):
         self.assertEqual(history.ended_ids_in(lines), {"p:a:1"})
         self.assertIn("p:b:1", s2["open"])
 
+    def test_a_source_whose_items_are_withheld_as_stale_ends_nothing(self):
+        # Cordon withholds a frozen warning list: the source answered (last_ok == checked_at) but its state is stale.
+        s1, _ = history.update({}, feed(item("p:a:1", lane="src-a"), item("p:b:1", lane="src-b")),
+                               health(T0, "src-a", "src-b"), T0)
+        t1 = T0 + timedelta(hours=2)
+        rec = health(t1, "src-a", "src-b")
+        rec["src-b"]["state"], rec["src-a"]["state"] = "stale", "fresh"
+        s2, lines = history.update(s1, feed(), rec, t1)
+        self.assertEqual(history.ended_ids_in(lines), {"p:a:1"})
+        self.assertIn("p:b:1", s2["open"])
+        self.assertEqual(history.lanes_ok({"x": {"last_ok": "t", "checked_at": "t", "state": "late"},
+                                           "y": {"last_ok": "t", "checked_at": "t", "state": "never"}}), {"x"})
+
     def test_an_item_the_linter_dropped_is_not_ended(self):
         s1, _ = history.update({}, feed(item("p:a:1")), health(T0, "src-a"), T0)
         t1 = T0 + timedelta(hours=2)
