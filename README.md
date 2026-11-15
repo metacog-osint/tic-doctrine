@@ -61,6 +61,9 @@ and freshness windows of 240 and 408 hours on its items' `data_as_of`, because P
 lag of 2 to 9 days (Wake's own source health: fresh to 10 days, late to 17).
 0.5.5 (15 Nov 2026): Wake is live (vessel transits through 28 chokepoints, family Maritime, prefix `WK-WP`) at wake.theintelligence.company,
 read and deployed by hand once a week until the IMF permits automated pulls.
+0.5.6 (15 Nov 2026): optional `data_as_of_precision` (`day` or `month`) for sources that give no time, with the
+linter's midnight-UTC check and `asOfDateLabel()` in the browser module, so a date-only item is shown as a date and
+not as the evening before; Undertow's `terms` now say what it quotes with credit (Meta, OpenAI, TikTok, EEAS).
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 

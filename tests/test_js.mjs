@@ -1,6 +1,6 @@
 // Browser-module tests (Node, no dependencies): node tests/test_js.mjs
 import assert from "node:assert/strict";
-import { termFor, likelihoodLabel, judgmentChips, lifelineStatus, ladderRung, changeText, indicatorStyle, countryPoint, actorStyle, actorLabel, tips, tipMatches, VOCAB } from "../js/tic-doctrine.js";
+import { termFor, likelihoodLabel, judgmentChips, lifelineStatus, ladderRung, changeText, indicatorStyle, countryPoint, actorStyle, actorLabel, tips, tipMatches, asOfDateLabel, VOCAB } from "../js/tic-doctrine.js";
 
 const cases = { 0: "almost_no_chance", 0.05: "very_unlikely", 0.2: "unlikely", 0.45: "roughly_even_chance",
   0.55: "roughly_even_chance", 0.551: "likely", 0.8: "likely", 0.801: "very_likely", 0.95: "very_likely", 0.951: "almost_certain", 1: "almost_certain" };
@@ -63,4 +63,8 @@ const anywhere = { ...interests, boxes: { "WF-WP-Z01": [22, 44, 41, 53] }, inter
 const geomItem = { program: "noisefloor", id: "n3", title: "Black Sea jamming", countries: [], tier: "anomaly", geometry: { type: "Point", coordinates: [31.5, 45.2] } };
 assert.deepEqual(tips([...bus, geomItem], anywhere).map((t) => `${t.item.id}:${t.areas.join(",")}`), ["n1:WF-WP-Z07", "n2:", "n3:WF-WP-Z01"],
   "anywhere keeps matches outside every area, labelled when inside one by country or bbox");
+assert.equal(asOfDateLabel({ data_as_of: "2025-06-01T00:00:00Z", data_as_of_precision: "month" }, "en-GB"), "June 2025");
+assert.equal(asOfDateLabel({ data_as_of: "2026-10-30T00:00:00Z", data_as_of_precision: "day" }, "en-GB"), "30 Oct 2026",
+  "a date-only item reads in UTC, never the evening before");
+assert.equal(asOfDateLabel({ data_as_of: "2026-10-30T09:12:00Z" }), null, "an exact time is left to the page");
 console.log("test_js.mjs: all passed");

@@ -40,6 +40,7 @@ def schema() -> dict:
         "us_person_data": enum("us_person_data"),
         "supersedes": {"type": "string"},
         "data_as_of": utc | {"description": "When the information was true (UTC)."},
+        "data_as_of_precision": enum("data_as_of_precision"),
         "published_at": utc | {"description": "When this item was published (UTC)."},
         "valid_until": utc,
         "countries": {"type": "array", "items": {"type": "string", "pattern": "^[A-Z]{2}$"}},
