@@ -59,6 +59,8 @@ events and STIX files in `extra`.
 0.5.4 (15 Nov 2026): Wake's entry, still planned, describes its rebuilt PortWatch lane: status note, terms, `owns`,
 and freshness windows of 240 and 408 hours on its items' `data_as_of`, because PortWatch publishes weekly with a
 lag of 2 to 9 days (Wake's own source health: fresh to 10 days, late to 17).
+0.5.5 (15 Nov 2026): Wake is live (vessel transits through 28 chokepoints, family Maritime, prefix `WK-WP`) at wake.theintelligence.company,
+read and deployed by hand once a week until the IMF permits automated pulls.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
