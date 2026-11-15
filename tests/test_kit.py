@@ -121,6 +121,19 @@ class Contract(unittest.TestCase):
         for needle in ("us_person_data", "data_as_of", "sector does not match", "response_stage"):
             self.assertIn(needle, msgs)
 
+    def test_data_as_of_precision(self):
+        """A date-only or month-only data_as_of is midnight UTC (on the 1st for a month)."""
+        def msgs(prec, asof):
+            f = copy.deepcopy(GOOD["features"][0])
+            f["properties"]["data_as_of_precision"] = prec
+            f["properties"]["data_as_of"] = asof
+            return " ".join(m for _, m in self.problems(f))
+        self.assertNotIn("data_as_of_precision", msgs("day", "2026-10-30T00:00:00Z"))
+        self.assertNotIn("data_as_of_precision", msgs("month", "2025-06-01T00:00:00Z"))
+        self.assertIn("data_as_of_precision", msgs("day", "2026-10-30T12:00:00Z"))
+        self.assertIn("data_as_of_precision", msgs("month", "2025-06-15T00:00:00Z"))
+        self.assertIn("data_as_of_precision", msgs("week", "2025-06-01T00:00:00Z"))
+
     def test_usgs_volcano_ladder(self):
         """USGS Volcano Alert Levels are a response_stage; UNASSIGNED is not a rung."""
         for value in ("normal", "advisory", "watch", "warning"):

@@ -108,7 +108,7 @@
     {
       "id": "undertow", "name": "Undertow", "status": "live", "family": "Information",
       "feed": "https://undertow.theintelligence.company/data/feed.geojson", "site": "https://undertow.theintelligence.company",
-      "terms": "Meta threat-research repository MIT; Google, OpenAI (RSS only) and TikTok (via the EU Code of Conduct Transparency Centre) facts and counts only, no text republished; EEAS reuse authorised with acknowledgement; DISARM framework CC BY-SA 4.0",
+      "terms": "Meta threat-research repository MIT (network summaries quoted with Meta's notice); Google facts and counts only, no bulletin text republished; OpenAI news RSS feed only, post titles and one-line summaries quoted with credit, report pages never read; TikTok via the EU Code of Conduct Transparency Centre (no terms stated), counts and TikTok's own network descriptions quoted with credit, tiktok.com never read; EEAS reuse authorised with acknowledgement, short quotes with pages; DISARM framework CC BY-SA 4.0",
       "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "UT-WP",
       "extra": {"events": "https://undertow.theintelligence.company/data/events.json", "stix": "https://undertow.theintelligence.company/data/stix.json"},
       "owns": ["publicly disclosed covert influence operations and platform takedowns, at operation level (Meta, Google, OpenAI, TikTok, EEAS)",
