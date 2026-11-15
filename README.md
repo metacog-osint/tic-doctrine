@@ -56,6 +56,9 @@ feed as `data/ended.geojson`. Format and adoption steps: `docs/history-log.md`. 
 (CC0 1.0) to its `terms`.
 0.5.3 (14 Nov 2026): Undertow is live (influence operations, family Information, prefix `UT-WP`), with its
 events and STIX files in `extra`.
+0.5.4 (15 Nov 2026): Wake's entry, still planned, describes its rebuilt PortWatch lane: status note, terms, `owns`,
+and freshness windows of 240 and 408 hours on its items' `data_as_of`, because PortWatch publishes weekly with a
+lag of 2 to 9 days (Wake's own source health: fresh to 10 days, late to 17).
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
