@@ -134,6 +134,17 @@ class Contract(unittest.TestCase):
         self.assertIn("data_as_of_precision", msgs("month", "2025-06-15T00:00:00Z"))
         self.assertIn("data_as_of_precision", msgs("week", "2025-06-01T00:00:00Z"))
 
+    def test_subdivisions(self):
+        f = copy.deepcopy(GOOD["features"][0])
+        p = f["properties"]
+        p["countries"] = ["US"]
+        p["subdivisions"] = ["US-HI"]
+        self.assertEqual(self.problems(f), [])
+        p["subdivisions"] = ["Hawaii"]
+        self.assertIn("ISO 3166-2", " ".join(m for _, m in self.problems(f)))
+        p["subdivisions"] = ["CA-ON"]
+        self.assertIn("also be in countries", " ".join(m for _, m in self.problems(f)))
+
     def test_usgs_volcano_ladder(self):
         """USGS Volcano Alert Levels are a response_stage; UNASSIGNED is not a rung."""
         for value in ("normal", "advisory", "watch", "warning"):
@@ -253,6 +264,23 @@ class Geo(unittest.TestCase):
             lat, lon = geo.point(cc)
             self.assertEqual(geo.country_at(lat, lon), cc)
         self.assertIsNone(geo.point("ZZ"))
+
+    def test_us_states_at_points(self):
+        from tic_doctrine import geo
+        for name, lat, lon, want in (("Kilauea", 19.421, -155.287, "US-HI"), ("Great Sitkin", 52.076, -176.13, "US-AK"),
+                                     ("Fargo", 46.8772, -96.7898, "US-ND"), ("Moorhead", 46.8738, -96.7676, "US-MN"),
+                                     ("Kansas City KS", 39.11, -94.63, "US-KS"), ("San Juan", 18.46, -66.1, None),
+                                     ("Windsor ON", 42.30, -83.03, None), ("Gulf of Mexico", 27.0, -90.0, None)):
+            self.assertEqual(geo.subdivision_at(lat, lon), want, name)
+        ring = {"type": "Polygon", "coordinates": [[[-96.9, 46.8], [-96.6, 46.8], [-96.6, 46.95], [-96.9, 46.95],
+                                                    [-96.9, 46.8]]]}
+        self.assertEqual(geo.subdivisions_for_geometry(ring), ["US-MN", "US-ND"])
+        dc = {"type": "Polygon", "coordinates": [[[-77.34, 38.59], [-76.74, 38.59], [-76.74, 39.19], [-77.34, 39.19],
+                                                  [-77.34, 38.59]]]}
+        self.assertEqual(geo.subdivisions_for_geometry(dc), ["US-DC", "US-MD", "US-VA"])  # DC holds no vertex
+        subs = json.loads(geo.SUBDIVISIONS.read_text(encoding="utf-8"))["subdivisions"]
+        self.assertEqual(len(subs), 51)
+        self.assertTrue(all(contract.SUBDIVISION_RE.match(s["code"]) for s in subs))
 
     def test_codes_pass_the_feed_contract(self):
         """Every code geo can emit passes the contract's ISO 3166-1 alpha-2 check (Natural Earth's CN-TW did not)."""

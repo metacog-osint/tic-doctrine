@@ -153,6 +153,13 @@
         "pattern": "^[A-Z]{2}$"
       }
     },
+    "subdivisions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$"
+      }
+    },
     "coverage_fraction": {
       "type": "number",
       "minimum": 0,
