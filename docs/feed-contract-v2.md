@@ -25,6 +25,7 @@ is [`schema/feed-item-v2.schema.json`](../schema/feed-item-v2.schema.json); the 
 | `status_class` | assessed, reported or claimed (claims draw hollow and move nothing alone) | Watchfloor two-source rule |
 | `data_as_of`, `published_at` | when it was true; when we published it (UTC, ending in Z) | ICD 206 |
 | `countries` | ISO 3166-1 alpha-2 codes, `[]` for none | |
+| `subdivisions` | optional: ISO 3166-2 codes of the states or provinces the item is in (`["US-HI"]`), each one's country also in `countries`; leave it out when not known. A consumer matching by place should prefer it to `countries`, so a notice in Hawaii is not read as one for all of the United States | suite rule (Tom, 15 Nov 2026) |
 | `coverage_fraction` | share of expected observations received | Primer quality-of-information check |
 | `method_version` | the method that made the item | |
 | `sources[]` | `id`, `publisher`, `author`, `title`, `outlet`, `source_type`, `url`, `published_at`, `accessed_at`, `licence`, `descriptor` (credibility, reliability, provenance, collector or tool), `grade` (Admiralty, e.g. B2), `lineage_id`, `independence_group`; optional `owner` (state, public, private, intergovernmental, ngo, individual, unknown) and `perspective` (the program's source group, e.g. `russian_state`) | ICS 206-01 (2 Dec 2024) citation fields, without classification fields; Admiralty system; owner and perspective from Watchfloor's source catalog |

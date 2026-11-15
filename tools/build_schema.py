@@ -44,6 +44,7 @@ def schema() -> dict:
         "published_at": utc | {"description": "When this item was published (UTC)."},
         "valid_until": utc,
         "countries": {"type": "array", "items": {"type": "string", "pattern": "^[A-Z]{2}$"}},
+        "subdivisions": {"type": "array", "items": {"type": "string", "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$"}},
         "coverage_fraction": {"type": "number", "minimum": 0, "maximum": 1},
         "baseline_ref": {"type": "object", "required": ["id", "window", "type"],
                          "properties": {"type": {"enum": ["fixed", "rolling", "both"]}}},

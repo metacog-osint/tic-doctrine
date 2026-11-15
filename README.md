@@ -64,6 +64,10 @@ read and deployed by hand once a week until the IMF permits automated pulls.
 0.5.6 (15 Nov 2026): optional `data_as_of_precision` (`day` or `month`) for sources that give no time, with the
 linter's midnight-UTC check and `asOfDateLabel()` in the browser module, so a date-only item is shown as a date and
 not as the evening before; Undertow's `terms` now say what it quotes with credit (Meta, OpenAI, TikTok, EEAS).
+0.5.7 (15 Nov 2026): optional item field `subdivisions` (ISO 3166-2 codes such as `US-HI`, each one's country also
+in `countries`), so a consumer can tell a notice in Hawaii from one for all of the United States (Tom, 15 Nov 2026);
+`geo.subdivision_at(lat, lon)` and `geo.subdivisions_for_geometry(geom)` name the US state from Natural Earth's 1:10m
+outlines (`geo/subdivisions.json`, built by `tools/build_subdivisions.py`; right to about 1 km at a state line).
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
