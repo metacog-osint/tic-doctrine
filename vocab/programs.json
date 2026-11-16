@@ -99,11 +99,11 @@
     {
       "id": "launch", "name": "Launch", "status": "live", "family": "Spectrum and space",
       "feed": "https://launch.theintelligence.company/data/feed.geojson", "site": "https://launch.theintelligence.company",
-      "terms": "FAA TFRs: US Government work. Orbit's items keep their sources' terms (GCAT CC BY 4.0).",
+      "terms": "FAA TFRs and NGA warnings: US Government works (archived copies through the Internet Archive). GCAT CC BY 4.0. NotamForChina Apache-2.0. Joey0609/notams MIT. Orbit's items keep their sources' terms.",
       "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "LA-WP",
       "owns": ["FAA space-operations temporary flight restrictions (tfr.faa.gov)",
                "scheduled launches that coincide with a closure area in time and place, or that GCAT has dated inside its window",
-               "launch and reentry closure history from Launch's charted notices, 2023 onward, with per-pad azimuth corridors and recurring drop zones"]
+               "launch and reentry closure history: Launch's charted notices (2022 onward), GCAT's launches since 2023, NotamForChina's Chinese launches since 2012, Joey0609/notams' launch NOTAMs since Dec 2020, and Internet Archive copies of FAA TFRs and NGA warnings, with per-pad azimuth corridors and recurring drop zones"]
     },
     {
       "id": "undertow", "name": "Undertow", "status": "live", "family": "Information",
