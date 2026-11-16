@@ -139,8 +139,11 @@
      "owns": ["official statements (ministries, militaries, heads of state)", "UN Security Council votes", "AU communiques"]},
     {"id": "temper", "name": "Temper", "status": "planned", "family": "Society",
      "owns": ["unrest", "displacement", "public attention (Wikipedia page views)", "press freedom"]},
-    {"id": "humanitarian", "name": "Humanitarian response (working label)", "status": "planned", "family": "Humanitarian",
-     "owns": ["HDX HAPI", "IFRC GO", "WHO disease outbreak news", "ReliefWeb reports (Watchfloor reads its headlines until this ships)", "IPC food insecurity"]},
+    {"id": "relief", "name": "Relief", "status": "live", "status_note": "IFRC GO appeals and WHO Disease Outbreak News (relief-0.1), live 16 Nov 2026", "family": "Society", "warning_problem_prefix": "RL-WP",
+     "feed": "https://relief.theintelligence.company/data/feed.geojson", "site": "https://relief.theintelligence.company",
+     "terms": "Relief code MIT; IFRC GO data non-commercial with attribution, analyses allowed, no copying of the data bank (counts only from the ten-year read); WHO Disease Outbreak News: titles, dates, countries and links with acknowledgement, notice text never kept or republished",
+     "fresh_hours": 12, "stale_hours": 36,
+     "owns": ["IFRC GO emergency appeals and DREF allocations", "WHO Disease Outbreak News", "HDX HAPI (planned)", "ReliefWeb reports (planned; Watchfloor reads its headlines until then)", "IPC food insecurity (planned)"]},
     {"id": "dead-drop", "name": "Dead Drop", "status": "planned", "family": "Dissemination",
      "owns": ["alerts and digests to analysts (Matrix)"]}
   ]
