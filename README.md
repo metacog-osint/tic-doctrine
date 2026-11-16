@@ -68,6 +68,7 @@ not as the evening before; Undertow's `terms` now say what it quotes with credit
 in `countries`), so a consumer can tell a notice in Hawaii from one for all of the United States (Tom, 15 Nov 2026);
 `geo.subdivision_at(lat, lon)` and `geo.subdivisions_for_geometry(geom)` name the US state from Natural Earth's 1:10m
 outlines (`geo/subdivisions.json`, built by `tools/build_subdivisions.py`; right to about 1 km at a state line).
+0.5.8 (15 Nov 2026): the registry names Launch's history source as Launch's charted notices, not a person.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
