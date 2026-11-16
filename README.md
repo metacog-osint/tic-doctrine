@@ -69,6 +69,8 @@ in `countries`), so a consumer can tell a notice in Hawaii from one for all of t
 `geo.subdivision_at(lat, lon)` and `geo.subdivisions_for_geometry(geom)` name the US state from Natural Earth's 1:10m
 outlines (`geo/subdivisions.json`, built by `tools/build_subdivisions.py`; right to about 1 km at a state line).
 0.5.8 (15 Nov 2026): the registry names Launch's history source as Launch's charted notices, not a person.
+0.5.9 (16 Nov 2026): Relief is live (humanitarian response: IFRC GO appeals and WHO Disease Outbreak News, family
+Society, prefix `RL-WP`) at relief.theintelligence.company; the planned `humanitarian` entry is renamed `relief`.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
