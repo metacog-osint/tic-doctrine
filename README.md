@@ -73,6 +73,10 @@ outlines (`geo/subdivisions.json`, built by `tools/build_subdivisions.py`; right
 Society, prefix `RL-WP`) at relief.theintelligence.company; the planned `humanitarian` entry is renamed `relief`.
 0.5.10 (16 Nov 2026): Launch's registry row names the history sources it ingests: NotamForChina (Apache-2.0),
 Joey0609/notams (MIT), and Internet Archive copies of FAA TFRs and NGA warnings (US Government works), with GCAT.
+0.5.11 (17 Nov 2026): Noisefloor's and Orbit's registry rows describe what each runs now: Noisefloor's space weather
+(COSMIC-2 limb S4, ground ROTI), satellite-sensor interference lanes and sun outages; Orbit's TIP reentry predictions,
+listed orbit changes, GEO region, new-payload paths and Secure World Foundation history, with their sources' terms.
+Orbit's launch lines stay until Launch takes the schedule and ledger.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
