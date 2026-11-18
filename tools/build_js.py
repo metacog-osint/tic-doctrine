@@ -40,6 +40,8 @@ def block() -> str:
         },
         "last_change": vocab("enums")["last_change"]["values"],
         "place_basis": vocab("enums")["place_basis"]["values"],
+        "zones": {z["key"]: {"name": z["name"], "countries": z["countries"]} for z in vocab("zones")["zones"]},
+        "zones_retired": {z["key"]: {"on": z["on"], "into": z["into"]} for z in vocab("zones")["retired"]},
         "seas": {s["slug"]: s["name"]
                  for s in json.loads((ROOT / "geo" / "seas.json").read_text(encoding="utf-8"))["seas"]},
     }

@@ -8,7 +8,7 @@ drawn on one map (COP) and scored (Verdict).
 
 | Path | What |
 |---|---|
-| `vocab/` | Reference vocabularies: ICD 203 likelihood with UK and Kent crosswalks; the confidence rubric; contract enums; JP 3-04 information aspects, PMESII-PT, ASCOPE, the competition continuum; CISA's 55 National Critical Functions with a published sector and lifeline crosswalk; FEMA's eight lifelines and status colours; response ladders (PAGER, USGS volcano alert levels, GDACS, Copernicus EMS, IFRC, EASA, State Department); Admiralty grades; ICD 203's nine tradecraft standards; actor roles and types, and source owners, for characterising entities and sides without friend-or-foe labels |
+| `vocab/` | Reference vocabularies: ICD 203 likelihood with UK and Kent crosswalks; the confidence rubric; contract enums; JP 3-04 information aspects, PMESII-PT, ASCOPE, the competition continuum; CISA's 55 National Critical Functions with a published sector and lifeline crosswalk; FEMA's eight lifelines and status colours; response ladders (PAGER, USGS volcano alert levels, GDACS, Copernicus EMS, IFRC, EASA, State Department); Admiralty grades; ICD 203's nine tradecraft standards; actor roles and types, and source owners, for characterising entities and sides without friend-or-foe labels; the suite's shared zone keys (`zones.json`, Watchfloor's) |
 | `schema/` | Feed contract v2 as JSON Schema |
 | `geo/` | Country outlines and label points, US state outlines, and the sea gazetteer (`seas.json`, Natural Earth's named marine areas, public domain) |
 | `python/tic_doctrine/` | Likelihood, confidence, contract checks, the tradecraft linter, register checks, source health, withholding counts, tips between programs, the history log (standard library only) |
@@ -108,6 +108,13 @@ live on 18 Nov 2026).
 - `contract.event_interval()` and the browser module's `eventInterval()` give an item's exact event interval;
   `seaName()` names a sea area; `health.feed_health()` turns a source-health report into header entries.
 - New worked example `tests/fixtures/good-2.1.geojson`: the four example items with every 2.1 field.
+
+**0.6.1 (18 Nov 2026): the shared zone list (D4).** `vocab/zones.json`: Watchfloor's 16 zone keys with names, ISO
+countries and map points, and its one retired key (`17_Horn_of_Africa`, into `18_Ethiopia_Eritrea` and
+`19_Somalia`), built by `tools/build_zones.py` from Watchfloor's `catalog/entities.json` (catalog 2026-10-27.1,
+more-context `6bedddb`) and checked against Watchfloor's live feed. A `subject_id` of kind `zone` naming a key not in
+the list, or a retired one, is a warning. `vocab.zones()`, `retired_zones()`, `zone()`; JS `zoneName()`. No feed
+sends zone subjects yet, so no feed's lint changes.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 

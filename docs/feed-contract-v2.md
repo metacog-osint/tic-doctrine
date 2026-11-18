@@ -121,6 +121,13 @@ Rules that come with them:
      `last_change_at` still says when it began.
 3. The numbers that show it are in the item.
 
+**Zones (kit 0.6.1, D4).** A subject of kind `zone` (`watchfloor:zone:11_Iran_Red_Sea`, `context:zone:...`,
+`vis:zone:...`, a Vis station suffix such as `-UKOO` allowed) names a key in the shared zone list,
+`vocab/zones.json`. Watchfloor owns the list (its `catalog/entities.json`); the kit copies it with
+`tools/build_zones.py`, countries as ISO codes. A key not in the list, or one Watchfloor has retired
+(`17_Horn_of_Africa`, split on 27 Oct 2026 into `18_Ethiopia_Eritrea` and `19_Somalia`), is a warning, never an
+error. `vocab.zone(key)` and JS `zoneName(key)` read it.
+
 A fixed line with no reference to the subject's past, a rung that has not moved, a product type, "the provider lists
 it" and "issued recently" with no level do not qualify by themselves. Each program adopts the rule as its own method
 version; until then the linter notes, as warnings, an anomaly whose event ended more than 72 hours before publication,

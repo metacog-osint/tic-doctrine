@@ -837,6 +837,44 @@ class Seas(unittest.TestCase):
         self.assertEqual([s["slug"] for s in bs.build(src)], ["gulf-of-california", "north-atlantic-ocean"])
 
 
+class Zones(unittest.TestCase):
+    """Kit 0.6.1: the shared zone list (D4), built from Watchfloor's catalog."""
+
+    def test_the_list(self):
+        from tic_doctrine import geo
+        z = vocab.zones()
+        doc = vocab.load("zones")
+        self.assertEqual(doc["source"]["program"], "watchfloor")
+        self.assertRegex(doc["source"]["commit"], r"^[0-9a-f]{40}$")
+        self.assertEqual(len(z), 16)
+        self.assertEqual(z["11_Iran_Red_Sea"]["countries"], ["IR", "YE"])
+        self.assertEqual(z["10_Israel_Gaza_Lebanon"]["countries"], ["IL", "LB", "PS"], "FIPS GZ and WE are both PS")
+        self.assertEqual(z["07_Russia_NATO"]["countries"], ["BY", "DK", "EE", "FI", "LT", "LV", "NO", "PL", "RU", "SE"])
+        for k, v in z.items():
+            self.assertRegex(k, r"^\d\d_[A-Za-z_]+$")
+            self.assertTrue(all(re.fullmatch(r"[A-Z]{2}", c) and geo.name(c) for c in v["countries"]), (k, v))
+        old = vocab.zone("17_Horn_of_Africa")
+        self.assertEqual(old["into"], ["18_Ethiopia_Eritrea", "19_Somalia"])
+        self.assertEqual(old["countries"], ["DJ", "ER", "ET", "SO"])
+        self.assertIsNone(vocab.zone("99_Nowhere"))
+
+    def _warnings(self, sid, program="vis"):
+        f = _by_id(GOOD21, "example-2026-10-29-cell-841f")
+        f["properties"].update(program=program, id=f"{program}:2026-11-18:zone:x", subject_id=sid)
+        return [m for s, sev, m in contract.check(f) if s == contract.GENERAL and sev == "warning" and "zone" in m]
+
+    def test_a_zone_subject_names_a_listed_zone(self):
+        self.assertEqual(self._warnings("vis:zone:11_Iran_Red_Sea"), [])
+        self.assertEqual(self._warnings("vis:zone:01_Ukraine_Conflict-UKOO"), [], "a station suffix is allowed")
+        self.assertEqual(self._warnings("vis:region:99_Nowhere"), [], "only kind zone is checked")
+        self.assertIn("not in the shared zone list", " ".join(self._warnings("vis:zone:99_Nowhere")))
+        got = " ".join(self._warnings("context:zone:17_Horn_of_Africa", program="context"))
+        self.assertIn("retired on 2026-10-27 into 18_Ethiopia_Eritrea, 19_Somalia", got)
+        f = _by_id(GOOD21, "example-2026-10-29-cell-841f")
+        f["properties"].update(program="vis", id="vis:x:y", subject_id="vis:zone:99_Nowhere")
+        self.assertFalse([m for s, sev, m in contract.check(f) if sev == "error"], "never an error")
+
+
 class Vendoring(unittest.TestCase):
     def test_kitcheck_survives_crlf_and_catches_edits(self):
         import subprocess
