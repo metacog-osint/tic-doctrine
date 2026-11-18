@@ -80,6 +80,10 @@ Orbit's launch lines stay until Launch takes the schedule and ledger.
 0.5.12 (18 Nov 2026): Blackout's registry row names its newest lanes: US ground stops from the FAA's ATCSCC, GitHub's
 status feed, and outages the public and the press report (Bluesky post counts, GDELT headline counts), with each
 source's terms word for word from Blackout's source register.
+0.5.13 (18 Nov 2026): `history --reading-key PROPERTY` (opt-in): a move of that property is a `changed` line too,
+with its value before in `was`, so a program whose ids stay the same across readings of a series (Headwind, with
+`data_as_of`) logs every reading without reporting the one before as ended. Programs that do not pass it see no
+change.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 

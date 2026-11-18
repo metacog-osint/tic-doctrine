@@ -78,6 +78,32 @@ class Update(unittest.TestCase):
         s3, down = history.update(s2, feed(item("p:a:1", tier="anomaly")), health(t2, "src-a"), t2)
         self.assertEqual([(x["change"], x["was"]["tier"], x["peak_tier"]) for x in down], [("changed", "warning", "warning")])
 
+    def test_a_reading_key_logs_a_new_reading_under_the_same_id(self):
+        s1, _ = history.update({}, feed(item("p:fx:A", data_as_of="2026-11-13T00:00:00Z")), health(T0, "src-a"), T0,
+                               reading_key="data_as_of")
+        t1, t2 = T0 + timedelta(hours=2), T0 + timedelta(hours=4)
+        same = item("p:fx:A", data_as_of="2026-11-13T00:00:00Z", title="Reworded")
+        s2, quiet = history.update(s1, feed(same), health(t1, "src-a"), t1, reading_key="data_as_of")
+        self.assertEqual(quiet, [])                                   # the same reading reworded is an update only
+        nxt = item("p:fx:A", data_as_of="2026-11-16T00:00:00Z")
+        s3, lines = history.update(s2, feed(nxt), health(t2, "src-a"), t2, reading_key="data_as_of")
+        self.assertEqual([(x["change"], x["was"]["data_as_of"], x["was"]["tier"]) for x in lines],
+                         [("changed", "2026-11-13T00:00:00Z", "routine")])
+        self.assertEqual(lines[0]["item"]["properties"]["data_as_of"], "2026-11-16T00:00:00Z")
+        # Without the option the same move is quiet, as before.
+        _, off = history.update(s2, feed(nxt), health(t2, "src-a"), t2)
+        self.assertEqual(off, [])
+
+    def test_a_reading_key_reports_nothing_for_items_logged_before_it_was_used(self):
+        s1, _ = history.update({}, feed(item("p:a:1", data_as_of="2026-11-13T00:00:00Z")), health(T0, "src-a"), T0)
+        t1, t2 = T0 + timedelta(hours=2), T0 + timedelta(hours=4)
+        s2, lines = history.update(s1, feed(item("p:a:1", data_as_of="2026-11-14T00:00:00Z")), health(t1, "src-a"), t1,
+                                   reading_key="data_as_of")
+        self.assertEqual(lines, [])                                   # first run with the option: stored, not reported
+        _, lines = history.update(s2, feed(item("p:a:1", data_as_of="2026-11-15T00:00:00Z")), health(t2, "src-a"), t2,
+                                  reading_key="data_as_of")
+        self.assertEqual([x["change"] for x in lines], ["changed"])
+
     def test_an_item_that_left_ends_with_its_last_version(self):
         s1, _ = history.update({}, feed(item("p:a:1", title="Last words"), item("p:a:2")), health(T0, "src-a"), T0)
         t1 = T0 + timedelta(hours=2)

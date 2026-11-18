@@ -7,7 +7,9 @@ A feed carries what is active now; this keeps what was. Each run compares the fe
 after the last run and writes one line per change to <dir>/log/YYYY/MM/DD.jsonl (format tic-history/1):
 
 - new      an item appears (the first time, or again after it ended)
-- changed  its tier or response_stage changed (an alert level moved); other edits only bump `updates`
+- changed  its tier or response_stage changed (an alert level moved); other edits only bump `updates`. With
+           --reading-key (opt-in, 0.5.13), also when that property moved: a program whose item ids stay the same
+           from one reading of a series to the next (Headwind: data_as_of) logs each new reading
 - ended    it left the feed while its source was read successfully this run, so a failed fetch never ends anything;
            or, for an item issued and ended between two runs (found by a program's own catch-up query), new and ended
            at once. ended_at is the item's own valid_until when that falls between its last sighting and this run,
@@ -112,7 +114,8 @@ def lanes_ok(health: dict) -> set:
 
 
 def update(state: dict, feed: dict, health: dict | None, now: datetime, caught: list | None = None, *,
-           ok: set | None = None, lane_of=lane, volatile: tuple = VOLATILE) -> tuple[dict, list]:
+           ok: set | None = None, lane_of=lane, volatile: tuple = VOLATILE,
+           reading_key: str | None = None) -> tuple[dict, list]:
     """(new state, log lines) after one run. Pure: no files read or written.
 
     state   {"open": {id: entry}} from the last run ({} on the first)
@@ -122,6 +125,9 @@ def update(state: dict, feed: dict, health: dict | None, now: datetime, caught: 
     ok      the lanes read well this run, when the caller knows them some other way (overrides health)
     lane_of how to name an item's lane (default: its first source id)
     volatile  property names that change on every run and are no change at all
+    reading_key  a property whose move is a "changed" line too (a new reading under the same id); its value before
+             is in `was`. Kept apart from the status, so an item logged before the option was used is not
+             reported as changed on the first run with it
 
     With neither health nor ok, every lane counts as read, except that a feed with no items ends nothing."""
     at = _stamp(now)
@@ -146,6 +152,8 @@ def update(state: dict, feed: dict, health: dict | None, now: datetime, caught: 
         if e is None:
             e = {"lane": lane_of(f), "first_seen": at, "last_seen": at, "hash": fp, "updates": 0,
                  "peak_tier": p.get("tier"), "status": [p.get(k) for k in STATUS_KEYS], "item": f}
+            if reading_key:
+                e["reading"] = p.get(reading_key)
             open_[iid] = e
             lines.append(_line(at, "new", e, f))
             continue
@@ -157,9 +165,16 @@ def update(state: dict, feed: dict, health: dict | None, now: datetime, caught: 
             e["updates"] = e.get("updates", 0) + 1
         if TIER_RANK.get(p.get("tier"), 0) > TIER_RANK.get(e.get("peak_tier"), 0):
             e["peak_tier"] = p.get("tier")
-        if moved:
-            lines.append(_line(at, "changed", e, f, was=dict(zip(STATUS_KEYS, e.get("status") or [None, None]))))
+        reading = p.get(reading_key) if reading_key else None
+        read_moved = bool(reading_key) and "reading" in e and reading != e["reading"]
+        if moved or read_moved:
+            was = dict(zip(STATUS_KEYS, e.get("status") or [None, None]))
+            if read_moved:
+                was[reading_key] = e["reading"]
+            lines.append(_line(at, "changed", e, f, was=was))
             e["status"] = status
+        if reading_key:
+            e["reading"] = reading
     for iid in sorted(set(open_) - seen):
         e = open_[iid]
         if blind or iid in dropped or (ok is not None and e.get("lane") not in ok):
@@ -316,6 +331,9 @@ def main(argv: list | None = None) -> int:
     ap.add_argument("--ended", help="also write the items that ended in the last --days days to this file")
     ap.add_argument("--days", type=int, default=ENDED_DAYS)
     ap.add_argument("--now", help="the run's time, ISO 8601 UTC (default: now)")
+    ap.add_argument("--reading-key", metavar="PROPERTY",
+                    help="also log a changed line when this item property moves, e.g. data_as_of for a program "
+                         "whose ids stay the same from one reading of a series to the next")
     a = ap.parse_args(argv)
     feed = json.loads(Path(a.feed).read_text(encoding="utf-8"))
     now = _t(a.now) if a.now else datetime.now(timezone.utc)
@@ -325,7 +343,7 @@ def main(argv: list | None = None) -> int:
     health = json.loads(Path(a.health).read_text(encoding="utf-8")) if a.health else feed.get("health")
     root = Path(a.dir)
     lane_map = dict(x.split("=", 1) for x in a.lane_map if "=" in x)
-    lines = run(feed, root, now, health, lane_of=mapped_lane(lane_map))
+    lines = run(feed, root, now, health, lane_of=mapped_lane(lane_map), reading_key=a.reading_key)
     n = {c: sum(1 for x in lines if x["change"] == c) for c in ("new", "changed", "ended")}
     how = "health record" if health is not None else "no health record: every source counted as read"
     print(f"history: {n['new']} new, {n['changed']} changed, {n['ended']} ended ({how}); "

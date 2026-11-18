@@ -12,7 +12,7 @@ Each run compares the feed just built with the items open after the last run and
 | Change | When |
 |---|---|
 | `new` | An item appears: the first time, or again after it ended |
-| `changed` | Its `tier` or `response_stage` moved. Other edits only raise `updates` |
+| `changed` | Its `tier` or `response_stage` moved; or, with `--reading-key` (opt-in, 0.5.13), that property moved. Other edits only raise `updates` |
 | `ended` | It left the feed while its source was read well on this run; or it was issued and ended between two runs and a catch-up query found it (then `new` and `ended` are written together, with `seen_live: false`) |
 
 A failed fetch never ends anything. An item the linter held back (`dropped` in the feed) is not ended either.
@@ -31,12 +31,14 @@ One JSON object per line, UTF-8, times in UTC.
 | `first_seen`, `last_seen` | First and latest run that saw the item |
 | `peak_tier` | The highest tier it reached |
 | `updates` | How many times its content changed, apart from fields that change on every run |
-| `was` | On `changed`: the tier and response stage before |
+| `was` | On `changed`: the tier and response stage before, and the reading key's value before when it moved |
 | `ended_at`, `end_reason` | On `ended`. `ended_at` is the item's own `valid_until` when that falls between its last sighting and this run; otherwise this run's time, and the true end lies between `last_seen` and `ended_at` |
 | `seen_live` | `false` when the item was never in a feed and came from a catch-up query |
 | `item` | The full contract-v2 item as it stood (its last version, for `ended`) |
 
 Because every line carries the full item, the log alone rebuilds the picture at any past time.
+
+**A series under one id (0.5.13).** A program whose item stands for one series (a currency, a price index) and keeps the same id from one reading to the next passes `--reading-key data_as_of`: each new reading is then a `changed` line with the full item, and the reading before is no longer reported as ended. The value is stored apart from the status, so the first run with the option reports nothing for items already open. Programs whose ids carry the reading's date need nothing: each reading is `new`, and the one before `ended`.
 
 ## Files
 
