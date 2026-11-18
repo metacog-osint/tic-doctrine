@@ -31,8 +31,11 @@ REV_NOTE = "rev 2.1: "
 # Revision 2.1 item fields, in the order the contract document gives them. The linter reports how many items carry
 # each, which is the migration's coverage count.
 REVISION_FIELDS = ("last_change", "last_change_at", "event_start", "event_end", "event_time_precision", "subject_id",
-                   "signal", "sea_areas", "place_basis")
+                   "signal", "sea_areas", "place_basis", "corroboration")
 HEALTH_KEYS = ("state", "checked_at", "last_ok", "last_error", "failures", "data_as_of", "detail")
+# The reader's key to likelihood and confidence terms (kit 0.6.2, kit review M1): the kit repo is public, so every
+# feed links this one page rather than a vendored copy in a program's repo.
+LANGUAGE_KEY_URL = "https://github.com/metacog-osint/tic-doctrine/blob/main/docs/language-key.md"
 HOLD_HOURS = 72          # D5: an event or notice is an anomaly within 72 hours of its change, unless the program says
 FLAG_RATE_CAP = 0.05     # D5: a series flagged on more than 5% of its baseline readings is not an anomaly rule
 
@@ -126,6 +129,53 @@ def check_signal(sig, err) -> None:
                          f"(smallest is 1 in {n + 1})")
 
 
+def check_corroboration(c, published, err) -> None:
+    """D11 (kit 0.6.2): an event item's corroboration member, "reported, then corroborated". Errors only."""
+    if not isinstance(c, dict):
+        err(GENERAL, "corroboration must be an object")
+        return
+    state, basis = c.get("state"), c.get("basis")
+    if state not in vocab.enum("corroboration_state"):
+        err(GENERAL, f"corroboration.state={state!r} not in {sorted(vocab.enum('corroboration_state'))}")
+    if basis is not None and basis not in vocab.enum("corroboration_basis"):
+        err(GENERAL, f"corroboration.basis={basis!r} not in {sorted(vocab.enum('corroboration_basis'))}")
+    n = c.get("origins")
+    if not (isinstance(n, int) and not isinstance(n, bool) and n >= 1):
+        err(GENERAL, "corroboration.origins must be a whole number of independent origins, at least 1")
+        n = None
+    if not (isinstance(c.get("rule"), str) and c["rule"].strip()):
+        err(GENERAL, "corroboration.rule missing: print the rule's id and text (e.g. 'corroborate-1: two independent "
+                     "origins, or one official source within its remit')")
+    pc = c.get("party_claim", False)
+    if not isinstance(pc, bool):
+        err(GENERAL, "corroboration.party_claim must be true or false")
+    first = parse_utc(c.get("first_reported_at"))
+    if first is None:
+        err(GENERAL, "corroboration.first_reported_at must be a UTC time (when the first origin appeared)")
+    at_raw = c.get("corroborated_at")
+    at = parse_utc(at_raw)
+    if state == "reported":
+        if basis is not None or at_raw is not None:
+            err(GENERAL, "a reported item has basis and corroborated_at null: the rule is not met yet")
+    elif state == "corroborated":
+        if basis is None:
+            err(GENERAL, "a corroborated item names its basis: origins or official")
+        if at is None:
+            err(GENERAL, "a corroborated item needs corroborated_at, a UTC time (when the rule was met)")
+        if basis == "origins" and n is not None and n < 2:
+            err(GENERAL, "corroborated on origins needs origins of 2 or more")
+        if basis == "official" and not (isinstance(c.get("official"), str) and c["official"]):
+            err(GENERAL, "corroborated on official needs official: the issuer's source id")
+        if pc is True and not (n is not None and n >= 2):
+            err(GENERAL, "a party's claim is corroborated only by an origin outside the party: origins of 2 or more")
+    if basis != "official" and c.get("official") is not None:
+        err(GENERAL, "corroboration.official is the issuer's id only when basis is official; otherwise null")
+    if first and at and at < first:
+        err(GENERAL, "corroboration.corroborated_at is before first_reported_at")
+    if at and published and at > published:
+        err(GENERAL, "corroboration.corroborated_at is after published_at")
+
+
 def check_health(health, strict: bool = False) -> list[tuple[str, str, str]]:
     """The feed header's health member (revision 2.1, F6): {lane: {state, checked_at, last_ok, last_error, failures,
     data_as_of, detail}}, one entry per source lane, written on every run. Other keys are allowed. Problems are
@@ -177,6 +227,9 @@ def check_header(h: dict) -> list[tuple[str, str, str]]:
             out.append((GENERAL, "error", f"feed header {key} missing"))
     if not h.get("language_key"):
         out.append(("uncertainty", "warning", "feed header language_key (link to the likelihood and confidence key) missing"))
+    elif h["language_key"] != LANGUAGE_KEY_URL:
+        out.append(("uncertainty", "warning", f"feed header language_key should be the kit's public key "
+                                              f"{LANGUAGE_KEY_URL} (a vendored copy goes stale)"))
     rev = h.get("contract_rev")
     if rev is None:
         out.append((REVISION, "warning", REV_NOTE + "feed header contract_rev absent"))
@@ -400,6 +453,11 @@ def _check_revision(p: dict, geom, strict: bool, err, warn) -> None:
         if isinstance(s, dict) and s.get("lane") is not None and not (isinstance(s["lane"], str) and s["lane"]):
             err("sources", f"sources[{i}].lane must be the lane's key in the feed header's health (a non-empty string)")
 
+    # F7. Corroboration (D11, kit 0.6.2). Shape only when present; no field marks an item as an event report, so
+    # its absence is not noted.
+    if p.get("corroboration") is not None:
+        check_corroboration(p["corroboration"], published, err)
+
     # Tier anomaly, revision 2.1 (D5). Warnings only: each program adopts the rule as its own method version.
     if p.get("tier") == "anomaly":
         span = event_interval(p) if tee else None
@@ -538,6 +596,15 @@ def check(item: dict, registers: dict | None = None, rev: str | None = None) -> 
             persp = s.get("perspective")
             if persp is not None and not (isinstance(persp, str) and persp.strip()):
                 err("sources", f"sources[{i}].perspective must be the program's source-group id (a non-empty string)")
+        groups = {s.get("independence_group") or s.get("lineage_id") or s.get("id") or s.get("publisher")
+                  for s in sources if isinstance(s, dict)}
+        ones = [s.get("grade") for s in sources
+                if isinstance(s, dict) and isinstance(s.get("grade"), str) and s["grade"][1:2] == "1"]
+        if ones and len(groups) < 2:
+            # Kit review M4 (kit 0.6.2): credibility 1 is "confirmed by other sources" (grading.json). A warning, so
+            # feeds that grade a lone official notice A1 do not fail; the fix is A2.
+            warn("sources", f"credibility 1 ({', '.join(sorted(set(ones)))}) means confirmed by other sources, and "
+                            "this item rests on one independence group: grade it 2 at most")
     if not p.get("method_version"):
         err("sources", "method_version missing")
     cov = p.get("coverage_fraction")

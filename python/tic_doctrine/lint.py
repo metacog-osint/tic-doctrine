@@ -43,6 +43,9 @@ def lint_files(paths, doctrine_dir=None) -> dict:
     by_std = defaultdict(lambda: {"error": 0, "warning": 0, "examples": []})
     coverage = dict.fromkeys(contract.REVISION_FIELDS, 0)
     n_items = 0
+    # What the checks could look at (kit 0.6.2, review M5): standards 4 and 7 are checked on judgments, 8 on
+    # forecasts, 7 also on updates and cancellations. With none, the row says so instead of "pass".
+    examined = {"judgments": 0, "forecasts": 0, "updates": 0}
     for path in map(Path, paths):
         header, items = read_items(path)
         rev = (header or {}).get("contract_rev")
@@ -52,6 +55,9 @@ def lint_files(paths, doctrine_dir=None) -> dict:
         for item in items:
             n_items += 1
             props, _ = contract.split(item)
+            examined["judgments"] += contract.is_judgment(props)
+            examined["forecasts"] += props.get("kind") == "forecast"
+            examined["updates"] += props.get("msg_type") in ("update", "cancel", "error")
             for k in contract.REVISION_FIELDS:
                 coverage[k] += props.get(k) is not None
             if isinstance(props.get("subject_id"), str):
@@ -75,7 +81,20 @@ def lint_files(paths, doctrine_dir=None) -> dict:
             slot["warning"] += sum(notices.values())
             for msg, n in sorted(notices.items(), key=lambda kv: (-kv[1], kv[0])):
                 slot["examples"].append(f"{path.name}: {n} of {len(items)} items: {msg}")
-    return {"items": n_items, "standards": dict(by_std), "coverage": coverage}
+    return {"items": n_items, "standards": dict(by_std), "coverage": coverage, "examined": examined}
+
+
+def not_applicable(sid: str, examined: dict | None) -> str | None:
+    """Why nothing was checked under a standard, or None when something was."""
+    if not examined:
+        return None
+    if sid == "alternatives" and not examined["judgments"]:
+        return "no judgments in these files"
+    if sid == "change" and not (examined["judgments"] or examined["updates"]):
+        return "no judgments, updates or cancellations in these files"
+    if sid == "accuracy" and not examined["forecasts"]:
+        return "no forecasts in these files"
+    return None
 
 
 def print_report(rep: dict) -> bool:
@@ -83,11 +102,18 @@ def print_report(rep: dict) -> bool:
     ok = True
     print(f"Tradecraft linter: {rep['items']} items checked against feed contract {CONTRACT} "
           f"(revision {CONTRACT_REV}, kit {__version__})")
-    print("Aligned with ICD 203's tradecraft standards (the directive binds IC elements only).\n")
-    rows = [("general", "Contract fields, tags and vocabularies")] + [(s["id"], f"{s['n']}. {s['title']}") for s in std]
+    print("Aligned with ICD 203's tradecraft standards (the directive binds IC elements only). A structural check:")
+    print("each row says whether the fields that standard needs are present and well formed, not whether the")
+    print("analysis meets it.\n")
+    rows = [("general", "Contract fields, tags and vocabularies")] + [
+        (s["id"], f"{s['n']}. {s['title']}: the fields it needs") for s in std]
     rows.append((contract.REVISION, f"Revision {CONTRACT_REV} fields (optional until 2.2; notices never fail a build)"))
     for sid, title in rows:
         r = rep["standards"].get(sid, {"error": 0, "warning": 0, "examples": []})
+        na = not_applicable(sid, rep.get("examined"))
+        if na and not (r["error"] or r["warning"]):
+            print(f"  [n/a ] {title}  (not applicable: {na})")
+            continue
         mark = "FAIL" if r["error"] else "pass"
         ok &= not r["error"]
         extra = f"  ({r['error']} errors, {r['warning']} warnings)" if (r["error"] or r["warning"]) else ""

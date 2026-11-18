@@ -5,7 +5,7 @@
   "generated_at": "2026-10-30T06:00:00Z",
   "licence": "ODbL 1.0 for derived data; text CC BY 4.0",
   "attribution": "Example program, The Intelligence Company. Aircraft data: adsb.lol (ODbL).",
-  "language_key": "https://theintelligence.company/method/language-key",
+  "language_key": "https://github.com/metacog-osint/tic-doctrine/blob/main/docs/language-key.md",
   "perspectives": { "ukrainian": "Ukrainian outlets", "russian_state": "Russian state and Kremlin-aligned media" },
   "features": [
     {

@@ -1,472 +1,491 @@
 {
- "type": "FeatureCollection",
- "contract": "tic-feed/2",
- "contract_rev": "2.1",
- "kit": "0.6.0",
- "program": "example",
- "generated_at": "2026-10-30T06:00:00Z",
- "licence": "ODbL 1.0 for derived data; text CC BY 4.0",
- "attribution": "Example program, The Intelligence Company. Aircraft data: adsb.lol (ODbL).",
- "language_key": "https://theintelligence.company/method/language-key",
- "perspectives": {
-  "ukrainian": "Ukrainian outlets",
-  "russian_state": "Russian state and Kremlin-aligned media"
- },
- "health": {
-  "adsblol-archive": {
-   "state": "fresh",
-   "checked_at": "2026-10-30T06:00:00Z",
-   "last_ok": "2026-10-30T06:00:00Z",
-   "last_error": null,
-   "failures": 0,
-   "data_as_of": "2026-10-29T23:59:59Z",
-   "detail": "example lane"
+  "type": "FeatureCollection",
+  "contract": "tic-feed/2",
+  "contract_rev": "2.1",
+  "kit": "0.6.0",
+  "program": "example",
+  "generated_at": "2026-10-30T06:00:00Z",
+  "licence": "ODbL 1.0 for derived data; text CC BY 4.0",
+  "attribution": "Example program, The Intelligence Company. Aircraft data: adsb.lol (ODbL).",
+  "language_key": "https://github.com/metacog-osint/tic-doctrine/blob/main/docs/language-key.md",
+  "perspectives": {
+    "ukrainian": "Ukrainian outlets",
+    "russian_state": "Russian state and Kremlin-aligned media"
   },
-  "agency-ua": {
-   "state": "fresh",
-   "checked_at": "2026-10-30T06:00:00Z",
-   "last_ok": "2026-10-30T06:00:00Z",
-   "last_error": null,
-   "failures": 0,
-   "data_as_of": "2026-10-29T23:59:59Z",
-   "detail": "example lane"
+  "health": {
+    "adsblol-archive": {
+      "state": "fresh",
+      "checked_at": "2026-10-30T06:00:00Z",
+      "last_ok": "2026-10-30T06:00:00Z",
+      "last_error": null,
+      "failures": 0,
+      "data_as_of": "2026-10-29T23:59:59Z",
+      "detail": "example lane"
+    },
+    "agency-ua": {
+      "state": "fresh",
+      "checked_at": "2026-10-30T06:00:00Z",
+      "last_ok": "2026-10-30T06:00:00Z",
+      "last_error": null,
+      "failures": 0,
+      "data_as_of": "2026-10-29T23:59:59Z",
+      "detail": "example lane"
+    },
+    "cisa-kev": {
+      "state": "fresh",
+      "checked_at": "2026-10-30T06:00:00Z",
+      "last_ok": "2026-10-30T06:00:00Z",
+      "last_error": null,
+      "failures": 0,
+      "data_as_of": "2026-10-29T23:59:59Z",
+      "detail": "example lane"
+    }
   },
-  "cisa-kev": {
-   "state": "fresh",
-   "checked_at": "2026-10-30T06:00:00Z",
-   "last_ok": "2026-10-30T06:00:00Z",
-   "last_error": null,
-   "failures": 0,
-   "data_as_of": "2026-10-29T23:59:59Z",
-   "detail": "example lane"
-  }
- },
- "features": [
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Polygon",
-    "coordinates": [
-     [
-      [
-       27.0,
-       59.0
-      ],
-      [
-       28.0,
-       59.0
-      ],
-      [
-       28.0,
-       60.0
-      ],
-      [
-       27.0,
-       60.0
-      ],
-      [
-       27.0,
-       59.0
-      ]
-     ]
-    ]
-   },
-   "properties": {
-    "contract": "tic-feed/2",
-    "id": "example-2026-10-29-cell-841f",
-    "program": "example",
-    "title": "Severe GPS error over the eastern Gulf of Finland",
-    "kind": "observation",
-    "tier": "anomaly",
-    "status": "actual",
-    "msg_type": "new",
-    "human_review": "none",
-    "us_person_data": "none",
-    "status_class": "assessed",
-    "data_as_of": "2026-10-29T23:59:59Z",
-    "published_at": "2026-10-30T06:00:00Z",
-    "countries": [
-     "EE",
-     "FI",
-     "RU"
-    ],
-    "precision_class": "area",
-    "coverage_fraction": 0.92,
-    "baseline_ref": {
-     "id": "example-cell-baseline",
-     "window": "28d",
-     "type": "both",
-     "version": "1",
-     "flag_rate": 0.036
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.0,
+              59.0
+            ],
+            [
+              28.0,
+              59.0
+            ],
+            [
+              28.0,
+              60.0
+            ],
+            [
+              27.0,
+              60.0
+            ],
+            [
+              27.0,
+              59.0
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "contract": "tic-feed/2",
+        "id": "example-2026-10-29-cell-841f",
+        "program": "example",
+        "title": "Severe GPS error over the eastern Gulf of Finland",
+        "kind": "observation",
+        "tier": "anomaly",
+        "status": "actual",
+        "msg_type": "new",
+        "human_review": "none",
+        "us_person_data": "none",
+        "status_class": "assessed",
+        "data_as_of": "2026-10-29T23:59:59Z",
+        "published_at": "2026-10-30T06:00:00Z",
+        "countries": [
+          "EE",
+          "FI",
+          "RU"
+        ],
+        "precision_class": "area",
+        "coverage_fraction": 0.92,
+        "baseline_ref": {
+          "id": "example-cell-baseline",
+          "window": "28d",
+          "type": "both",
+          "version": "1",
+          "flag_rate": 0.036
+        },
+        "measure": {
+          "name": "severe_share",
+          "value": 0.41,
+          "expected": 0.06
+        },
+        "method_version": "example-1.0",
+        "requirement_ids": [
+          "EX-PIR-1"
+        ],
+        "ie_aspect": [
+          "physical"
+        ],
+        "pmesii_pt": [
+          "infrastructure"
+        ],
+        "ascope": [
+          "capabilities"
+        ],
+        "continuum": "competition",
+        "ncf": [
+          "provide_pnt"
+        ],
+        "sector": [
+          "communications",
+          "transportation_systems"
+        ],
+        "lifeline": [
+          {
+            "id": "transportation",
+            "status": "moderate"
+          }
+        ],
+        "product_category": "current",
+        "evidence_hash": "sha256:0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0",
+        "sources": [
+          {
+            "id": "adsblol-archive",
+            "publisher": "adsb.lol",
+            "url": "https://github.com/adsblol/globe_history_2026",
+            "licence": "ODbL 1.0",
+            "accessed_at": "2026-10-30T05:41:00Z",
+            "grade": "B2",
+            "descriptor": "Crowd-fed ADS-B receiver archive; aircraft-reported position quality; daily file.",
+            "independence_group": "adsb-feeders"
+          }
+        ],
+        "subject_id": "example:cell:841f",
+        "last_change": "raised",
+        "last_change_at": "2026-10-29T00:00:00Z",
+        "event_start": "2026-10-29T00:00:00Z",
+        "event_end": "2026-10-29T00:00:00Z",
+        "event_time_precision": "day",
+        "signal": {
+          "name": "severe_share",
+          "value": 0.31,
+          "unit": "share",
+          "expected": 0.04,
+          "tail": "high",
+          "baseline_n": 28,
+          "exceedance": 0.0345
+        },
+        "sea_areas": [
+          "gulf-of-finland"
+        ],
+        "place_basis": "location"
+      }
     },
-    "measure": {
-     "name": "severe_share",
-     "value": 0.41,
-     "expected": 0.06
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              26.0,
+              58.5
+            ],
+            [
+              29.0,
+              58.5
+            ],
+            [
+              29.0,
+              60.5
+            ],
+            [
+              26.0,
+              60.5
+            ],
+            [
+              26.0,
+              58.5
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "contract": "tic-feed/2",
+        "id": "example-wp-1-2026-10-30",
+        "program": "example",
+        "title": "Interference over the Gulf of Finland likely continues through 6 Nov",
+        "summary": "Severe GPS error has covered the eastern Gulf of Finland on 9 of the last 10 days, against a 28-day base of 2 in 10.",
+        "kind": "forecast",
+        "tier": "warning",
+        "status": "actual",
+        "msg_type": "update",
+        "supersedes": "example-wp-1-2026-10-29",
+        "human_review": "none",
+        "us_person_data": "none",
+        "status_class": "assessed",
+        "data_as_of": "2026-10-29T23:59:59Z",
+        "published_at": "2026-10-30T06:00:00Z",
+        "valid_until": "2026-11-06T23:59:59Z",
+        "countries": [
+          "EE",
+          "FI",
+          "RU"
+        ],
+        "precision_class": "area",
+        "coverage_fraction": 0.9,
+        "method_version": "example-1.0",
+        "warning_problem_id": "EX-WP-1",
+        "hypothesis_id": "EX-WP-1-H1",
+        "indicator_id": "EX-IND-1",
+        "direction": "supports",
+        "indicator_state": "present",
+        "requirement_ids": [
+          "EX-PIR-1"
+        ],
+        "probability": 0.7,
+        "likelihood_term": "likely",
+        "confidence": "moderate",
+        "confidence_basis": {
+          "rubric": "tic-confidence-1.0",
+          "factors": {
+            "independent_lines": 2
+          },
+          "caps": [
+            "expertise"
+          ],
+          "raise_by": [
+            "a scored Verdict record for this method version"
+          ]
+        },
+        "change_from_prior": "raised",
+        "change_reason": "Persistence rose from 6 to 9 of the last 10 days.",
+        "alternatives": [
+          {
+            "hypothesis": "Receiver or feeder artefact",
+            "tell_apart": "Effect seen by several independent feeders and aircraft types",
+            "status": "rejected"
+          },
+          {
+            "hypothesis": "Space-weather scintillation",
+            "tell_apart": "Kp and scintillation indices quiet at the same hours",
+            "status": "rejected"
+          }
+        ],
+        "resolution": {
+          "rule": "Severe share above 20% in the cell group on at least 5 of 7 days, 31 Oct-6 Nov",
+          "source": "example daily maps",
+          "resolve_by": "2026-11-07"
+        },
+        "ie_aspect": [
+          "physical"
+        ],
+        "continuum": "competition",
+        "ncf": [
+          "provide_pnt",
+          "transport_by_air"
+        ],
+        "sector": [
+          "communications",
+          "transportation_systems"
+        ],
+        "product_category": "estimative",
+        "sources": [
+          {
+            "id": "adsblol-archive",
+            "publisher": "adsb.lol",
+            "url": "https://github.com/adsblol/globe_history_2026",
+            "licence": "ODbL 1.0",
+            "accessed_at": "2026-10-30T05:41:00Z",
+            "grade": "B2",
+            "descriptor": "Crowd-fed ADS-B receiver archive.",
+            "independence_group": "adsb-feeders"
+          },
+          {
+            "id": "position-loss",
+            "publisher": "The Intelligence Company (derived from adsb.lol MLAT)",
+            "url": "https://github.com/adsblol/globe_history_2026",
+            "licence": "ODbL 1.0",
+            "accessed_at": "2026-10-30T05:41:00Z",
+            "grade": "B2",
+            "descriptor": "Aircraft heard by multilateration but sending no GNSS position.",
+            "independence_group": "mlat"
+          }
+        ],
+        "subject_id": "example:wp:EX-WP-1",
+        "last_change": "raised",
+        "last_change_at": "2026-10-30T06:00:00Z",
+        "event_start": "2026-10-31T00:00:00Z",
+        "event_end": "2026-11-06T00:00:00Z",
+        "event_time_precision": "day",
+        "sea_areas": [
+          "gulf-of-finland"
+        ],
+        "place_basis": "location"
+      }
     },
-    "method_version": "example-1.0",
-    "requirement_ids": [
-     "EX-PIR-1"
-    ],
-    "ie_aspect": [
-     "physical"
-    ],
-    "pmesii_pt": [
-     "infrastructure"
-    ],
-    "ascope": [
-     "capabilities"
-    ],
-    "continuum": "competition",
-    "ncf": [
-     "provide_pnt"
-    ],
-    "sector": [
-     "communications",
-     "transportation_systems"
-    ],
-    "lifeline": [
-     {
-      "id": "transportation",
-      "status": "moderate"
-     }
-    ],
-    "product_category": "current",
-    "evidence_hash": "sha256:0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0",
-    "sources": [
-     {
-      "id": "adsblol-archive",
-      "publisher": "adsb.lol",
-      "url": "https://github.com/adsblol/globe_history_2026",
-      "licence": "ODbL 1.0",
-      "accessed_at": "2026-10-30T05:41:00Z",
-      "grade": "B2",
-      "descriptor": "Crowd-fed ADS-B receiver archive; aircraft-reported position quality; daily file.",
-      "independence_group": "adsb-feeders"
-     }
-    ],
-    "subject_id": "example:cell:841f",
-    "last_change": "raised",
-    "last_change_at": "2026-10-29T00:00:00Z",
-    "event_start": "2026-10-29T00:00:00Z",
-    "event_end": "2026-10-29T00:00:00Z",
-    "event_time_precision": "day",
-    "signal": {
-     "name": "severe_share",
-     "value": 0.31,
-     "unit": "share",
-     "expected": 0.04,
-     "tail": "high",
-     "baseline_n": 28,
-     "exceedance": 0.0345
+    {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+        "contract": "tic-feed/2",
+        "id": "example-kev-2026-10-30",
+        "program": "example",
+        "title": "Three vulnerabilities added to CISA's exploited list",
+        "kind": "observation",
+        "tier": "routine",
+        "status": "actual",
+        "msg_type": "new",
+        "human_review": "none",
+        "us_person_data": "none",
+        "status_class": "reported",
+        "data_as_of": "2026-10-30T00:00:00Z",
+        "published_at": "2026-10-30T06:00:00Z",
+        "countries": [],
+        "precision_class": "none",
+        "coverage_fraction": 1.0,
+        "method_version": "example-1.0",
+        "requirement_ids": [
+          "EX-PIR-1"
+        ],
+        "ncf": [
+          "provide_it_products"
+        ],
+        "visual": {
+          "type": "ncf-tile-grid",
+          "url": "https://example.theintelligence.company/kev"
+        },
+        "sources": [
+          {
+            "id": "cisa-kev",
+            "publisher": "CISA",
+            "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+            "licence": "US government work",
+            "accessed_at": "2026-10-30T05:50:00Z",
+            "grade": "A2",
+            "descriptor": "Official US government catalogue.",
+            "independence_group": "us-gov"
+          }
+        ],
+        "subject_id": "example:kev:kev",
+        "last_change": "new",
+        "last_change_at": "2026-10-30T00:00:00Z",
+        "event_start": "2026-10-30T00:00:00Z",
+        "event_time_precision": "day",
+        "corroboration": {
+          "state": "corroborated",
+          "basis": "official",
+          "origins": 1,
+          "official": "cisa-kev",
+          "first_reported_at": "2026-10-30T00:00:00Z",
+          "corroborated_at": "2026-10-30T00:00:00Z",
+          "rule": "corroborate-1: two independent origins, or one official source within its remit"
+        }
+      }
     },
-    "sea_areas": [
-     "gulf-of-finland"
-    ],
-    "place_basis": "location"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Polygon",
-    "coordinates": [
-     [
-      [
-       26.0,
-       58.5
-      ],
-      [
-       29.0,
-       58.5
-      ],
-      [
-       29.0,
-       60.5
-      ],
-      [
-       26.0,
-       60.5
-      ],
-      [
-       26.0,
-       58.5
-      ]
-     ]
-    ]
-   },
-   "properties": {
-    "contract": "tic-feed/2",
-    "id": "example-wp-1-2026-10-30",
-    "program": "example",
-    "title": "Interference over the Gulf of Finland likely continues through 6 Nov",
-    "summary": "Severe GPS error has covered the eastern Gulf of Finland on 9 of the last 10 days, against a 28-day base of 2 in 10.",
-    "kind": "forecast",
-    "tier": "warning",
-    "status": "actual",
-    "msg_type": "update",
-    "supersedes": "example-wp-1-2026-10-29",
-    "human_review": "none",
-    "us_person_data": "none",
-    "status_class": "assessed",
-    "data_as_of": "2026-10-29T23:59:59Z",
-    "published_at": "2026-10-30T06:00:00Z",
-    "valid_until": "2026-11-06T23:59:59Z",
-    "countries": [
-     "EE",
-     "FI",
-     "RU"
-    ],
-    "precision_class": "area",
-    "coverage_fraction": 0.9,
-    "method_version": "example-1.0",
-    "warning_problem_id": "EX-WP-1",
-    "hypothesis_id": "EX-WP-1-H1",
-    "indicator_id": "EX-IND-1",
-    "direction": "supports",
-    "indicator_state": "present",
-    "requirement_ids": [
-     "EX-PIR-1"
-    ],
-    "probability": 0.7,
-    "likelihood_term": "likely",
-    "confidence": "moderate",
-    "confidence_basis": {
-     "rubric": "tic-confidence-1.0",
-     "factors": {
-      "independent_lines": 2
-     },
-     "caps": [
-      "expertise"
-     ],
-     "raise_by": [
-      "a scored Verdict record for this method version"
-     ]
-    },
-    "change_from_prior": "raised",
-    "change_reason": "Persistence rose from 6 to 9 of the last 10 days.",
-    "alternatives": [
-     {
-      "hypothesis": "Receiver or feeder artefact",
-      "tell_apart": "Effect seen by several independent feeders and aircraft types",
-      "status": "rejected"
-     },
-     {
-      "hypothesis": "Space-weather scintillation",
-      "tell_apart": "Kp and scintillation indices quiet at the same hours",
-      "status": "rejected"
-     }
-    ],
-    "resolution": {
-     "rule": "Severe share above 20% in the cell group on at least 5 of 7 days, 31 Oct-6 Nov",
-     "source": "example daily maps",
-     "resolve_by": "2026-11-07"
-    },
-    "ie_aspect": [
-     "physical"
-    ],
-    "continuum": "competition",
-    "ncf": [
-     "provide_pnt",
-     "transport_by_air"
-    ],
-    "sector": [
-     "communications",
-     "transportation_systems"
-    ],
-    "product_category": "estimative",
-    "sources": [
-     {
-      "id": "adsblol-archive",
-      "publisher": "adsb.lol",
-      "url": "https://github.com/adsblol/globe_history_2026",
-      "licence": "ODbL 1.0",
-      "accessed_at": "2026-10-30T05:41:00Z",
-      "grade": "B2",
-      "descriptor": "Crowd-fed ADS-B receiver archive.",
-      "independence_group": "adsb-feeders"
-     },
-     {
-      "id": "position-loss",
-      "publisher": "The Intelligence Company (derived from adsb.lol MLAT)",
-      "url": "https://github.com/adsblol/globe_history_2026",
-      "licence": "ODbL 1.0",
-      "accessed_at": "2026-10-30T05:41:00Z",
-      "grade": "B2",
-      "descriptor": "Aircraft heard by multilateration but sending no GNSS position.",
-      "independence_group": "mlat"
-     }
-    ],
-    "subject_id": "example:wp:EX-WP-1",
-    "last_change": "raised",
-    "last_change_at": "2026-10-30T06:00:00Z",
-    "event_start": "2026-10-31T00:00:00Z",
-    "event_end": "2026-11-06T00:00:00Z",
-    "event_time_precision": "day",
-    "sea_areas": [
-     "gulf-of-finland"
-    ],
-    "place_basis": "location"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": null,
-   "properties": {
-    "contract": "tic-feed/2",
-    "id": "example-kev-2026-10-30",
-    "program": "example",
-    "title": "Three vulnerabilities added to CISA's exploited list",
-    "kind": "observation",
-    "tier": "routine",
-    "status": "actual",
-    "msg_type": "new",
-    "human_review": "none",
-    "us_person_data": "none",
-    "status_class": "reported",
-    "data_as_of": "2026-10-30T00:00:00Z",
-    "published_at": "2026-10-30T06:00:00Z",
-    "countries": [],
-    "precision_class": "none",
-    "coverage_fraction": 1.0,
-    "method_version": "example-1.0",
-    "requirement_ids": [
-     "EX-PIR-1"
-    ],
-    "ncf": [
-     "provide_it_products"
-    ],
-    "visual": {
-     "type": "ncf-tile-grid",
-     "url": "https://example.theintelligence.company/kev"
-    },
-    "sources": [
-     {
-      "id": "cisa-kev",
-      "publisher": "CISA",
-      "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
-      "licence": "US government work",
-      "accessed_at": "2026-10-30T05:50:00Z",
-      "grade": "A1",
-      "descriptor": "Official US government catalogue.",
-      "independence_group": "us-gov"
-     }
-    ],
-    "subject_id": "example:kev:kev",
-    "last_change": "new",
-    "last_change_at": "2026-10-30T00:00:00Z",
-    "event_start": "2026-10-30T00:00:00Z",
-    "event_time_precision": "day"
-   }
-  },
-  {
-   "type": "Feature",
-   "geometry": {
-    "type": "Point",
-    "coordinates": [
-     30.74,
-     46.49
-    ]
-   },
-   "properties": {
-    "contract": "tic-feed/2",
-    "id": "example-strike-2026-10-30-odesa-port",
-    "program": "example",
-    "title": "Strike on Odesa port reported by both sides' media (fictional example)",
-    "kind": "observation",
-    "tier": "routine",
-    "status": "test",
-    "msg_type": "new",
-    "human_review": "none",
-    "us_person_data": "organizations",
-    "status_class": "reported",
-    "data_as_of": "2026-10-30T03:10:00Z",
-    "published_at": "2026-10-30T06:00:00Z",
-    "countries": [
-     "UA"
-    ],
-    "precision_class": "point",
-    "coverage_fraction": 1.0,
-    "method_version": "example-1.0",
-    "requirement_ids": [
-     "EX-PIR-1"
-    ],
-    "ie_aspect": [
-     "physical"
-    ],
-    "pmesii_pt": [
-     "military",
-     "infrastructure"
-    ],
-    "actors": [
-     {
-      "name": "Russian Armed Forces",
-      "role": "party",
-      "actor_type": "armed_forces",
-      "side": "Russia",
-      "country": "RU",
-      "status_class": "reported",
-      "source_ids": [
-       "agency-ua",
-       "agency-ru"
-      ]
-     },
-     {
-      "name": "Odesa commercial sea port",
-      "role": "affected",
-      "actor_type": "company",
-      "side": "Ukraine",
-      "country": "UA",
-      "status_class": "reported",
-      "source_ids": [
-       "agency-ua",
-       "agency-ru"
-      ]
-     },
-     {
-      "name": "Residents near the port",
-      "role": "civilians",
-      "actor_type": "population",
-      "side": "Ukraine",
-      "status_class": "claimed",
-      "source_ids": [
-       "agency-ua"
-      ]
-     }
-    ],
-    "sources": [
-     {
-      "id": "agency-ua",
-      "publisher": "Example Ukrainian news agency",
-      "url": "https://example.org/ua/strike",
-      "licence": "Link and short quotation only",
-      "accessed_at": "2026-10-30T05:30:00Z",
-      "grade": "B2",
-      "descriptor": "State news agency of a party to the conflict; reports damage to port buildings and injured residents.",
-      "owner": "state",
-      "perspective": "ukrainian",
-      "independence_group": "ua-gov"
-     },
-     {
-      "id": "agency-ru",
-      "publisher": "Example Russian state news agency",
-      "url": "https://example.org/ru/strike",
-      "licence": "Link and short quotation only",
-      "accessed_at": "2026-10-30T05:32:00Z",
-      "grade": "C3",
-      "descriptor": "State news agency of a party to the conflict; reports a strike on military infrastructure at the port.",
-      "owner": "state",
-      "perspective": "russian_state",
-      "independence_group": "ru-gov"
-     }
-    ],
-    "subject_id": "example-strike-2026-10-30-odesa-port",
-    "last_change": "new",
-    "last_change_at": "2026-10-30T03:10:00Z",
-    "event_start": "2026-10-30T03:10:00Z",
-    "sea_areas": [],
-    "place_basis": "location"
-   }
-  }
- ]
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.74,
+          46.49
+        ]
+      },
+      "properties": {
+        "contract": "tic-feed/2",
+        "id": "example-strike-2026-10-30-odesa-port",
+        "program": "example",
+        "title": "Strike on Odesa port reported by both sides' media (fictional example)",
+        "kind": "observation",
+        "tier": "routine",
+        "status": "test",
+        "msg_type": "new",
+        "human_review": "none",
+        "us_person_data": "organizations",
+        "status_class": "reported",
+        "data_as_of": "2026-10-30T03:10:00Z",
+        "published_at": "2026-10-30T06:00:00Z",
+        "countries": [
+          "UA"
+        ],
+        "precision_class": "point",
+        "coverage_fraction": 1.0,
+        "method_version": "example-1.0",
+        "requirement_ids": [
+          "EX-PIR-1"
+        ],
+        "ie_aspect": [
+          "physical"
+        ],
+        "pmesii_pt": [
+          "military",
+          "infrastructure"
+        ],
+        "actors": [
+          {
+            "name": "Russian Armed Forces",
+            "role": "party",
+            "actor_type": "armed_forces",
+            "side": "Russia",
+            "country": "RU",
+            "status_class": "reported",
+            "source_ids": [
+              "agency-ua",
+              "agency-ru"
+            ]
+          },
+          {
+            "name": "Odesa commercial sea port",
+            "role": "affected",
+            "actor_type": "company",
+            "side": "Ukraine",
+            "country": "UA",
+            "status_class": "reported",
+            "source_ids": [
+              "agency-ua",
+              "agency-ru"
+            ]
+          },
+          {
+            "name": "Residents near the port",
+            "role": "civilians",
+            "actor_type": "population",
+            "side": "Ukraine",
+            "status_class": "claimed",
+            "source_ids": [
+              "agency-ua"
+            ]
+          }
+        ],
+        "sources": [
+          {
+            "id": "agency-ua",
+            "publisher": "Example Ukrainian news agency",
+            "url": "https://example.org/ua/strike",
+            "licence": "Link and short quotation only",
+            "accessed_at": "2026-10-30T05:30:00Z",
+            "grade": "B2",
+            "descriptor": "State news agency of a party to the conflict; reports damage to port buildings and injured residents.",
+            "owner": "state",
+            "perspective": "ukrainian",
+            "independence_group": "ua-gov"
+          },
+          {
+            "id": "agency-ru",
+            "publisher": "Example Russian state news agency",
+            "url": "https://example.org/ru/strike",
+            "licence": "Link and short quotation only",
+            "accessed_at": "2026-10-30T05:32:00Z",
+            "grade": "C3",
+            "descriptor": "State news agency of a party to the conflict; reports a strike on military infrastructure at the port.",
+            "owner": "state",
+            "perspective": "russian_state",
+            "independence_group": "ru-gov"
+          }
+        ],
+        "subject_id": "example-strike-2026-10-30-odesa-port",
+        "last_change": "new",
+        "last_change_at": "2026-10-30T03:10:00Z",
+        "event_start": "2026-10-30T03:10:00Z",
+        "sea_areas": [],
+        "place_basis": "location",
+        "corroboration": {
+          "state": "reported",
+          "basis": null,
+          "origins": 1,
+          "official": null,
+          "party_claim": true,
+          "first_reported_at": "2026-10-30T03:10:00Z",
+          "corroborated_at": null,
+          "rule": "corroborate-1: two independent origins, or one official source within its remit"
+        }
+      }
+    }
+  ]
 }
