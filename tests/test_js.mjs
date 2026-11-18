@@ -1,6 +1,6 @@
 // Browser-module tests (Node, no dependencies): node tests/test_js.mjs
 import assert from "node:assert/strict";
-import { termFor, likelihoodLabel, judgmentChips, lifelineStatus, ladderRung, changeText, indicatorStyle, countryPoint, actorStyle, actorLabel, tips, tipMatches, asOfDateLabel, VOCAB } from "../js/tic-doctrine.js";
+import { termFor, likelihoodLabel, judgmentChips, lifelineStatus, ladderRung, changeText, indicatorStyle, countryPoint, actorStyle, actorLabel, tips, tipMatches, asOfDateLabel, eventInterval, seaName, VOCAB } from "../js/tic-doctrine.js";
 
 const cases = { 0: "almost_no_chance", 0.05: "very_unlikely", 0.2: "unlikely", 0.45: "roughly_even_chance",
   0.55: "roughly_even_chance", 0.551: "likely", 0.8: "likely", 0.801: "very_likely", 0.95: "very_likely", 0.951: "almost_certain", 1: "almost_certain" };
@@ -67,4 +67,20 @@ assert.equal(asOfDateLabel({ data_as_of: "2025-06-01T00:00:00Z", data_as_of_prec
 assert.equal(asOfDateLabel({ data_as_of: "2026-10-30T00:00:00Z", data_as_of_precision: "day" }, "en-GB"), "30 Oct 2026",
   "a date-only item reads in UTC, never the evening before");
 assert.equal(asOfDateLabel({ data_as_of: "2026-10-30T09:12:00Z" }), null, "an exact time is left to the page");
+// Contract revision 2.1 (kit 0.6.0): the event interval is the Python kit's rule.
+const iso = (r) => r && [r.start && r.start.toISOString(), r.end && r.end.toISOString()];
+const asof = "2026-11-16T05:45:30Z";
+assert.equal(eventInterval({ data_as_of: asof }), null);
+assert.deepEqual(iso(eventInterval({ event_start: "2026-11-10T19:45:00Z", data_as_of: asof })),
+  ["2026-11-10T19:45:00.000Z", "2026-11-16T05:45:30.000Z"], "ongoing to the last look");
+assert.deepEqual(iso(eventInterval({ event_start: "2026-11-18T22:50:00Z", data_as_of: asof })),
+  ["2026-11-18T22:50:00.000Z", "2026-11-18T22:50:00.000Z"], "scheduled: the moment alone");
+assert.deepEqual(iso(eventInterval({ event_start: "2026-11-15T00:00:00Z", event_end: "2026-11-15T00:00:00Z", event_time_precision: "day", data_as_of: asof })),
+  ["2026-11-15T00:00:00.000Z", "2026-11-16T00:00:00.000Z"], "one whole day");
+assert.deepEqual(iso(eventInterval({ event_start: "2026-07-01T00:00:00Z", event_end: "2026-12-01T00:00:00Z", event_time_precision: "month", data_as_of: asof })),
+  ["2026-07-01T00:00:00.000Z", "2027-01-01T00:00:00.000Z"], "December runs into January");
+assert.deepEqual(iso(eventInterval({ event_end: "2026-11-20T22:00:00Z", data_as_of: asof })), [null, "2026-11-20T22:00:00.000Z"]);
+assert.equal(seaName("persian-gulf"), "Persian Gulf");
+assert.equal(seaName("strait-of-hormuz"), null);
+assert.equal(VOCAB.last_change.raised.length > 0, true);
 console.log("test_js.mjs: all passed");

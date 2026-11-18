@@ -10,6 +10,7 @@ drawn on one map (COP) and scored (Verdict).
 |---|---|
 | `vocab/` | Reference vocabularies: ICD 203 likelihood with UK and Kent crosswalks; the confidence rubric; contract enums; JP 3-04 information aspects, PMESII-PT, ASCOPE, the competition continuum; CISA's 55 National Critical Functions with a published sector and lifeline crosswalk; FEMA's eight lifelines and status colours; response ladders (PAGER, USGS volcano alert levels, GDACS, Copernicus EMS, IFRC, EASA, State Department); Admiralty grades; ICD 203's nine tradecraft standards; actor roles and types, and source owners, for characterising entities and sides without friend-or-foe labels |
 | `schema/` | Feed contract v2 as JSON Schema |
+| `geo/` | Country outlines and label points, US state outlines, and the sea gazetteer (`seas.json`, Natural Earth's named marine areas, public domain) |
 | `python/tic_doctrine/` | Likelihood, confidence, contract checks, the tradecraft linter, register checks, source health, withholding counts, tips between programs, the history log (standard library only) |
 | `js/tic-doctrine.js` | The same likelihood, confidence, lifeline, ladder and tip-matching logic for web pages (ES module, no dependencies) |
 | `vocab/programs.json` | The suite registry: every program, its feed, and the datasets it owns |
@@ -84,6 +85,29 @@ source's terms word for word from Blackout's source register.
 with its value before in `was`, so a program whose ids stay the same across readings of a series (Headwind, with
 `data_as_of`) logs every reading without reporting the one before as ended. Programs that do not pass it see no
 change.
+
+**0.6.0 (18 Nov 2026): feed contract revision 2.1.** Step 2 of the feed-contract migration (Tom's decisions D1 to D8,
+18 Nov 2026). Additive: the contract string stays `tic-feed/2`, every new field is optional, and every feed that
+passed 0.5.12 passes 0.6.0 with the same errors (checked on the 16 feeds in the registry, COP's among them, read
+live on 18 Nov 2026).
+- New optional item fields: `last_change`, `last_change_at`, `event_start`, `event_end`, `event_time_precision`,
+  `subject_id`, `signal`, `sea_areas`, `place_basis`, `baseline_ref.flag_rate`, `sources[].lane`. Header:
+  `contract_rev` (`"2.1"`), `kit`, and a documented `health` member (one key set; states fresh, late, stale, failing,
+  never, up). Tightened meanings of `data_as_of`, `countries` (by overlap) and tier `anomaly` (D5: own history, 5%
+  flag-rate cap, 72-hour hold). Vocabulary in `vocab/enums.json` 1.1; schema rebuilt, with the header under `$defs`.
+- The linter checks each new field's shape when present (an error) and counts its absence per feed (a warning,
+  never a failed build), and ends with a coverage line per field. A feed that states `contract_rev: "2.1"` is held to
+  the health shape and the tightened `data_as_of` as errors; otherwise they are warnings.
+- `geo.countries_overlapping()` (countries by overlap) beside the vertex-based `countries_for_geometry()`;
+  `geo.sea_areas_for_geometry()`, `sea_at()`, `sea_name()` and `sea_slugs()` on the new gazetteer `geo/seas.json`:
+  291 named areas from Natural Earth 1:10m marine areas, release v5.1.2 (public domain), built by
+  `tools/build_seas.py`. Natural Earth has no separate Strait of Hormuz and no canals.
+- History keys on `subject_id` when present, on `id` otherwise; lines carry `subject_id`; the state records `since`
+  and when each subject last moved. `history --fill-last-change` (and `fill_last_change()`) fills `last_change` from
+  the log for programs with no better knowledge.
+- `contract.event_interval()` and the browser module's `eventInterval()` give an item's exact event interval;
+  `seaName()` names a sea area; `health.feed_health()` turns a source-health report into header entries.
+- New worked example `tests/fixtures/good-2.1.geojson`: the four example items with every 2.1 field.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 

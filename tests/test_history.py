@@ -293,5 +293,136 @@ class CommandLine(unittest.TestCase):
                 self.assertEqual(json.loads(fh.readline())["id"], "p:a:1")
 
 
+class Subjects(unittest.TestCase):
+    """Kit 0.6.0: the log keys on subject_id when an item has one (contract revision 2.1), on id otherwise."""
+
+    def test_a_dated_id_with_a_subject_is_one_open_entry_not_new_and_ended_every_day(self):
+        t1 = T0 + timedelta(days=1)
+        s1, l1 = history.update({}, feed(item("p:fx:TRY:2026-11-13", subject_id="p:fx:TRY")), health(T0, "src-a"), T0)
+        s2, l2 = history.update(s1, feed(item("p:fx:TRY:2026-11-14", subject_id="p:fx:TRY")), health(t1, "src-a"), t1)
+        self.assertEqual([(x["change"], x["id"], x["subject_id"]) for x in l1], [("new", "p:fx:TRY:2026-11-13", "p:fx:TRY")])
+        self.assertEqual(l2, [])
+        self.assertEqual(list(s2["open"]), ["p:fx:TRY"])
+        self.assertEqual(s2["open"]["p:fx:TRY"]["item"]["properties"]["id"], "p:fx:TRY:2026-11-14")
+        self.assertEqual(s2["open"]["p:fx:TRY"]["updates"], 1)
+        t2 = t1 + timedelta(days=1)
+        _, l3 = history.update(s2, feed(item("p:fx:TRY:2026-11-15", subject_id="p:fx:TRY", tier="anomaly")),
+                               health(t2, "src-a"), t2)
+        self.assertEqual([(x["change"], x["id"], x["subject_id"], x["was"]["tier"]) for x in l3],
+                         [("changed", "p:fx:TRY:2026-11-15", "p:fx:TRY", "routine")])
+
+    def test_without_a_subject_a_dated_id_is_still_new_and_ended(self):
+        t1 = T0 + timedelta(days=1)
+        s1, _ = history.update({}, feed(item("p:fx:TRY:2026-11-13")), health(T0, "src-a"), T0)
+        _, lines = history.update(s1, feed(item("p:fx:TRY:2026-11-14")), health(t1, "src-a"), t1)
+        self.assertEqual(sorted((x["change"], x["id"]) for x in lines),
+                         [("ended", "p:fx:TRY:2026-11-13"), ("new", "p:fx:TRY:2026-11-14")])
+        self.assertNotIn("subject_id", lines[0])
+
+    def test_the_first_run_with_subject_ids_moves_each_open_entry_to_its_subject(self):
+        s1, _ = history.update({}, feed(item("p:a:1")), health(T0, "src-a"), T0)
+        t1 = T0 + timedelta(hours=2)
+        s2, lines = history.update(s1, feed(item("p:a:1", subject_id="p:thing:1")), health(t1, "src-a"), t1)
+        self.assertEqual(lines, [])
+        self.assertEqual(list(s2["open"]), ["p:thing:1"])
+        self.assertEqual(s2["open"]["p:thing:1"]["first_seen"], "2026-11-14T02:00:00Z")
+
+    def test_a_second_item_of_one_subject_in_a_feed_is_kept_under_its_own_id(self):
+        both = feed(item("p:r:new-1", subject_id="p:region:1"), item("p:r:ended-1", subject_id="p:region:1"))
+        s1, lines = history.update({}, both, health(T0, "src-a"), T0)
+        self.assertEqual(sorted(s1["open"]), ["p:r:ended-1", "p:region:1"])
+        self.assertEqual(len(lines), 2)
+
+    def test_an_item_the_linter_dropped_is_not_ended_under_its_subject(self):
+        s1, _ = history.update({}, feed(item("p:a:1:d1", subject_id="p:a:1")), health(T0, "src-a"), T0)
+        t1 = T0 + timedelta(hours=2)
+        s2, lines = history.update(s1, feed(dropped=[{"id": "p:a:1:d1"}]), health(t1, "src-a"), t1)
+        self.assertEqual(lines, [])
+        self.assertIn("p:a:1", s2["open"])
+
+    def test_a_source_names_its_lane(self):
+        f = item("p:a:1", lane="usembassy-sa")
+        f["properties"]["sources"][0]["lane"] = "us-embassy-alerts"
+        self.assertEqual(history.lane(f), "us-embassy-alerts")
+        self.assertEqual(history.lane(item("p:a:1", lane="src-a")), "src-a")
+
+    def test_a_reading_key_works_on_a_subject_and_leaves_last_change_alone(self):
+        t1 = T0 + timedelta(days=1)
+        a = item("p:fx:TRY:2026-11-13", subject_id="p:fx:TRY", data_as_of="2026-11-13T00:00:00Z")
+        b = item("p:fx:TRY:2026-11-14", subject_id="p:fx:TRY", data_as_of="2026-11-14T00:00:00Z")
+        s1, _ = history.update({}, feed(a), health(T0, "src-a"), T0, reading_key="data_as_of")
+        s2, lines = history.update(s1, feed(b), health(t1, "src-a"), t1, reading_key="data_as_of")
+        self.assertEqual([(x["change"], x["subject_id"], x["was"]["data_as_of"]) for x in lines],
+                         [("changed", "p:fx:TRY", "2026-11-13T00:00:00Z")])
+        self.assertEqual(s2["open"]["p:fx:TRY"]["last_change"], "none", "a new reading is not a change of state")
+
+    def test_a_move_is_raised_lowered_or_changed(self):
+        self.assertEqual(history.move(["routine", None], ["anomaly", None]), "raised")
+        self.assertEqual(history.move(["warning", None], ["anomaly", None]), "lowered")
+        self.assertEqual(history.move(["anomaly", "usgs_volcano:advisory"], ["anomaly", "usgs_volcano:watch"]), "raised")
+        self.assertEqual(history.move(["routine", "pager:orange"], ["routine", "pager:yellow"]), "lowered")
+        self.assertEqual(history.move(["routine", "pager:orange"], ["routine", "gdacs:orange"]), "changed")
+        self.assertEqual(history.move(["routine", None], ["routine", "pager:green"]), "changed")
+
+
+class FillLastChange(unittest.TestCase):
+    """Kit 0.6.0: last_change and last_change_at from the log, for items that do not state them."""
+
+    def test_standing_new_and_moved(self):
+        t1, t2 = T0 + timedelta(hours=2), T0 + timedelta(hours=4)
+        f0 = feed(item("p:a:1"))
+        s1, _ = history.update({}, f0, health(T0, "src-a"), T0)
+        self.assertEqual(s1["since"], "2026-11-14T02:00:00Z")
+        self.assertEqual(history.fill_last_change(f0, s1), 1)
+        self.assertEqual(f0["features"][0]["properties"]["last_change"], "none")
+        self.assertNotIn("last_change_at", f0["features"][0]["properties"])
+        f1 = feed(item("p:a:1"), item("p:a:2"))
+        s2, _ = history.update(s1, f1, health(t1, "src-a"), t1)
+        history.fill_last_change(f1, s2)
+        self.assertEqual([(f["properties"]["last_change"], f["properties"].get("last_change_at")) for f in f1["features"]],
+                         [("none", None), ("new", "2026-11-14T04:00:00Z")])
+        f2 = feed(item("p:a:1", tier="anomaly"), item("p:a:2"))
+        s3, _ = history.update(s2, f2, health(t2, "src-a"), t2)
+        history.fill_last_change(f2, s3)
+        self.assertEqual([(f["properties"]["last_change"], f["properties"].get("last_change_at")) for f in f2["features"]],
+                         [("raised", "2026-11-14T06:00:00Z"), ("new", "2026-11-14T04:00:00Z")])
+
+    def test_a_program_that_states_it_keeps_its_own(self):
+        f = feed(item("p:a:1", last_change="raised", last_change_at="2026-11-13T21:04:48Z"))
+        s1, _ = history.update({}, f, health(T0, "src-a"), T0)
+        self.assertEqual(history.fill_last_change(f, s1), 0)
+        self.assertEqual(f["features"][0]["properties"]["last_change_at"], "2026-11-13T21:04:48Z")
+
+    def test_a_log_begun_before_0_6_0_takes_its_start_from_its_first_line(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            history.run(feed(item("p:a:1")), root, T0, health(T0, "src-a"))
+            old = history.load_state(root)                 # make it look like a 0.5.x state
+            old.pop("since")
+            for e in old["open"].values():
+                e.pop("last_change"), e.pop("last_change_at")
+            history.save_state(root, old)
+            self.assertEqual(history.first_run(root), "2026-11-14T02:00:00Z")
+            t1 = T0 + timedelta(hours=2)
+            f = feed(item("p:a:1"), item("p:a:2"))
+            history.run(f, root, t1, health(t1, "src-a"), fill=True)
+            self.assertEqual([x["properties"]["last_change"] for x in f["features"]], ["none", "new"])
+            self.assertEqual(history.load_state(root)["since"], "2026-11-14T02:00:00Z")
+            logged = history.read_days(root, "2026-11-14", "2026-11-14")[-1]
+            self.assertEqual(logged["item"]["properties"]["last_change"], "new", "the log carries the filled item")
+
+    def test_the_command_rewrites_the_feed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            path = tmp / "feed.geojson"
+            path.write_text(json.dumps(feed(item("p:a:1"), health=health(T0, "src-a"))), encoding="utf-8")
+            with redirect_stdout(io.StringIO()) as out:
+                history.main([str(path), "--dir", str(tmp / "h"), "--now", "2026-11-14T02:00:00Z",
+                              "--fill-last-change"])
+            self.assertIn("last_change on 1 of 1 items", out.getvalue())
+            self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["features"][0]["properties"]["last_change"],
+                             "none")
+
+
 if __name__ == "__main__":
     unittest.main()
