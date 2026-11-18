@@ -276,6 +276,23 @@ def _check_actors(actors: list, p: dict, judged: bool, err, warn) -> None:
         err(GENERAL, "actors name organizations: us_person_data must be 'organizations' or 'individuals'")
 
 
+def _check_zone_subject(sid: str, warn) -> None:
+    """D4 (kit 0.6.1): a subject of kind zone (program:zone:key, the key optionally followed by -suffix or more
+    parts, as Vis's stations are) names a zone in the shared list, vocab/zones.json. Warnings only: a zone Watchfloor
+    adds reaches the kit after it reaches the feeds."""
+    parts = sid.split(":")
+    if parts[1] != "zone":
+        return
+    key = parts[2].split("-")[0]
+    if key in vocab.zones():
+        return
+    old = vocab.retired_zones().get(key)
+    if old:
+        warn(GENERAL, f"subject_id zone {key!r} was retired on {old['on']} into {', '.join(old['into'])}")
+    else:
+        warn(GENERAL, f"subject_id zone {key!r} is not in the shared zone list (vocab/zones.json, Watchfloor's)")
+
+
 def _check_revision(p: dict, geom, strict: bool, err, warn) -> None:
     """Revision 2.1 (kit 0.6.0): the new optional fields' shape when present (errors), their absence (warnings), the
     tightened meanings of data_as_of and tier anomaly (warnings, or errors under strict for data_as_of)."""
@@ -341,6 +358,8 @@ def _check_revision(p: dict, geom, strict: bool, err, warn) -> None:
             err(GENERAL, f"subject_id {sid!r} must equal the id or be shaped program:kind:key, starting '{prog}:'")
         elif DATED_RE.search(sid):
             note("subject_id carries a date: it names the thing read, not the reading")
+        else:
+            _check_zone_subject(sid, warn)
 
     # F4. Strength.
     sig = p.get("signal")

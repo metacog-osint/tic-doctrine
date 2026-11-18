@@ -1365,6 +1365,133 @@ export const VOCAB = {
     "named": "A party is named: a victim's country, a network's home, an operator's origin. A join by place skips it.",
     "zone": "The program's own multi-country zone; counts as one place, not as each country in it."
   },
+  "zones": {
+    "01_Ukraine_Conflict": {
+      "name": "Ukraine Conflict",
+      "countries": [
+        "UA"
+      ]
+    },
+    "07_Russia_NATO": {
+      "name": "Russia-NATO Border",
+      "countries": [
+        "BY",
+        "DK",
+        "EE",
+        "FI",
+        "LT",
+        "LV",
+        "NO",
+        "PL",
+        "RU",
+        "SE"
+      ]
+    },
+    "02_Taiwan_Strait": {
+      "name": "Taiwan Strait",
+      "countries": [
+        "TW"
+      ]
+    },
+    "08_South_China_Sea": {
+      "name": "South China Sea",
+      "countries": [
+        "PH",
+        "VN"
+      ]
+    },
+    "03_Korea_Peninsula": {
+      "name": "Korea Peninsula",
+      "countries": [
+        "KP",
+        "KR"
+      ]
+    },
+    "10_Israel_Gaza_Lebanon": {
+      "name": "Israel, Gaza & Lebanon",
+      "countries": [
+        "IL",
+        "LB",
+        "PS"
+      ]
+    },
+    "11_Iran_Red_Sea": {
+      "name": "Iran & Red Sea",
+      "countries": [
+        "IR",
+        "YE"
+      ]
+    },
+    "06_India_Pakistan": {
+      "name": "India-Pakistan",
+      "countries": [
+        "IN",
+        "PK"
+      ]
+    },
+    "13_Sudan": {
+      "name": "Sudan",
+      "countries": [
+        "SD"
+      ]
+    },
+    "18_Ethiopia_Eritrea": {
+      "name": "Ethiopia & Eritrea",
+      "countries": [
+        "ER",
+        "ET"
+      ]
+    },
+    "19_Somalia": {
+      "name": "Somalia",
+      "countries": [
+        "DJ",
+        "SO"
+      ]
+    },
+    "12_Sahel_West_Africa": {
+      "name": "Sahel & West Africa",
+      "countries": [
+        "BF",
+        "ML",
+        "NE"
+      ]
+    },
+    "14_DRC_Rwanda": {
+      "name": "DRC-Rwanda (M23)",
+      "countries": [
+        "CD",
+        "RW"
+      ]
+    },
+    "16_Myanmar": {
+      "name": "Myanmar",
+      "countries": [
+        "MM"
+      ]
+    },
+    "05_Venezuela": {
+      "name": "Venezuela",
+      "countries": [
+        "VE"
+      ]
+    },
+    "15_Cuba": {
+      "name": "Cuba",
+      "countries": [
+        "CU"
+      ]
+    }
+  },
+  "zones_retired": {
+    "17_Horn_of_Africa": {
+      "on": "2026-10-27",
+      "into": [
+        "18_Ethiopia_Eritrea",
+        "19_Somalia"
+      ]
+    }
+  },
   "seas": {
     "adriatic-sea": "Adriatic Sea",
     "aegean-sea": "Aegean Sea",
@@ -1769,6 +1896,15 @@ export function eventInterval(item) {
 /** The gazetteer's name for a sea-area slug ("persian-gulf" -> "Persian Gulf"), or null. */
 export function seaName(slug) {
   return VOCAB.seas[slug] || null;
+}
+
+/** The shared zone list's name for a zone key ("11_Iran_Red_Sea" -> "Iran & Red Sea"); a retired key gives the
+ *  names of the zones it went into, joined; null for an unknown key. */
+export function zoneName(key) {
+  const z = VOCAB.zones[key];
+  if (z) return z.name;
+  const old = VOCAB.zones_retired[key];
+  return old ? old.into.map((k) => VOCAB.zones[k].name).join(" / ") : null;
 }
 
 /** A response ladder rung from "ladder:value", e.g. "pager:orange". */
