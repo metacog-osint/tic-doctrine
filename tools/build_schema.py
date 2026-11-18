@@ -138,6 +138,18 @@ def schema() -> dict:
                       "description": "Revision 2.1. Slugs of the named sea areas the geometry overlaps, from the "
                                      "kit's gazetteer (geo/seas.json, Natural Earth marine areas); [] on land."},
         "place_basis": enum("place_basis"),
+        "corroboration": {
+            "type": "object", "required": ["state", "origins", "first_reported_at", "rule"],
+            "description": "Revision 2.1, F7 (kit 0.6.2, D11). Event items only: reported until two independent "
+                           "origins, or one official source within its remit; never moves back.",
+            "properties": {
+                "state": enum("corroboration_state"),
+                "basis": {"oneOf": [enum("corroboration_basis"), {"type": "null"}]},
+                "origins": {"type": "integer", "minimum": 1},
+                "official": {"type": ["string", "null"]},
+                "party_claim": {"type": "boolean"},
+                "first_reported_at": utc, "corroborated_at": {"oneOf": [utc, {"type": "null"}]},
+                "rule": {"type": "string", "minLength": 1}}},
     }
     props["baseline_ref"]["properties"]["flag_rate"] = {
         "type": "number", "minimum": 0, "maximum": 1,

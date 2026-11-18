@@ -837,6 +837,107 @@ class Seas(unittest.TestCase):
         self.assertEqual([s["slug"] for s in bs.build(src)], ["gulf-of-california", "north-atlantic-ocean"])
 
 
+class Kit062(unittest.TestCase):
+    """Kit 0.6.2: corroboration (D11) and the kit review's M1, M4, M5 and G3."""
+
+    def setUp(self):
+        self.kev = _by_id(GOOD21, "example-kev-2026-10-30")
+
+    def errs(self, item):
+        return " | ".join(m for s, sev, m in contract.check(item) if sev == "error")
+
+    def warns(self, item, std):
+        return " | ".join(m for s, sev, m in contract.check(item) if sev == "warning" and s == std)
+
+    def test_the_fixture_corroborations_pass(self):
+        self.assertEqual(self.errs(self.kev), "")
+        self.assertEqual(self.errs(_by_id(GOOD21, "example-strike-2026-10-30-odesa-port")), "")
+
+    def test_corroboration_shape(self):
+        c = self.kev["properties"]["corroboration"]
+        for change, needle in (
+                ({"state": "confirmed"}, "corroboration.state"),
+                ({"basis": "rumour"}, "corroboration.basis"),
+                ({"origins": 0}, "at least 1"),
+                ({"origins": True}, "at least 1"),
+                ({"rule": ""}, "corroboration.rule missing"),
+                ({"official": None}, "needs official"),
+                ({"basis": "origins", "official": None}, "origins of 2 or more"),
+                ({"basis": "origins"}, "only when basis is official"),
+                ({"basis": None}, "names its basis"),
+                ({"corroborated_at": None}, "needs corroborated_at"),
+                ({"corroborated_at": "2026-10-29T00:00:00Z"}, "before first_reported_at"),
+                ({"corroborated_at": "2026-10-31T00:00:00Z", "first_reported_at": "2026-10-29T00:00:00Z"},
+                 "after published_at"),
+                ({"first_reported_at": "yesterday"}, "first_reported_at must be a UTC time"),
+                ({"party_claim": "yes"}, "true or false"),
+                ({"party_claim": True}, "outside the party"),
+                ({"state": "reported"}, "basis and corroborated_at null")):
+            f = copy.deepcopy(self.kev)
+            f["properties"]["corroboration"] = dict(c, **change)
+            self.assertIn(needle, self.errs(f), change)
+        f = copy.deepcopy(self.kev)
+        f["properties"]["corroboration"] = "corroborated"
+        self.assertIn("must be an object", self.errs(f))
+
+    def test_corroboration_absence_is_not_noted(self):
+        self.kev["properties"].pop("corroboration")
+        self.assertNotIn("corroboration", " ".join(m for s, sev, m in contract.check(self.kev)))
+
+    def test_credibility_1_on_one_group_is_a_warning(self):
+        self.assertEqual(self.warns(self.kev, "sources"), "")
+        self.kev["properties"]["sources"][0]["grade"] = "A1"
+        self.assertIn("grade it 2 at most", self.warns(self.kev, "sources"))
+        self.assertEqual(self.errs(self.kev), "", "never an error")
+        two = _by_id(GOOD21, "example-strike-2026-10-30-odesa-port")
+        two["properties"]["sources"][0]["grade"] = "B1"     # two independence groups: confirmed is possible
+        self.assertNotIn("grade it 2 at most", self.warns(two, "sources"))
+
+    def test_language_key_is_the_kits_public_page(self):
+        h = {k: v for k, v in GOOD21.items() if k != "features"}
+        self.assertEqual(h["language_key"], contract.LANGUAGE_KEY_URL)
+        self.assertFalse([m for s, sev, m in contract.check_header(h) if "language_key" in m])
+        h["language_key"] = "https://github.com/metacog-osint/noise-floor/blob/main/doctrine/kit/docs/language-key.md"
+        got = [(sev, m) for s, sev, m in contract.check_header(h) if "language_key" in m]
+        self.assertEqual([sev for sev, m in got], ["warning"])
+        self.assertTrue((ROOT / "docs" / "language-key.md").exists())
+
+    def test_rows_say_not_applicable_when_nothing_was_checked(self):
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as d:
+            doc = copy.deepcopy(GOOD21)
+            doc["features"] = [x for x in doc["features"] if not contract.is_judgment(x["properties"])]
+            path = Path(d) / "obs.geojson"
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            rep = lint.lint_files([path])
+            self.assertEqual(rep["examined"], {"judgments": 0, "forecasts": 0, "updates": 0})
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertTrue(lint.print_report(rep))
+        text = out.getvalue()
+        self.assertIn("[n/a ] 4. ", text)
+        self.assertIn("[n/a ] 8. ", text)
+        self.assertIn("not whether the", text)
+        self.assertIn("the fields it needs", text)
+        rep = lint.lint_files([GOOD21_PATH])
+        self.assertGreater(rep["examined"]["forecasts"], 0)
+        self.assertIsNone(lint.not_applicable("accuracy", rep["examined"]))
+
+    def test_method_scored_from_verdict(self):
+        scores = {"skill_min_n": 30, "by_program": {"verdict": {"n": 8, "n_independent": 3.0, "brier": 0.0142},
+                                                    "vis": {"n": 40, "n_independent": 31.0, "brier": 0.2}}}
+        self.assertFalse(confidence.method_scored(scores, "verdict"))
+        self.assertTrue(confidence.method_scored(scores, "vis"))
+        self.assertFalse(confidence.method_scored(scores, "vis", min_n=50))
+        self.assertFalse(confidence.method_scored(scores, "cordon"))
+        self.assertFalse(confidence.method_scored(None, "vis"))
+        from tic_doctrine.confidence import Evidence, assess
+        ev = Evidence(independent_lines=3, method_scored=confidence.method_scored(scores, "vis"))
+        self.assertEqual(assess(ev)["level"], "high")
+        self.assertEqual(assess(Evidence(independent_lines=3))["level"], "moderate")
+
+
 class Zones(unittest.TestCase):
     """Kit 0.6.1: the shared zone list (D4), built from Watchfloor's catalog."""
 

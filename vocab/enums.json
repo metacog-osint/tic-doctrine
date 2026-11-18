@@ -177,5 +177,19 @@
       "never": "Never read successfully, or no probe is defined.",
       "up": "Read on this run; it gives no time to judge freshness by."
     }
+  },
+  "corroboration_state": {
+    "basis": "Feed contract revision 2.1, F7 (Tom, 18 Nov 2026, D11): reported, then corroborated",
+    "values": {
+      "reported": "One origin so far, or only the party's own claim: not yet corroborated.",
+      "corroborated": "Two independent origins, or one official source speaking within its own remit."
+    }
+  },
+  "corroboration_basis": {
+    "basis": "Feed contract revision 2.1, F7 (D11)",
+    "values": {
+      "origins": "Two or more independent origins (wire copies and near-identical texts are one origin; one government's outlets are one origin).",
+      "official": "The issuer speaking about its own remit: UKMTO for incidents it logs, an embassy for its own alert, an agency for its own measurement. An official about someone else's action is a party claim."
+    }
   }
 }

@@ -1055,6 +1055,71 @@
         "zone"
       ],
       "description": "Feed contract revision 2.1, F5 (Tom, 18 Nov 2026, D7): why the item names these countries"
+    },
+    "corroboration": {
+      "type": "object",
+      "required": [
+        "state",
+        "origins",
+        "first_reported_at",
+        "rule"
+      ],
+      "description": "Revision 2.1, F7 (kit 0.6.2, D11). Event items only: reported until two independent origins, or one official source within its remit; never moves back.",
+      "properties": {
+        "state": {
+          "enum": [
+            "corroborated",
+            "reported"
+          ],
+          "description": "Feed contract revision 2.1, F7 (Tom, 18 Nov 2026, D11): reported, then corroborated"
+        },
+        "basis": {
+          "oneOf": [
+            {
+              "enum": [
+                "official",
+                "origins"
+              ],
+              "description": "Feed contract revision 2.1, F7 (D11)"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "origins": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "official": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "party_claim": {
+          "type": "boolean"
+        },
+        "first_reported_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?Z$"
+        },
+        "corroborated_at": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?Z$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   },
   "$defs": {

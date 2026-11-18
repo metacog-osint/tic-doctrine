@@ -15,7 +15,9 @@ D8, 18 Nov 2026). Revision 2.2 will make each field compulsory once every feed s
 ## Feed header (FeatureCollection)
 
 `contract`, `program`, `generated_at`, `licence`, `attribution`, and `language_key` (a link to the
-[language key](language-key.md)). Optional: `perspectives`, a map from each `sources[].perspective` id to its label
+[language key](language-key.md)). From kit 0.6.2 the linter warns unless `language_key` is the kit's own public page,
+`https://github.com/metacog-osint/tic-doctrine/blob/main/docs/language-key.md`: a copy vendored into a program's repo
+goes stale with that program's kit. Optional: `perspectives`, a map from each `sources[].perspective` id to its label
 (`{"russian_state": "Russian state and Kremlin-aligned media"}`), so readers and COP can name each side's media.
 
 Revision 2.1 adds three header members, each optional (the linter notes their absence):
@@ -120,6 +122,31 @@ Rules that come with them:
      program's hold, **72 hours** unless the program states another. After the hold it is routine, and
      `last_change_at` still says when it began.
 3. The numbers that show it are in the item.
+
+**Corroboration (kit 0.6.2, D11): "reported, then corroborated".** An optional `corroboration` member on items
+that report an event (a strike, an attack at sea, an alert), never on measurements:
+
+| Member | Meaning |
+|---|---|
+| `state` | `reported` until the rule is met, then `corroborated`. It never moves back: a retraction is a new item or a `last_change` |
+| `basis` | `origins` or `official`; null while reported |
+| `origins` | Independent origins counted so far, at least 1. Wire copies and texts with 80% word overlap are one origin; one government's outlets are one origin |
+| `official` | The issuer's source id when `basis` is `official` (`ukmto`, `usembassy-bh`), else null. An issuer speaking about its own remit: UKMTO for incidents it logs, an embassy for its own alert, a ministry or armed force for its own government's actions and territory |
+| `party_claim` | Optional, default false: every origin so far is a party claiming its own action or an adversary's loss. Such an item stays reported until an origin outside the party reports it |
+| `first_reported_at`, `corroborated_at` | When the first origin appeared; when the rule was met (null while reported) |
+| `rule` | The rule's id and text, printed (`corroborate-1: two independent origins, or one official source within its remit`) |
+
+The linter checks the shape and these rules as errors when the member is present:
+- `corroborated` on origins needs `origins` of 2 or more; on official it needs `official`.
+- A party claim counts as corroborated only with 2 or more origins.
+- `corroborated_at` is not before `first_reported_at` and not after `published_at`.
+
+No field yet marks an item as an event report, so the member's absence is not noted. It is counted in the coverage
+line. Wake and Cordon adopt it first (official issuers, no counting), then Watchfloor's feed stories.
+
+**Admiralty credibility 1 (kit 0.6.2).** Credibility 1 is "confirmed by other sources" (`vocab/grading.json`). An
+item that grades a source 1 while all its sources sit in one independence group is warned to grade it 2 at most:
+a lone State Department advisory is a reliable source (A) that nothing has confirmed (A2). A warning, not an error.
 
 **Zones (kit 0.6.1, D4).** A subject of kind `zone` (`watchfloor:zone:11_Iran_Red_Sea`, `context:zone:...`,
 `vis:zone:...`, a Vis station suffix such as `-UKOO` allowed) names a key in the shared zone list,

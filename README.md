@@ -116,6 +116,23 @@ more-context `6bedddb`) and checked against Watchfloor's live feed. A `subject_i
 the list, or a retired one, is a warning. `vocab.zones()`, `retired_zones()`, `zone()`; JS `zoneName()`. No feed
 sends zone subjects yet, so no feed's lint changes.
 
+**0.6.2 (18 Nov 2026): corroboration (D11) and four fixes from the 15 Nov kit review.** Additive: no feed's lint
+gains an error (checked on the 16 registry feeds as read on 18 Nov 2026).
+- **`corroboration` (D11):** an optional member for event items, "reported, then corroborated". The linter checks its
+  shape and rules when present, and coverage counts it. The vocabulary is `corroboration_state` and
+  `corroboration_basis` in `vocab/enums.json` 1.2.
+- **M1, language key:** the kit repo is public, so `language_key` should be its page
+  (`contract.LANGUAGE_KEY_URL`). A vendored copy draws a warning. Five feeds point at copies today: Context, COP,
+  Noisefloor, Vigil and Watchfloor.
+- **M4, Admiralty credibility 1:** a grade of 1 on an item with one independence group draws a warning, "grade it 2
+  at most". Today that is 959 items on Cordon, 195 on Elements and 105 on Headwind.
+- **M5, linter labels:** each row now reads "the fields it needs". The header says the check is structural, and
+  standards 4, 7 and 8 print `n/a` when the files hold no judgments, updates or forecasts to check.
+- **G3, confidence:** `confidence.method_scored(scores, program)` reads Verdict's `scores.json`, so a program with a
+  scored record (Verdict's `skill_min_n`, 30) can reach High. No program has one yet.
+- The fixtures link the public key; the 2.1 example's KEV item is graded A2 and corroborated by its issuer, and the
+  strike is a reported party claim.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
