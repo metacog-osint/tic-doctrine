@@ -2,6 +2,7 @@
 
 import copy
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -10,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from tic_doctrine import confidence, contract, likelihood, lint, registers, tips, vocab, withhold  # noqa: E402
+from tic_doctrine import CONTRACT_REV, confidence, contract, likelihood, lint, registers, tips, vocab, withhold  # noqa: E402
 from tic_doctrine.confidence import Evidence  # noqa: E402
 
 GOOD = json.loads((ROOT / "tests" / "fixtures" / "good.geojson").read_text(encoding="utf-8"))
@@ -524,6 +525,316 @@ class Withhold(unittest.TestCase):
             out = withhold.counts(log)
             self.assertEqual(out["months"][0]["total"], 1)
             self.assertNotIn("named official", json.dumps(out))
+
+
+GOOD21_PATH = ROOT / "tests" / "fixtures" / "good-2.1.geojson"
+GOOD21 = json.loads(GOOD21_PATH.read_text(encoding="utf-8"))
+
+
+def _by_id(doc, iid):
+    return copy.deepcopy(next(f for f in doc["features"] if f["properties"]["id"] == iid))
+
+
+class Revision21(unittest.TestCase):
+    """Kit 0.6.0, contract revision 2.1: new fields are optional; their shape is an error, their absence a notice."""
+
+    def errors(self, item, rev=None):
+        return " | ".join(m for s, sev, m in contract.check(item, rev=rev) if sev == "error")
+
+    def notices(self, item, rev=None):
+        return [m for s, sev, m in contract.check(item, rev=rev) if s == contract.REVISION]
+
+    def test_the_old_fixture_still_passes_with_notices_only(self):
+        rep = lint.lint_files([ROOT / "tests" / "fixtures" / "good.geojson"])
+        self.assertFalse(any(v["error"] for v in rep["standards"].values()), rep)
+        self.assertGreater(rep["standards"]["revision"]["warning"], 0)
+        self.assertEqual(set(rep["coverage"].values()), {0})
+        self.assertEqual(lint.main([str(ROOT / "tests" / "fixtures" / "good.geojson")]), 0, "a notice never fails")
+
+    def test_the_2_1_fixture_is_clean_in_strict_mode(self):
+        self.assertEqual(GOOD21["contract_rev"], "2.1")
+        rep = lint.lint_files([GOOD21_PATH])
+        self.assertFalse(any(v["error"] for v in rep["standards"].values()), rep)
+        self.assertNotIn("revision", rep["standards"], rep["standards"].get("revision"))
+        self.assertEqual(rep["coverage"]["subject_id"], 4)
+        for f in GOOD21["features"]:
+            self.assertEqual(self.errors(f, rev="2.1"), "", f["properties"]["id"])
+
+    def test_each_field_has_its_shape_checked(self):
+        cell = "example-2026-10-29-cell-841f"
+        cases = [
+            ("last_change", "up", "last_change='up' not in"),
+            ("last_change_at", None, "needs last_change_at"),
+            ("last_change_at", "2026-10-31T00:00:00Z", "last_change_at is later than published_at"),
+            ("last_change_at", "yesterday", "last_change_at='yesterday'"),
+            ("event_start", "2026-10-29", "event_start='2026-10-29' is not ISO 8601"),
+            ("event_end", "2026-10-28T00:00:00Z", "event_end is before event_start"),
+            ("event_start", "2026-10-29T06:00:00Z", "needs event_start at midnight UTC"),
+            ("event_time_precision", "week", "event_time_precision='week' not in"),
+            ("subject_id", "example cell", "no spaces"),
+            ("subject_id", "other:cell:841f", "starting 'example:'"),
+            ("subject_id", "example-cell", "program:kind:key"),
+            ("signal", 31, "signal must be an object"),
+            ("signal", {"value": 1}, "signal.name missing"),
+            ("signal", {"name": "x", "value": float("nan")}, "signal.value must be a finite number"),
+            ("signal", {"name": "x", "value": True}, "signal.value must be a finite number"),
+            ("signal", {"name": "x", "value": 1, "tail": "up"}, "signal.tail='up'"),
+            ("signal", {"name": "x", "value": 1, "baseline_n": -1}, "signal.baseline_n"),
+            ("signal", {"name": "x", "value": 1, "exceedance": 1.2}, "signal.exceedance must be a share"),
+            ("signal", {"name": "x", "value": 1, "baseline_n": 28, "exceedance": 0.01}, "smallest is 1 in 29"),
+            ("sea_areas", ["strait-of-hormuz"], "not in the kit's gazetteer"),
+            ("sea_areas", "gulf-of-finland", "sea_areas must be a list"),
+            ("place_basis", "nearby", "place_basis='nearby' not in"),
+        ]
+        for key, value, needle in cases:
+            f = _by_id(GOOD21, cell)
+            if value is None:
+                f["properties"].pop(key)
+            else:
+                f["properties"][key] = value
+            self.assertIn(needle, self.errors(f), (key, value))
+        f = _by_id(GOOD21, cell)
+        f["properties"].pop("last_change")
+        self.assertIn("last_change_at without last_change", self.errors(f))
+        f = _by_id(GOOD21, cell)
+        f["properties"].pop("event_start"), f["properties"].pop("event_end")
+        self.assertIn("event_time_precision without event_start", self.errors(f))
+        f = _by_id(GOOD21, cell)
+        f["properties"]["baseline_ref"]["flag_rate"] = 2
+        self.assertIn("flag_rate must be a share", self.errors(f))
+        f = _by_id(GOOD21, cell)
+        f["properties"]["sources"][0]["lane"] = ""
+        self.assertIn("sources[0].lane", self.errors(f))
+        f = _by_id(GOOD21, cell)
+        f["properties"]["last_change"], f["properties"]["last_change_at"] = "none", None
+        f["properties"].pop("last_change_at")
+        self.assertEqual(self.errors(f), "", "none needs no time")
+
+    def test_absence_is_a_notice_never_an_error(self):
+        for f in GOOD21["features"]:
+            f = copy.deepcopy(f)
+            for k in contract.REVISION_FIELDS:
+                f["properties"].pop(k, None)
+            self.assertEqual(self.errors(f, rev="2.1"), "", f["properties"]["id"])
+        cell = _by_id(GOOD, "example-2026-10-29-cell-841f")
+        got = " | ".join(self.notices(cell))
+        for needle in ("last_change absent", "event_start absent", "subject_id absent", "signal absent on an anomaly",
+                       "sea_areas absent", "place_basis absent"):
+            self.assertIn(needle, got)
+        self.assertTrue(all(m.startswith("rev 2.1: ") for m in self.notices(cell)))
+        self.assertTrue(all(sev == "warning" for s, sev, m in contract.check(cell) if s == contract.REVISION))
+
+    def test_a_subject_id_with_a_date_is_a_notice(self):
+        f = _by_id(GOOD21, "example-2026-10-29-cell-841f")
+        f["properties"]["subject_id"] = "example:cell:841f:2026-10-29"
+        self.assertEqual(self.errors(f), "")
+        self.assertIn("rev 2.1: subject_id carries a date: it names the thing read, not the reading", self.notices(f))
+        f["properties"]["subject_id"] = f["properties"]["id"]        # a dated id that is stable is its own subject
+        self.assertEqual(self.notices(f), [])
+
+    def test_data_as_of_after_publication_is_an_error_only_when_the_feed_states_2_1(self):
+        f = _by_id(GOOD21, "example-kev-2026-10-30")
+        f["properties"]["data_as_of"] = "2026-10-30T07:00:00Z"
+        self.assertEqual(self.errors(f), "")
+        self.assertTrue(any("data_as_of is later than published_at" in m for m in self.notices(f)))
+        self.assertIn("data_as_of is later than published_at", self.errors(f, rev="2.1"))
+
+    def test_the_2_1_meaning_of_anomaly_is_noted_not_enforced(self):
+        def notes(**props):
+            f = _by_id(GOOD21, "example-2026-10-29-cell-841f")
+            for k, v in props.items():
+                if v is None:
+                    f["properties"].pop(k, None)
+                else:
+                    f["properties"][k] = v
+            self.assertEqual(self.errors(f), "")
+            return " | ".join(self.notices(f))
+        self.assertEqual(notes(), "")
+        self.assertIn("flag_rate is over 5%", notes(baseline_ref={"id": "b", "window": "28d", "type": "rolling",
+                                                                  "flag_rate": 0.117}))
+        self.assertIn("no signal and no rise", notes(signal=None, last_change="none", last_change_at=None))
+        self.assertIn("raised more than 72 hours ago", notes(signal=None, last_change_at="2026-10-26T00:00:00Z"))
+        self.assertNotIn("72 hours", notes(signal=None, last_change_at="2026-10-28T00:00:00Z"))
+        self.assertIn("event ended more than 72 hours", notes(event_start="2026-10-01T00:00:00Z",
+                                                              event_end="2026-10-03T00:00:00Z"))
+
+    def test_the_feed_header(self):
+        h = {k: v for k, v in GOOD21.items() if k != "features"}
+        self.assertEqual(contract.check_header(h), [])
+        self.assertEqual(lint.check_header, contract.check_header)
+        bad = dict(h, contract_rev="3.0", kit="latest")
+        msgs = " | ".join(m for s, sev, m in contract.check_header(bad) if sev == "error")
+        self.assertIn("contract_rev='3.0'", msgs)
+        self.assertIn("kit='latest'", msgs)
+        old = {k: v for k, v in h.items() if k not in ("contract_rev", "kit", "health")}
+        self.assertEqual({(s, sev) for s, sev, m in contract.check_header(old)}, {("revision", "warning")})
+
+    def test_health_shapes_live_today_are_notices_and_errors_under_2_1(self):
+        lane = {"state": "fresh", "checked_at": "2026-11-16T05:45:30Z", "last_ok": "2026-11-16T05:45:30Z"}
+        live = {"nasa-black-marble": dict(lane, state="failed"),          # Blackout, 16 Nov 2026
+                "usgs-earthquakes": {k: v for k, v in lane.items() if k != "state"},   # Elements: no state
+                "census-trade": dict(lane, data_as_of="2026-09-30"),        # Headwind: a date, not a time
+                "gdelt": dict(lane, failures="two"), "x": "up"}
+        loose = contract.check_health(live)
+        self.assertEqual({(s, sev) for s, sev, m in loose}, {("revision", "warning")})
+        self.assertEqual(len(loose), 5)
+        strict = contract.check_health(live, strict=True)
+        self.assertEqual({sev for s, sev, m in strict}, {"error"})
+        self.assertEqual(contract.check_health({"a": lane}, strict=True), [])
+        self.assertEqual(contract.check_health({"a": {**lane, "last_ok": None, "state": "never", "vigil_extra": 1}},
+                                               strict=True), [], "other keys are allowed; last_ok may be null")
+        self.assertTrue(contract.check_health(["a"], strict=True))
+        h = dict({k: v for k, v in GOOD21.items() if k != "features"}, health=live)
+        self.assertTrue(any(sev == "error" for s, sev, m in contract.check_header(h)))
+        h.pop("contract_rev")
+        self.assertFalse(any(sev == "error" for s, sev, m in contract.check_header(h)))
+
+    def test_health_report_converts_to_the_contract_shape(self):
+        from tic_doctrine import health
+        self.assertEqual(set(health.STATES), vocab.enum("health_state"))
+        report = {"checked_at": "2026-11-18T12:00:00Z", "sources": {
+            "a": {"state": "fresh", "latest": "2026-11-18T11:00:00Z", "last_ok": "2026-11-18T12:00:00Z"},
+            "b": {"state": "failing", "error": "HTTP 503", "last_ok": "2026-11-17T00:00:00Z"},
+            "c": {"state": "never", "note": "no probe defined", "last_ok": None}}}
+        out = health.feed_health(report, previous={"b": {"failures": 2}})
+        self.assertEqual(contract.check_health(out, strict=True), [])
+        self.assertEqual((out["a"]["data_as_of"], out["a"]["failures"]), ("2026-11-18T11:00:00Z", 0))
+        self.assertEqual((out["b"]["last_error"], out["b"]["failures"]), ("HTTP 503", 3))
+        self.assertEqual(out["c"]["detail"], "no probe defined")
+
+    def test_the_linter_counts_notices_per_feed_and_reports_coverage(self):
+        doc = copy.deepcopy(GOOD21)
+        doc["features"][1]["properties"]["subject_id"] = doc["features"][0]["properties"]["subject_id"]
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "feed.geojson"
+            path.write_text(json.dumps(doc), encoding="utf-8")
+            rep = lint.lint_files([path])
+        self.assertFalse(any(v["error"] for v in rep["standards"].values()))
+        self.assertEqual(rep["standards"]["revision"]["examples"],
+                         ["feed.geojson: 1 of 4 items: rev 2.1: a subject_id shared by two or more items of one feed "
+                          "(history keeps each under its own id)"])
+
+    def test_event_interval(self):
+        def span(**p):
+            got = contract.event_interval(p)
+            return got and tuple(t and t.strftime("%Y-%m-%dT%H:%M:%SZ") for t in got)
+        asof = "2026-11-16T05:45:30Z"
+        self.assertIsNone(span(data_as_of=asof))
+        self.assertEqual(span(event_start="2026-11-18T14:00:00Z", event_end="2026-11-20T22:00:00Z", data_as_of=asof),
+                         ("2026-11-18T14:00:00Z", "2026-11-20T22:00:00Z"))      # Cordon's TFR
+        self.assertEqual(span(event_start="2026-11-10T19:45:00Z", data_as_of=asof),
+                         ("2026-11-10T19:45:00Z", asof))                         # Blackout: ongoing at the last look
+        self.assertEqual(span(event_start="2026-11-18T22:50:00Z", data_as_of=asof),
+                         ("2026-11-18T22:50:00Z", "2026-11-18T22:50:00Z"))       # Orbit: a scheduled launch
+        self.assertEqual(span(event_start="2026-11-18T22:00:00Z", event_time_precision="hour", data_as_of=asof),
+                         ("2026-11-18T22:00:00Z", "2026-11-18T23:00:00Z"))
+        self.assertEqual(span(event_start="2026-11-15T00:00:00Z", event_end="2026-11-15T00:00:00Z",
+                              event_time_precision="day", data_as_of=asof),
+                         ("2026-11-15T00:00:00Z", "2026-11-16T00:00:00Z"))       # one whole day
+        self.assertEqual(span(event_start="2026-07-01T00:00:00Z", event_end="2026-12-01T00:00:00Z",
+                              event_time_precision="month", data_as_of=asof),
+                         ("2026-07-01T00:00:00Z", "2027-01-01T00:00:00Z"))       # Undertow's H2 2026
+        self.assertEqual(span(event_end="2026-11-20T22:00:00Z", data_as_of=asof), (None, "2026-11-20T22:00:00Z"))
+
+    def test_vocabulary_schema_and_browser_module_agree(self):
+        from tic_doctrine import geo
+        e = vocab.load("enums")
+        self.assertEqual(e["version"], "1.1")
+        for name in ("last_change", "event_time_precision", "place_basis", "signal_tail", "health_state", "contract_rev"):
+            self.assertTrue(e[name]["basis"] and e[name]["values"], name)
+        self.assertIn(CONTRACT_REV, vocab.enum("contract_rev"))
+        import subprocess
+        for tool in ("build_schema.py", "build_js.py"):
+            r = subprocess.run([sys.executable, str(ROOT / "tools" / tool), "--check"], capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, r.stdout)
+        schema = json.loads((ROOT / "schema" / "feed-item-v2.schema.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(schema["properties"]["sea_areas"]["items"]["enum"]), geo.sea_slugs())
+        for k in contract.REVISION_FIELDS:
+            self.assertIn(k, schema["properties"])
+        self.assertEqual(sorted(schema["$defs"]["feed_header"]["properties"]["health"]["additionalProperties"]
+                                ["properties"]), sorted(contract.HEALTH_KEYS))
+
+
+class Seas(unittest.TestCase):
+    """Kit 0.6.0: the sea gazetteer (geo/seas.json, Natural Earth marine areas) and countries by overlap."""
+
+    def test_the_gazetteer(self):
+        from tic_doctrine import geo
+        doc = json.loads(geo.SEAS.read_text(encoding="utf-8"))
+        self.assertIn("Natural Earth", doc["source"])
+        self.assertIn("v5.1.2", doc["url"])
+        self.assertEqual(doc["licence"], "Public domain (Natural Earth)")
+        slugs = [s["slug"] for s in doc["seas"]]
+        self.assertEqual(len(slugs), len(set(slugs)))
+        self.assertTrue(all(re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", s) for s in slugs), slugs)
+        for slug in ("persian-gulf", "gulf-of-oman", "red-sea", "bab-el-mandeb", "gulf-of-aden", "arabian-sea",
+                     "black-sea", "baltic-sea", "south-china-sea", "taiwan-strait", "strait-of-malacca",
+                     "north-atlantic-ocean", "south-pacific-ocean", "indian-ocean"):
+            self.assertIn(slug, slugs)
+        self.assertEqual(geo.sea_name("persian-gulf"), "Persian Gulf")
+        self.assertEqual(geo.sea_name("indian-ocean"), "Indian Ocean")
+        self.assertIsNone(geo.sea_name("strait-of-hormuz"), "Natural Earth has no separate Strait of Hormuz")
+
+    def test_points_at_sea_and_on_land(self):
+        from tic_doctrine import geo
+        for name, lat, lon, want in (("Cordon's tug, Hormuz", 26.376, 56.341, "persian-gulf"),
+                                     ("Gulf of Oman", 24.5, 58.5, "gulf-of-oman"),
+                                     ("Elements' XAVIER-26", -8.1, -160.1, "south-pacific-ocean"),
+                                     ("Red Sea", 20.0, 38.0, "red-sea"), ("Gulf of Aden", 12.5, 48.0, "gulf-of-aden"),
+                                     ("Sargasso Sea", 28.0, -60.0, "sargasso-sea"), ("Fargo", 46.88, -96.79, None),
+                                     ("Suez Canal", 30.5933, 32.4369, None)):
+            self.assertEqual(geo.sea_at(lat, lon), want, name)
+            got = geo.sea_areas_for_geometry({"type": "Point", "coordinates": [lon, lat]})
+            self.assertEqual(got, [want] if want else [], name)
+        self.assertEqual(geo.sea_areas_for_geometry(None), [])
+
+    def test_the_areas_do_not_overlap(self):
+        from tic_doctrine import geo
+        doubles = []
+        for lat in range(-75, 85, 3):
+            for lon in range(-180, 180, 3):
+                hits = [s["slug"] for s in geo._seas() if s["bbox"][0] <= lon <= s["bbox"][2]
+                        and s["bbox"][1] <= lat <= s["bbox"][3] and any(geo._in_poly(lon, lat, p) for p in s["polygons"])]
+                if len(hits) > 1:
+                    doubles.append((lat, lon, hits))
+        self.assertEqual(doubles, [])
+
+    def test_countries_by_overlap(self):
+        from tic_doctrine import geo
+        gulf = {"type": "Polygon", "coordinates": [[[49, 23], [58, 23], [58, 28], [49, 28], [49, 23]]]}
+        self.assertEqual(geo.countries_for_geometry(gulf), ["IR", "OM", "SA"], "the corners alone")
+        self.assertEqual(geo.countries_overlapping(gulf), ["AE", "BH", "IR", "OM", "QA", "SA"])
+        self.assertEqual(geo.sea_areas_for_geometry(gulf), ["gulf-of-oman", "persian-gulf"])
+        inside = {"type": "Polygon", "coordinates": [[[50, 20], [57, 20], [57, 30], [50, 30], [50, 20]]]}
+        self.assertIn("QA", geo.countries_overlapping(inside), "a country wholly inside the area")
+        line = {"type": "LineString", "coordinates": [[46.0, 24.0], [56.0, 24.0]]}   # Riyadh to Oman, across the UAE
+        self.assertEqual(geo.countries_overlapping(line), ["AE", "OM", "SA"])
+        ring = {"type": "Polygon", "coordinates": [[[49, 23.5], [53, 23.5], [53, 27], [49, 27], [49, 23.5]],
+                                                   [[50.6, 24.3], [51.8, 24.3], [51.8, 26.3], [50.6, 26.3], [50.6, 24.3]]]}
+        got = geo.countries_overlapping(ring)
+        self.assertNotIn("QA", got, "a country wholly inside the shape's hole is not under the shape")
+        self.assertIn("BH", got)
+        self.assertIn("SA", got)
+        self.assertEqual(geo.countries_overlapping({"type": "Point", "coordinates": [-96.79, 46.88]}), ["US"])
+        self.assertEqual(geo.countries_overlapping(None), [])
+
+    def test_the_builder_rules(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import build_seas as bs
+        self.assertEqual(bs.slug("Golfe du Lion"), "golfe-du-lion")
+        self.assertEqual(bs.slug("Øresund"), "oresund")
+        self.assertEqual(bs.slug("Gulf of Anadyr'"), "gulf-of-anadyr")
+        self.assertEqual(bs.slug("Bahía de Campeche"), "bahia-de-campeche")
+        self.assertEqual(bs.display("INDIAN OCEAN"), "Indian Ocean")
+        self.assertEqual(bs.display("Gulf of Aden"), "Gulf of Aden")
+        src = {"features": [
+            {"properties": {"name": "North Atlantic Ocean", "name_en": "Atlantic Ocean", "featurecla": "ocean"},
+             "geometry": {"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]}},
+            {"properties": {"name": "Golfo de California", "name_en": "Gulf of California", "featurecla": "gulf"},
+             "geometry": {"type": "Polygon", "coordinates": [[[5, 5], [6, 5], [6, 6], [5, 6], [5, 5]]]}},
+            {"properties": {"name": None, "featurecla": "generic"},
+             "geometry": {"type": "Polygon", "coordinates": [[[9, 9], [10, 9], [10, 10], [9, 9]]]}}]}
+        self.assertEqual([s["slug"] for s in bs.build(src)], ["gulf-of-california", "north-atlantic-ocean"])
 
 
 class Vendoring(unittest.TestCase):

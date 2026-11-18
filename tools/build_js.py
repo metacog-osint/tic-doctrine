@@ -38,6 +38,10 @@ def block() -> str:
             k: {"name": v["name"], "values": v["values"]}
             for k, v in vocab("grading")["response_stage"]["ladders"].items()
         },
+        "last_change": vocab("enums")["last_change"]["values"],
+        "place_basis": vocab("enums")["place_basis"]["values"],
+        "seas": {s["slug"]: s["name"]
+                 for s in json.loads((ROOT / "geo" / "seas.json").read_text(encoding="utf-8"))["seas"]},
     }
     return f"{BEGIN}\nexport const VOCAB = {json.dumps(data, indent=2, ensure_ascii=False)};\n{END}"
 
