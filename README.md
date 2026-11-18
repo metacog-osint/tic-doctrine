@@ -77,6 +77,9 @@ Joey0609/notams (MIT), and Internet Archive copies of FAA TFRs and NGA warnings 
 (COSMIC-2 limb S4, ground ROTI), satellite-sensor interference lanes and sun outages; Orbit's TIP reentry predictions,
 listed orbit changes, GEO region, new-payload paths and Secure World Foundation history, with their sources' terms.
 Orbit's launch lines stay until Launch takes the schedule and ledger.
+0.5.12 (18 Nov 2026): Blackout's registry row names its newest lanes: US ground stops from the FAA's ATCSCC, GitHub's
+status feed, and outages the public and the press report (Bluesky post counts, GDELT headline counts), with each
+source's terms word for word from Blackout's source register.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
