@@ -140,6 +140,10 @@ and stamped the wall clock, and the contract check "last_change_at is later than
 every Blackout deploy on 18 Nov 2026 from 22:14 UTC until Blackout passed `--now` (PR #8). `--now` still wins.
 `history.run_time(feed)`.
 
+**0.6.4 (18 Nov 2026): Orbit's registry row names the GEO page.** `owns` adds the GEO page (globe, rendezvous and
+proximity pairs, callouts and the belt board), which moved from Noisefloor on 18 Nov 2026; Noisefloor's row already
+named no GEO lane. Registry text only.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
