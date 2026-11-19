@@ -133,6 +133,10 @@ gains an error (checked on the 16 registry feeds as read on 18 Nov 2026).
 - The fixtures link the public key; the 2.1 example's KEV item is graded A2 and corroborated by its issuer, and the
   strike is a reported party claim.
 
+**0.6.4 (19 Nov 2026): code licences in the program register.** `vocab/programs.json` `terms` now say "code GNU
+AGPL-3.0" for Blackout, Cordon, Elements, Headwind and Relief, which are AGPL-3.0 since 19 Nov 2026 (they read "code
+MIT"). Blackout's feed takes its licence line from here, so it changes at Blackout's next kit sync. No code change.
+
 **0.6.3 (18 Nov 2026): `history` takes the feed's own time.** Without `--now`, the run's time is the feed's
 `generated_at` (the wall clock when the feed has none, or when it is later than the clock), so `first_seen` and a
 filled `last_change_at` are never later than the items' `published_at`. Before, the step ran seconds after the build
