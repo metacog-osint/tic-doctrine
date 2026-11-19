@@ -133,6 +133,13 @@ gains an error (checked on the 16 registry feeds as read on 18 Nov 2026).
 - The fixtures link the public key; the 2.1 example's KEV item is graded A2 and corroborated by its issuer, and the
   strike is a reported party claim.
 
+**0.6.3 (18 Nov 2026): `history` takes the feed's own time.** Without `--now`, the run's time is the feed's
+`generated_at` (the wall clock when the feed has none, or when it is later than the clock), so `first_seen` and a
+filled `last_change_at` are never later than the items' `published_at`. Before, the step ran seconds after the build
+and stamped the wall clock, and the contract check "last_change_at is later than published_at" failed: it stopped
+every Blackout deploy on 18 Nov 2026 from 22:14 UTC until Blackout passed `--now` (PR #8). `--now` still wins.
+`history.run_time(feed)`.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
