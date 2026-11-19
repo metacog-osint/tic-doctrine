@@ -101,6 +101,7 @@
                "satellite catalog changes between Orbit's own readings of GCAT, and objects in orbit by owner code",
                "listed orbit changes of watched satellites (Space-Track)",
                "the GEO region: objects near geostationary orbit, arrivals, departures and quiet payloads (Space-Track)",
+               "the GEO page: a globe of the GEO region, rendezvous and proximity pairs, callouts, and the belt board (drift, orbit changes and close pairs of different owners in CelesTrak's active GEO group), moved from Noisefloor on 18 Nov 2026",
                "paths of payloads launched in the last 30 days (CelesTrak)",
                "anti-satellite test and rendezvous and proximity operations history (Secure World Foundation)"]
     },
