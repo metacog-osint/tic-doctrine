@@ -423,6 +423,33 @@ class FillLastChange(unittest.TestCase):
             self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["features"][0]["properties"]["last_change"],
                              "none")
 
+    def test_without_now_the_run_takes_the_feeds_own_time_and_the_contract_check_passes(self):
+        """Kit 0.6.3. Blackout, 18 Nov 2026: the history step ran seconds after the build set published_at, stamped
+        a new item's last_change_at with the wall clock, and the contract check failed every deploy."""
+        from tic_doctrine import contract
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            path = tmp / "feed.geojson"
+            for gen, ids in (("2026-11-14T02:00:00Z", ["p:a:1"]), ("2026-11-14T04:00:00Z", ["p:a:1", "p:a:2"])):
+                f = feed(*(item(i, published_at=gen) for i in ids), generated_at=gen)
+                path.write_text(json.dumps(f), encoding="utf-8")
+                with redirect_stdout(io.StringIO()):
+                    self.assertEqual(history.main([str(path), "--dir", str(tmp / "h"), "--fill-last-change"]), 0)
+            out = json.loads(path.read_text(encoding="utf-8"))
+            p = {x["properties"]["id"]: x["properties"] for x in out["features"]}
+            self.assertEqual((p["p:a:2"]["last_change"], p["p:a:2"].get("last_change_at")), ("new", "2026-11-14T04:00:00Z"))
+            self.assertEqual(p["p:a:1"]["last_change"], "none")
+            for x in out["features"]:
+                errors = [m for _, lvl, m in contract.check(x) if lvl == "error"]
+                self.assertEqual(errors, [], x["properties"]["id"])
+
+    def test_the_run_time_is_the_feeds_unless_it_is_missing_or_ahead_of_the_clock(self):
+        wall = datetime(2026, 11, 18, 22, 14, tzinfo=timezone.utc)
+        self.assertEqual(history.run_time({"generated_at": "2026-11-18T22:13:50Z"}, wall),
+                         datetime(2026, 11, 18, 22, 13, 50, tzinfo=timezone.utc))
+        self.assertEqual(history.run_time({}, wall), wall)
+        self.assertEqual(history.run_time({"generated_at": "2026-11-19T00:00:00Z"}, wall), wall)
+
 
 if __name__ == "__main__":
     unittest.main()
