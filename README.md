@@ -159,6 +159,10 @@ country (ITU's share of people online times the population, via the World Bank's
 beside each country outage and in the trend series, never users affected. `terms` adds the ITU/World Bank terms word for
 word from Blackout's doctrine/sources.json. Registry text only.
 
+**0.6.7 (20 Nov 2026): Blackout's registry row names Viasat MSS.** `owns` adds Viasat MSS to the providers' own
+status feeds (Viasat's page for its mobile satellite services, the one satellite operator beyond Starlink found with a
+readable feed). `terms` adds its licence word for word from Blackout's doctrine/sources.json. Registry text only.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
