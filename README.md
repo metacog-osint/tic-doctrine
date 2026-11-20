@@ -148,6 +148,12 @@ every Blackout deploy on 18 Nov 2026 from 22:14 UTC until Blackout passed `--now
 proximity pairs, callouts and the belt board), which moved from Noisefloor on 18 Nov 2026; Noisefloor's row already
 named no GEO lane. Registry text only.
 
+**0.6.5 (21 Nov 2026): Blackout's registry row names NetBlocks and the trend series.** `owns` adds NetBlocks' reports
+(from its public Bluesky posts: times, links, parsed fields and short excerpts) and the daily outage series per country
+(IODA, Cloudflare Radar and NetBlocks, for 7, 14 and 30-day trends). `terms` adds NetBlocks' terms word for word from
+Blackout's doctrine/sources.json: NetBlocks publishes no reuse licence (all rights reserved), so Blackout never
+republishes a post's full text. Registry text only.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
