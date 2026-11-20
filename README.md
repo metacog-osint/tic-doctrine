@@ -154,6 +154,11 @@ named no GEO lane. Registry text only.
 Blackout's doctrine/sources.json: NetBlocks publishes no reuse licence (all rights reserved), so Blackout never
 republishes a post's full text. Registry text only.
 
+**0.6.6 (21 Nov 2026): Blackout's registry row names internet-user exposure.** `owns` adds internet users per
+country (ITU's share of people online times the population, via the World Bank's WDI) as an upper bound on exposure
+beside each country outage and in the trend series, never users affected. `terms` adds the ITU/World Bank terms word for
+word from Blackout's doctrine/sources.json. Registry text only.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
