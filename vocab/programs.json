@@ -71,6 +71,7 @@
                "OONI censorship measurements by country, with Citizen Lab's URL test lists as context",
                "Cloudflare Radar outages Cloudflare annotates (with the cause Cloudflare states) and its verified traffic anomalies, by country",
                "Cloudflare Radar BGP origin hijacks and route leaks, counted by country; the widely seen ones as items",
+               "satellite networks' traffic drops against their own weekday-matched normal (Cloudflare Radar traffic by network: counted satellite ASNs worldwide, Starlink in its top countries)",
                "cloud, software and satellite providers' own status feeds (AWS, Google Cloud, Google Workspace, Azure, Microsoft 365, Apple, Cloudflare, Akamai, Slack, Zoom, Starlink Statuspage, GitHub, Viasat MSS)",
                "power: the Zaporizhzhya NPP's off-site power as the IAEA's numbered updates state it; US county outages at ODIN's reporting utilities; US balancing authorities' demand against their own day-ahead forecasts (EIA-930); NASA Black Marble night lights over watched cities; base rates for US state outages from ORNL EAGLE-I's outage history (2018-2025)",
                "Access Now's STOP shutdown history by country, as context",
