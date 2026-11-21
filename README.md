@@ -167,6 +167,8 @@ readable feed). `terms` adds its licence word for word from Blackout's doctrine/
 networks' traffic drops against their own weekday-matched normal (Blackout's BO-IND-21, read from Cloudflare Radar
 traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0. Registry text only.
 
+**0.6.9 (20 Nov 2026): Relief's registry row matches relief-0.3.** `status_note` and `owns` name the HDX HAPI and ReliefWeb lanes (IPC stays planned); `terms` adds the HAPI and ReliefWeb terms. Registry text only.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
