@@ -1,0 +1,7 @@
+tic-doctrine: Copyright © 2026 Thomas Brummer, The Intelligence Company.
+The doctrine kit is licensed under the MIT License (LICENSE).
+
+Files in this repository with their own terms:
+
+- geo/   Country, subdivision and point files built from Natural Earth (public domain); each file's own "source" field
+         says which Natural Earth dataset it comes from.
