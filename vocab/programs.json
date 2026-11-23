@@ -144,7 +144,7 @@
     },
     {"id": "fieldcast", "name": "FieldCast", "status": "planned", "family": "Spectrum and space",
      "owns": ["GNSS ionospheric disturbance (ROTI) from public base stations", "NANU"]},
-    {"id": "tempo", "name": "Tempo", "status": "planned", "family": "Military activity",
+    {"id": "deploy", "name": "Deploy", "status": "planned", "family": "Military activity",
      "owns": ["military flights from ADS-B", "exercises and deployments"]},
     {"id": "readout", "name": "Readout", "status": "planned", "family": "Statements",
      "owns": ["official statements (ministries, militaries, heads of state)", "UN Security Council votes", "AU communiques"]},
