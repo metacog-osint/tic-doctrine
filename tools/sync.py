@@ -1,7 +1,7 @@
 """Copy the kit into a program repo as doctrine/kit/ (a vendored, read-only copy).
 
-    python tools/sync.py [local path]          # copy, write doctrine/kit/KIT.json
-    python tools/sync.py [local path] --check  # exit 1 if the copy was edited or is behind
+    python tools/sync.py ../noise-floor          # copy, write doctrine/kit/KIT.json
+    python tools/sync.py ../noise-floor --check  # exit 1 if the copy was edited or is behind
 
 Repos differ in language and some have no git remote, so a plain copy with a
 manifest of hashes is the simplest way to share one kit at $0. Programs never
