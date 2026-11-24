@@ -1,0 +1,91 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "relief",
+ "measured_at": "2026-11-24T03:32:48Z",
+ "stores": [
+  {
+   "id": "relief-history",
+   "store": "Appeals and notices history",
+   "location": {
+    "value": {
+     "kind": "git",
+     "where": "github.com/metacog-osint/relief: history"
+    },
+    "status": "measured",
+    "how": "GitHub contents API"
+   },
+   "schema": {
+    "value": "files: .jsonl.gz, .jsonl, .json",
+    "status": "measured",
+    "how": "12 files at measured_at"
+   },
+   "method_version": {
+    "value": "relief-0.3",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:relief",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": "about every 1.9 h",
+    "status": "measured",
+    "how": "median gap between the last 71 commits touching the store"
+   },
+   "first_date": {
+    "value": "2026-11-16",
+    "status": "measured",
+    "how": "first commit touching this path; moved paths start at the move"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
+   }
+  },
+  {
+   "id": "relief-archive-raw",
+   "store": "Raw source archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "76 assets, 67.8 MB"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "raw capture; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:relief",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": "about every 2.4 h",
+    "status": "measured",
+    "how": "median gap between 38 asset upload times; replaced assets show only their latest time"
+   },
+   "first_date": {
+    "value": "2026-11-19",
+    "status": "measured",
+    "how": "earliest surviving asset upload"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+   }
+  }
+ ]
+}
