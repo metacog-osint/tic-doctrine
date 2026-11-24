@@ -1,0 +1,217 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "wake",
+ "measured_at": "2026-11-24T03:32:48Z",
+ "stores": [
+  {
+   "id": "wake-history",
+   "store": "Transit and incident history",
+   "location": {
+    "value": {
+     "kind": "git",
+     "where": "private GitHub repository, git tree"
+    },
+    "status": "measured",
+    "how": "GitHub contents API"
+   },
+   "schema": {
+    "value": "files: .jsonl.gz, .jsonl, .json.gz, .json",
+    "status": "measured",
+    "how": "15 files at measured_at"
+   },
+   "method_version": {
+    "value": "wake-2.3, wake-2.2, wake-2.4, wake-2.0, wake-2.5",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:wake",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": "about every 2.4 h",
+    "status": "measured",
+    "how": "median gap between the last 33 commits touching the store"
+   },
+   "first_date": {
+    "value": "2026-11-15",
+    "status": "measured",
+    "how": "first commit touching this path; moved paths start at the move"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
+   }
+  },
+  {
+   "id": "wake-ais-raw",
+   "store": "Raw AIS readings",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API"
+   },
+   "schema": {
+    "value": "files: .tar.gz",
+    "status": "measured",
+    "how": "7 assets, 38.2 MB"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "raw capture; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:wake",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-19",
+    "status": "measured",
+    "how": "earliest surviving asset upload"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+   }
+  },
+  {
+   "id": "wake-portwatch-state",
+   "store": "PortWatch state",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API"
+   },
+   "schema": {
+    "value": "files: .json",
+    "status": "measured",
+    "how": "1 assets, 0.1 MB"
+   },
+   "method_version": {
+    "value": "wake-2.3, wake-2.2, wake-2.4, wake-2.0, wake-2.5",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:wake",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-18",
+    "status": "measured",
+    "how": "earliest surviving asset upload"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+   }
+  },
+  {
+   "id": "wake-ais-kv",
+   "store": "Live AIS capture",
+   "location": {
+    "value": {
+     "kind": "key-value",
+     "where": "Cloudflare KV"
+    },
+    "status": "measured",
+    "how": "namespace listed"
+   },
+   "schema": {
+    "value": null,
+    "status": "unverified",
+    "why": "KV contents were not read"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "raw capture; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:wake",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "no write log was read for this store"
+   },
+   "first_date": {
+    "value": null,
+    "status": "unverified",
+    "why": "KV contents were not read"
+   },
+   "independent_copies": {
+    "value": null,
+    "status": "unverified",
+    "why": "KV contents were not compared with the release"
+   }
+  },
+  {
+   "id": "wake-local-state",
+   "store": "Local PortWatch state",
+   "location": {
+    "value": {
+     "kind": "local",
+     "where": "operator-held local storage"
+    },
+    "status": "measured",
+    "how": "named by the program's storage layout"
+   },
+   "schema": {
+    "value": null,
+    "status": "unverified",
+    "why": "not re-read in this pass"
+   },
+   "method_version": {
+    "value": "wake-2.3, wake-2.2, wake-2.4, wake-2.0, wake-2.5",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:wake",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "no write log was read for this store"
+   },
+   "first_date": {
+    "value": null,
+    "status": "unverified",
+    "why": "not re-read in this pass"
+   },
+   "independent_copies": {
+    "value": null,
+    "status": "unverified",
+    "why": "not re-read in this pass"
+   }
+  }
+ ]
+}

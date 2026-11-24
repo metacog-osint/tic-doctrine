@@ -1,0 +1,91 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "elements",
+ "measured_at": "2026-11-24T03:32:48Z",
+ "stores": [
+  {
+   "id": "elements-history",
+   "store": "Hazard history",
+   "location": {
+    "value": {
+     "kind": "git",
+     "where": "github.com/metacog-osint/elements: history"
+    },
+    "status": "measured",
+    "how": "GitHub contents API"
+   },
+   "schema": {
+    "value": "files: .jsonl.gz, .jsonl, .json, .md",
+    "status": "measured",
+    "how": "37 files at measured_at"
+   },
+   "method_version": {
+    "value": "elements-feed-1.1",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:elements",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": "about every 0.5 h",
+    "status": "measured",
+    "how": "median gap between the last 100 commits touching the store"
+   },
+   "first_date": {
+    "value": "2026-11-14",
+    "status": "measured",
+    "how": "first commit touching this path; moved paths start at the move"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
+   }
+  },
+  {
+   "id": "elements-firms-cells",
+   "store": "FIRMS hourly cells",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "github.com/metacog-osint/elements releases: firms-cells-2026-11"
+    },
+    "status": "measured",
+    "how": "GitHub releases API"
+   },
+   "schema": {
+    "value": "files: .json.gz, .csv.gz",
+    "status": "measured",
+    "how": "177 assets, 23.3 MB"
+   },
+   "method_version": {
+    "value": "elements-feed-1.1",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:elements",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-24",
+    "status": "measured",
+    "how": "earliest surviving asset upload"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+   }
+  }
+ ]
+}
