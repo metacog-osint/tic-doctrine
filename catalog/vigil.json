@@ -1,0 +1,49 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "vigil",
+ "measured_at": "2026-11-24T03:32:48Z",
+ "stores": [
+  {
+   "id": "vigil-db",
+   "store": "Vigil database",
+   "location": {
+    "value": {
+     "kind": "database",
+     "where": "Supabase Postgres, us-east-2"
+    },
+    "status": "measured",
+    "how": "read-only SQL"
+   },
+   "schema": {
+    "value": "Postgres, 155 public tables",
+    "status": "measured",
+    "how": "3,314 MB; entity_changelog about 2.72 M rows; iocs about 754 k rows (planner estimates)"
+   },
+   "method_version": {
+    "value": "vigil-feed-1.0",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:vigil",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "no write log was read for this store"
+   },
+   "first_date": {
+    "value": "2026-01-17",
+    "status": "measured",
+    "how": "earliest entity_changelog row; other tables may start elsewhere"
+   },
+   "independent_copies": {
+    "value": null,
+    "status": "unverified",
+    "why": "platform backup settings were not read"
+   }
+  }
+ ]
+}
