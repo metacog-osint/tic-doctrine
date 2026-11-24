@@ -1,0 +1,49 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "watchfloor",
+ "measured_at": "2026-11-24T03:32:48Z",
+ "stores": [
+  {
+   "id": "watchfloor-bucket",
+   "store": "Scores, stories and state",
+   "location": {
+    "value": {
+     "kind": "object-store",
+     "where": "Google Cloud Storage, us-central1"
+    },
+    "status": "measured",
+    "how": "gcloud storage ls and du"
+   },
+   "schema": {
+    "value": "object prefixes: codings, cycles, events, health, relations, state, stories",
+    "status": "measured",
+    "how": "699 MB at measured_at"
+   },
+   "method_version": {
+    "value": "watchfloor-feed-1.3",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:watchfloor",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "no write log was read for this store"
+   },
+   "first_date": {
+    "value": null,
+    "status": "unverified",
+    "why": "needs a full object listing"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; no versioning, and 7-day soft delete is not a separate copy"
+   }
+  }
+ ]
+}

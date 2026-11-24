@@ -1,0 +1,175 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "launch",
+ "measured_at": "2026-11-24T03:32:48Z",
+ "stores": [
+  {
+   "id": "launch-history",
+   "store": "Closure history log",
+   "location": {
+    "value": {
+     "kind": "git",
+     "where": "github.com/metacog-osint/launch: history"
+    },
+    "status": "measured",
+    "how": "GitHub contents API"
+   },
+   "schema": {
+    "value": "files: .json, .txt",
+    "status": "measured",
+    "how": "13 files at measured_at"
+   },
+   "method_version": {
+    "value": "launch-1.0",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:launch",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": "about every 13.1 h",
+    "status": "measured",
+    "how": "median gap between the last 11 commits touching the store"
+   },
+   "first_date": {
+    "value": "2026-11-16",
+    "status": "measured",
+    "how": "first commit touching this path; moved paths start at the move"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
+   }
+  },
+  {
+   "id": "launch-ledger",
+   "store": "Ledger release",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "github.com/metacog-osint/launch releases: ledger"
+    },
+    "status": "measured",
+    "how": "GitHub releases API"
+   },
+   "schema": {
+    "value": "files: .json",
+    "status": "measured",
+    "how": "3 assets, 0.8 MB"
+   },
+   "method_version": {
+    "value": "launch-1.0",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:launch",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-24",
+    "status": "measured",
+    "how": "earliest surviving asset upload"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+   }
+  },
+  {
+   "id": "launch-archive-source",
+   "store": "Raw source archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "2 assets, 0.3 MB"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "raw capture; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:launch",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-19",
+    "status": "measured",
+    "how": "earliest surviving asset upload"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+   }
+  },
+  {
+   "id": "launch-site-files",
+   "store": "Closure notices on the site",
+   "location": {
+    "value": {
+     "kind": "site",
+     "where": "launch.theintelligence.company/data: nms-closures.json, ledger.json"
+    },
+    "status": "measured",
+    "how": "HTTP 200 on both files"
+   },
+   "schema": {
+    "value": "files: .json",
+    "status": "measured",
+    "how": "two files served by the site"
+   },
+   "method_version": {
+    "value": "launch-1.0",
+    "status": "measured",
+    "how": "method_version values on the live feed's items at measured_at; older stored rows may differ"
+   },
+   "licence": {
+    "value": "registry:launch",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "no write log was read for this store"
+   },
+   "first_date": {
+    "value": null,
+    "status": "unverified",
+    "why": "the site does not state a first date"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "at least one copy confirmed here; other copies were not compared"
+   }
+  }
+ ]
+}
