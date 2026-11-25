@@ -1,4 +1,4 @@
-"""Build vocab/zones.json, the suite's shared zone list (decision D4, Tom, 18 Nov 2026), from Watchfloor's catalog.
+"""Build vocab/zones.json, the suite's shared zone list (decision D4, 18 Nov 2026), from Watchfloor's catalog.
 
     python -I tools/build_zones.py path/to/entities.json <commit>
 

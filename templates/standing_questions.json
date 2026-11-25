@@ -1,5 +1,5 @@
 {
-  "status": "proposed 29 Oct 2026; Tom to confirm",
+  "status": "proposed 29 Oct 2026; to be confirmed",
   "questions": [
     { "id": "SQ1", "question": "Is a zone escalating?", "programs": ["Watchfloor", "Context", "Tempo"] },
     { "id": "SQ2", "question": "Is critical infrastructure (PNT, internet, power) being degraded, and where?", "programs": ["Noisefloor", "Blackout", "FieldCast", "Elements"] },
