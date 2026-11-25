@@ -1,6 +1,6 @@
 # Significance of closures and official warnings (tic-significance-0.1, draft)
 
-**Status: draft for review (25 Nov 2026).** Nothing here is built yet. Cordon is under a change freeze to 12 Dec 2026,
+**Status: draft (25 Nov 2026).** Nothing here is built yet. Cordon is under a change freeze to 12 Dec 2026,
 so its part waits until then; COP's part follows Cordon's.
 
 ## Why
@@ -278,18 +278,134 @@ Quotes marked (fetch) were read through a fetch tool and should be checked again
 - The National Weather Service API does not carry the local non-weather alerts, so nothing is gained by widening
   Elements' NWS lane.
 
+## Outside the United States
+
+The method is the same everywhere: cause, rarity and dynamics, events, coincidence, consequence, tier. What changes
+abroad is where the footprints come from, what sets the cause, how rarity is counted and what counts as independent.
+Measured and vetted 25 Nov 2026.
+
+### Air: worldwide NOTAMs, already held
+
+Cordon keeps every NOTAM it pulls from the FAA's NMS-API in a permanent archive (since 18 Nov 2026). The day file for
+19 Nov 2026 holds **49,004 international NOTAMs** under 413 distinct flight-information-region or location codes. Each
+carries an ICAO Q-code whose second and third letters name the subject, which sets the cause the way a US regulation
+number does. Counts on that day, restriction and warning subjects only:
+
+| Q-code subject | Meaning (ICAO) | Count | Cause group |
+|---|---|---|---|
+| RT | temporary restricted area | 3,375 | from the words (security, VIP, hazard, military) |
+| WU | unmanned aircraft | 3,257 | military and test, or scheduled, from the words |
+| RD | danger area active | 1,176 | military and test |
+| RR | restricted area | 967 | military and test, or from the words |
+| RA | airspace reservation | 870 | military and test |
+| WE | exercises | 413 | military and test |
+| WM | missile, gun or rocket firing | 335 | military and test |
+| WH | blasting | 129 | hazard to people |
+| RP | prohibited area | 110 | security, from the words |
+| WD | demolition of explosives | 36 | hazard to people, unless the words say fireworks |
+| WR | radioactive materials or toxic chemicals | 2 | hazard to people |
+
+Examples from that day: a 5 NM prohibited area over the state government palace in Toluca, Mexico (RP); 81 mm mortar
+firing on Japan's Higashi-Fuji range (WM); an airspace closure polygon in the Yekaterinburg region (RT). Words still
+matter: the WD example drawn was a fireworks display in Sabah, Malaysia.
+
+Rarity abroad is counted per Q-code subject and flight-information region, the region taking the place of the US
+state. The FAA's terms say NMS is not the authoritative source for NOTAMs issued outside the United States, so coverage
+may be partial and every item says so (Cordon's `SOURCE_NOTE` already does).
+
+### Sea
+
+NGA's NAVAREA and HYDROPAC warnings (Cordon, have) are the worldwide layer. National coastal warnings were mostly closed
+to scripts on 25 Nov 2026: China's Maritime Safety Administration (where PLA live-fire closures are published)
+answered "ACCESS DENIED", Russia's navigation-warning hosts did not connect, Japan's coast guard is barred by its
+robots file (an existing Cordon decision), Taiwan's port bureau answered "ACCESS DENIED", and no Korean warning feed
+was found. Military firing and exercise areas usually also appear as NOTAMs (WM, WE, RD), so the air layer covers part
+of the gap; that is expected, not measured.
+
+### Ground: civil-protection alerts
+
+CAP's own `category` (Geo, Met, Safety, Security, Rescue, Fire, Health, Env, Transport, Infra, CBRNE, Other) is an
+international, language-neutral cause signal; event names are in the local language and are used second.
+
+| Source | Access | Terms as stated | Lag | Verdict |
+|---|---|---|---|---|
+| Germany federal warning API (warnung.bund.de/api31) | JSON, no key | not found; ask the federal civil protection office (BBK) | minutes | **Build**, once terms are confirmed |
+| Victoria, Australia: VicEmergency events GeoJSON | no key; point and polygon, CAP category, agency | "Creative Common Attribution 3.0 Australia", with a link to the notice and the last update time (search snippet; notice page refused scripts) | under 20 min | **Build**, after the licence page is read |
+| New South Wales Rural Fire Service major incidents | JSON, no key; geometry, alert level | CC BY 4.0 by the RFS's own statement (search result; page behind a challenge) | hours | **Build** |
+| India NDMA Sachet CAP | RSS, no key | per source, not found | minutes | **Build**, terms first |
+| WMO register of alerting authorities (156 CAP sources) | per source | per source | per source | **Build later**, source by source |
+| Canada NAAD archive (Pelmorex) | public archive page; live TCP stream for registered distributors | no reuse licence found | minutes (archive's own claim) | **Build later**, after asking Pelmorex |
+| Taiwan NCDR CAP alerts | needs a member login; 3 s rate limit | not found | | **Build later** (an account) |
+| UK Emergency Alerts past alerts (gov.uk/alerts/past-alerts) | HTML, a few a year | Open Government Licence | | **Build later** (tiny) |
+| Israel Home Front Command | refused outside Israel | not found | | **Don't** |
+| Ukraine air-raid alerts | token on request | not found | | **Don't** for now (an account) |
+| France FR-Alert, Netherlands NL-Alert, Korea | no feed or archive found | | | **Don't** for now |
+
+### National guidance
+
+Cordon reads five governments' advice (US State Department, UK FCDO, Canada, New Zealand, CDC). Add:
+
+- **Japan's foreign ministry overseas-safety open data** (ezairyu.mofa.go.jp/opendata): XML, no key, refreshed every
+  5 minutes, about 20 minutes behind when checked, with country and area codes. Its "spot" notices are local
+  (demonstrations, attacks, unrest in a named city). Free for any use with a source line, per a summary of its terms
+  page; read the page in full before building. **Build.**
+- **Netherlands travel advice API** (opendata.nederlandwereldwijd.nl): XML, no key, colour code per country, changes
+  rarely. CC0 is stated on the government open-data listing, not on the API itself. **Build**, after confirming.
+
+Each government is its own independence group, so advisory changes by several governments in the same week count as
+several lines.
+
+### Media
+
+Local media is the coincidence line abroad: Context's and Watchfloor's stories, GDELT's translated headline counts for
+a place against its own 30-day level (as Blackout already counts), and the local press found by place name. ReliefWeb's
+API now needs an approved app name, and its terms allow "personal, non-commercial use, without any right to resell or
+redistribute", so it would give links and headlines only.
+
+### Consequence
+
+GHSL population works worldwide (European Commission reuse notice: "reuse is authorised, provided the source is
+acknowledged"). Listed sites are harder: the US lists (MIRTA, EPA, EIA) have no worldwide equivalent found yet, HIFLD
+went offline in 2025, and OpenStreetMap is ODbL, so it is used to check places, not published as a layer. NGA's World
+Port Index covers ports, and Wake's chokepoints cover sea lanes.
+
+### What changes in the rules
+
+- **Rarity is counted per source and region, never per country alone.** Coverage differs widely; a country with no
+  open feed is not quiet, and items say which sources were read.
+- **Independence:** where the press is state-controlled, state media and the government's own notices are one line.
+- **In closed states the closure is the signal:** a sudden prohibited area, an unusually large or long danger area, a
+  closure along a border or coast, counted against the same region's own NOTAM history.
+- **Codes before words:** ICAO Q-codes, NAVAREA categories and CAP categories first; word lists per language later,
+  starting with the languages of the regions the suite watches most.
+- **Blocked sources stay unread.** No source is read round a block, and a restriction is quoted from the source's own
+  terms before a source is dropped.
+
+### Order
+
+1. Cause, rarity and dynamics on international NOTAMs, from the archive Cordon already keeps (no new source).
+2. Japan's and the Netherlands' travel advice in Cordon.
+3. Civil-protection alerts: Germany, Victoria, New South Wales, India, then the WMO list.
+4. Media matching by place name in COP.
+
+Decisions that need the owner: an account or app name for Taiwan's NCDR and ReliefWeb; whether to ask for an
+alerts.in.ua token; notes asking Pelmorex and BBK about terms.
+
 ## Open questions
 
 1. Should non-weather public alerts from FEMA's IPAWS archive (evacuation, shelter in place, civil danger, hazardous
    materials) live in Cordon (recommended: they are official warnings) or Elements (weather and natural hazards)?
 2. The archive is a day behind. Same-day alerts need FEMA's IPAWS All-Hazards Information Feed, which is free but needs
-   a registration and a Memorandum of Agreement with the IPAWS Office. Apply for it? (An agreement in TIC's name is
-   signed by its owner, not by a program.)
+   a registration and a Memorandum of Agreement with the IPAWS Office. Decided 25 Nov 2026: hold. The agreement text
+   is not published; revisit once it is seen, and after checking whether any IPAWS alert went out for the Iowa case.
 3. Should press attention count as a line? Recommended yes, as one line at most, because the press often knows about a
-   local event before any feed does, as in Iowa. Without it, Iowa is notable, not significant.
+   local event before any feed does. Iowa reaches significant without it (a rare hazard-to-people cause), but many
+   events abroad will have no second official line.
 4. The thresholds in the tier table (1,000 people, 365 days, 10 km and 72 hours for joining) are first guesses to be
    set against the case file. Keep them as defaults until the replay?
 
 ## Versions
 
 - tic-significance-0.1 (25 Nov 2026): this draft.
+- tic-significance-0.1, same day: section on the rest of the world (international NOTAMs, sea, civil-protection
+  alerts, national guidance, media, consequence).
