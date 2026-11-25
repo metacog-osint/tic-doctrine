@@ -14,7 +14,7 @@ drawn on one map (COP) and scored (Verdict).
 | `python/tic_doctrine/` | Likelihood, confidence, contract checks, the tradecraft linter, register checks, source health, withholding counts, tips between programs, the history log (standard library only) |
 | `js/tic-doctrine.js` | The same likelihood, confidence, lifeline, ladder and tip-matching logic for web pages (ES module, no dependencies) |
 | `vocab/programs.json` | The suite registry: every program, its feed, and the datasets it owns |
-| `docs/` | The contract, the reader's language key, the confidence rubric, the sources-and-withholding page, the history log format |
+| `docs/` | The contract, the reader's language key, the confidence rubric, the sources-and-withholding page, the history log format, the significance method for closures and official warnings (draft) |
 | `templates/doctrine/` | A program's registers: requirements, indicators and warning problems, assumptions, function map, sources, method |
 | `tools/` | `sync.py` copies the kit into a program as `doctrine/kit/`; `build_js.py` and `build_schema.py` regenerate from `vocab/` |
 
