@@ -1,7 +1,7 @@
 {
   "vocab": "programs",
   "version": "1.0",
-  "note": "The suite registry (Tom, 1 Nov 2026): every program, its contract-v2 feed, and the datasets it owns. Rule: each dataset is collected once, by the program that owns it; every other program reads the owner's feed (tips, python/tic_doctrine/tips.py) instead of collecting it again. Before adding a collector to a program, check `owns` here. COP's merged snapshot (`bus`) carries every live feed in one file, refreshed every two hours, with stale feeds flagged. fresh_hours and stale_hours match COP's settings. Planned programs list what they will own, so nobody builds it twice in the meantime.",
+  "note": "The suite registry (1 Nov 2026): every program, its contract-v2 feed, and the datasets it owns. Rule: each dataset is collected once, by the program that owns it; every other program reads the owner's feed (tips, python/tic_doctrine/tips.py) instead of collecting it again. Before adding a collector to a program, check `owns` here. COP's merged snapshot (`bus`) carries every live feed in one file, refreshed every two hours, with stale feeds flagged. fresh_hours and stale_hours match COP's settings. Planned programs list what they will own, so nobody builds it twice in the meantime.",
   "bus": {
     "url": "https://cop.theintelligence.company/data/today.geojson",
     "program": "cop",
