@@ -49,10 +49,11 @@
     {
       "id": "cordon", "name": "Cordon", "status": "live", "family": "Notices and advisories",
       "feed": "https://cordon.theintelligence.company/data/feed.geojson", "site": "https://cordon.theintelligence.company/",
-      "terms": "Cordon code GNU AGPL-3.0; content per source", "fresh_hours": 6, "stale_hours": 24,
+      "terms": "Cordon code GNU AGPL-3.0; content per source; Japan Ministry of Foreign Affairs overseas safety open data: Government Standard Terms 2.0, compatible with CC BY 4.0 (free to reuse including commercially, with the source line “出典：外務省 海外安全情報オープンデータ” and the page URL, and a note that the content was edited or processed; never presented as made by the State; terms page ezairyu.mofa.go.jp/html/opendata/support/terms.html, read 25 Nov 2026); Netherlands travel advice: CC0 1.0 as listed on data.overheid.nl (dataset Reisadviezen op nederlandwereldwijd.nl, read 25 Nov 2026), credited to the Ministerie van Buitenlandse Zaken", "fresh_hours": 6, "stale_hours": 24,
       "extra": {"events": "https://cordon.theintelligence.company/data/events.json"},
       "owns": ["US State Department travel advisories", "US embassy departure status and security alerts",
-               "EASA conflict-zone information bulletins", "NGA navigational warnings (MSI)", "planned: FAA NOTAMs, NAVAREA text"]
+               "EASA conflict-zone information bulletins", "NGA navigational warnings (MSI)", "planned: FAA NOTAMs, NAVAREA text",
+               "Japan overseas safety information (Ministry of Foreign Affairs: danger levels and embassy and consulate notices)", "Netherlands travel advice (colour codes)"]
     },
     {
       "id": "vis", "name": "Vis", "status": "live", "family": "Weather",
