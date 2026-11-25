@@ -182,3 +182,7 @@ Community elements only; this is an independent, non-commercial research effort,
 released doctrine is cited.
 
 Code: MIT. Vocabulary files restate public US government and allied publications, credited in each file.
+
+## AI assistance
+
+This repository is built with AI coding assistance (Anthropic's Claude Code). The Intelligence Company is responsible for everything published here.
