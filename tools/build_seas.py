@@ -4,7 +4,7 @@
 
 Source: Natural Earth 1:10m Physical, "Geography Regions: Marine Areas", file
 geojson/ne_10m_geography_marine_polys.geojson of https://github.com/nvkelso/natural-earth-vector at release v5.1.2
-(commit f1890d9f152c896d250a77557a5751a93d494776, released 13 May 2022), downloaded 18 Nov 2026 with Tom's approval,
+(commit f1890d9f152c896d250a77557a5751a93d494776, released 13 May 2022), downloaded 18 Nov 2026,
 sha256 53f865e8ffa966cdd402145c82c5cd14ee7ce974cd0eb9a3f59f03a4cfd2d66c. Natural Earth is in the public domain
 (naturalearthdata.com/about/terms-of-use: "No permission is needed to use Natural Earth").
 

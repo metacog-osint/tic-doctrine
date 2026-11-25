@@ -3,7 +3,7 @@
   "customer": "Public readers, analysts and COP. Requirements are written by the program owner, not collected from a customer.",
   "reviewed": "2026-10-30",
   "review_by": "2027-01-31",
-  "standing_questions": "The suite's five standing questions (proposed 29 Oct 2026, Tom to confirm) live in the kit's templates/standing_questions.json.",
+  "standing_questions": "The suite's five standing questions (proposed 29 Oct 2026, to be confirmed) live in the kit's templates/standing_questions.json.",
   "requirements": [
     {
       "id": "EX-SQ-1",
