@@ -6,8 +6,8 @@
     "program": "watchfloor",
     "repo": "metacog-osint/more-context",
     "file": "catalog/entities.json",
-    "catalog_version": "2026-10-27.1",
-    "commit": "6bedddb09ed063b53e5204c4cd05cd69088171b4"
+    "catalog_version": "2026-11-24.1",
+    "commit": "0e0897102cff026457a81720fbb91d8629d30f16"
   },
   "zones": [
     {
