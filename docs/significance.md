@@ -359,8 +359,8 @@ several lines.
 
 Local media is the coincidence line abroad: Context's and Watchfloor's stories, GDELT's translated headline counts for
 a place against its own 30-day level (as Blackout already counts), and the local press found by place name. ReliefWeb's
-API now needs an approved app name, and its terms allow "personal, non-commercial use, without any right to resell or
-redistribute", so it would give links and headlines only.
+API needs an approved app name, which the suite already holds (Relief uses it), and its terms allow "personal,
+non-commercial use, without any right to resell or redistribute", so it gives links and headlines only.
 
 ### Consequence
 
@@ -388,8 +388,8 @@ Port Index covers ports, and Wake's chokepoints cover sea lanes.
 3. Civil-protection alerts: Germany, Victoria, New South Wales, India, then the WMO list.
 4. Media matching by place name in COP.
 
-Decisions that need the owner: an account or app name for Taiwan's NCDR and ReliefWeb; whether to ask for an
-alerts.in.ua token; notes asking Pelmorex and BBK about terms.
+Decisions that need the owner: an account for Taiwan's NCDR; whether to ask for an alerts.in.ua token; notes asking
+Pelmorex and BBK about terms.
 
 ## Open questions
 
