@@ -175,6 +175,8 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 
 **0.6.12 (24 Nov 2026): zone list rebuilt from Watchfloor's catalog at 3ab3a28.** The retired zone `17_Horn_of_Africa` keeps its reason without a name. Text only; keys, countries and map points unchanged.
 
+**0.6.13 (26 Nov 2026): Readout's registry row goes live.** `readout` moves from planned to live with its feed, site, terms, freshness (12 h fresh, 36 h stale, as Relief) and a `status_note` saying the UN Security Council and AU PSC lanes are held. To merge only once readout.theintelligence.company serves its feed. Registry text only.
+
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.
 
 **Claims.** The methods are aligned with the principles of ICD 203, 206 and 208. Those directives bind US Intelligence
