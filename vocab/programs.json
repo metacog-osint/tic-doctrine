@@ -96,10 +96,9 @@
     {
       "id": "orbit", "name": "Orbit", "status": "live", "family": "Spectrum and space",
       "feed": "https://orbit.theintelligence.company/data/feed.geojson", "site": "https://orbit.theintelligence.company",
-      "terms": "GCAT data CC BY 4.0 (J. McDowell, planet4589.org/space/gcat); Launch Library 2 data from The Space Devs (free access, no licence stated); Space-Track element sets and TIP messages redistributed under USSPACECOM's blanket approval for basic SSA data, with citation; CelesTrak element sets from the 18th Space Defense Squadron's GP data; Secure World Foundation data CC BY-NC 4.0; NGA warnings US Government works; Spaceflight News headlines as links only",
+      "terms": "GCAT data CC BY 4.0 (J. McDowell, planet4589.org/space/gcat); Space-Track element sets and TIP messages redistributed under USSPACECOM's blanket approval for basic SSA data, with citation; CelesTrak element sets from the 18th Space Defense Squadron's GP data; Secure World Foundation data CC BY-NC 4.0",
       "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "OR-WP",
       "owns": ["orbital launches (GCAT launch list)",
-               "launches scheduled in the next 14 days (Launch Library 2)",
                "reentries (GCAT) and reentry predictions (Space-Track TIP messages)",
                "satellite catalog changes between Orbit's own readings of GCAT, and objects in orbit by owner code",
                "listed orbit changes of watched satellites (Space-Track)",
@@ -111,9 +110,12 @@
     {
       "id": "launch", "name": "Launch", "status": "live", "family": "Spectrum and space",
       "feed": "https://launch.theintelligence.company/data/feed.geojson", "site": "https://launch.theintelligence.company",
-      "terms": "FAA TFRs and NGA warnings: US Government works (archived copies through the Internet Archive). GCAT CC BY 4.0. NotamForChina Apache-2.0. Joey0609/notams MIT. Orbit's items keep their sources' terms.",
+      "terms": "FAA TFRs and NGA warnings: US Government works (archived copies through the Internet Archive). GCAT CC BY 4.0. NotamForChina Apache-2.0. Joey0609/notams MIT. Launch Library 2 data from The Space Devs (free access, no licence stated). Spaceflight News headlines as links only. Orbit's items keep their sources' terms.",
       "fresh_hours": 24, "stale_hours": 72, "warning_problem_prefix": "LA-WP",
       "owns": ["FAA space-operations temporary flight restrictions (tfr.faa.gov)",
+               "launches scheduled worldwide (Launch Library 2), held as multi-source records, with closures that have no listed launch",
+               "launch news headlines (Spaceflight News, links only)",
+               "the launch ledger: flown launches checked against Launch Library 2, with launches GCAT has not yet dated kept as provisional rows",
                "scheduled launches that coincide with a closure area in time and place, or that GCAT has dated inside its window",
                "launch and reentry closure history: Launch's charted notices (2022 onward), GCAT's launches since 2023, NotamForChina's Chinese launches since 2012, Joey0609/notams' launch NOTAMs since Dec 2020, and Internet Archive copies of FAA TFRs and NGA warnings, with per-pad azimuth corridors and recurring drop zones"]
     },
