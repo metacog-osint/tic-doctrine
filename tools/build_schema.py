@@ -140,15 +140,22 @@ def schema() -> dict:
         "place_basis": enum("place_basis"),
         "corroboration": {
             "type": "object", "required": ["state", "origins", "first_reported_at", "rule"],
-            "description": "Revision 2.1, F7 (kit 0.6.2, D11). Event items only: reported until two independent "
-                           "origins, or one official source within its remit; never moves back.",
+            "description": "Revision 2.1, F7 (kit 0.6.2, D11; three states from kit 0.6.13). Event items only: the "
+                           "ladder lead, confirmed, verified (docs/event-ladder.md); reported and corroborated are "
+                           "the earlier names of lead and verified. Moves up only.",
             "properties": {
                 "state": enum("corroboration_state"),
                 "basis": {"oneOf": [enum("corroboration_basis"), {"type": "null"}]},
                 "origins": {"type": "integer", "minimum": 1},
                 "official": {"type": ["string", "null"]},
+                "geolocation": {"type": ["string", "null"]},
                 "party_claim": {"type": "boolean"},
-                "first_reported_at": utc, "corroborated_at": {"oneOf": [utc, {"type": "null"}]},
+                "state_media": {"type": "boolean"},
+                "first_reported_at": utc,
+                "confirmed_at": {"oneOf": [utc, {"type": "null"}]},
+                "verified_at": {"oneOf": [utc, {"type": "null"}]},
+                "corroborated_at": {"oneOf": [utc, {"type": "null"}],
+                                    "description": "Earlier name of verified_at (kit 0.6.2)."},
                 "rule": {"type": "string", "minLength": 1}}},
     }
     props["baseline_ref"]["properties"]["flag_rate"] = {

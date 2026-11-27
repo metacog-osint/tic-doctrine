@@ -358,13 +358,13 @@
         "event_start": "2026-10-30T00:00:00Z",
         "event_time_precision": "day",
         "corroboration": {
-          "state": "corroborated",
+          "state": "verified",
           "basis": "official",
           "origins": 1,
           "official": "cisa-kev",
           "first_reported_at": "2026-10-30T00:00:00Z",
-          "corroborated_at": "2026-10-30T00:00:00Z",
-          "rule": "corroborate-1: two independent origins, or one official source within its remit"
+          "verified_at": "2026-10-30T00:00:00Z",
+          "rule": "ladder-1: a report is a lead until a reviewer confirms it or it is verified by two independent origins, an official source within its own remit, or a published geolocation; a party's claims and state media count as one origin per government and never verify or raise an item alone"
         }
       }
     },
@@ -476,14 +476,14 @@
         "sea_areas": [],
         "place_basis": "location",
         "corroboration": {
-          "state": "reported",
+          "state": "lead",
           "basis": null,
           "origins": 1,
           "official": null,
           "party_claim": true,
           "first_reported_at": "2026-10-30T03:10:00Z",
-          "corroborated_at": null,
-          "rule": "corroborate-1: two independent origins, or one official source within its remit"
+          "verified_at": null,
+          "rule": "ladder-1: a report is a lead until a reviewer confirms it or it is verified by two independent origins, an official source within its own remit, or a published geolocation; a party's claims and state media count as one origin per government and never verify or raise an item alone"
         }
       }
     }

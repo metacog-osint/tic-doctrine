@@ -173,6 +173,15 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 
 **0.6.11 (24 Nov 2026): neutral attributions.** Dated notes in the schema, vocabularies, templates, docs and tools no longer name a person: each keeps its date ("(15 Nov 2026)"), and a rule or decision is "the suite's". Wording only; no field, value or rule changes.
 
+**0.6.13 (27 Nov 2026): the event ladder and the coverage table.** [`docs/event-ladder.md`](docs/event-ladder.md)
+defines, in one place, the states lead, confirmed and verified for event reports, the promotion rule `ladder-1`, the
+rule that a party's claims and state media never verify or raise an item alone, and the coverage-table format
+`tic-coverage/1` (several independent sources, one or two, not monitored). The `corroboration` member takes the new
+state names, `confirmed_at`, `verified_at`, `geolocation` and `state_media`; `reported` and `corroborated` still pass
+as the earlier names of lead and verified, with a note. New: `vocab/event_ladder.json`, `ladder.py`
+(`state_of`, `rests_on_claim`, `coverage_place`, `coverage_class`), and `eventState()` and `coverageClass()` in the
+browser module.
+
 **0.6.12 (24 Nov 2026): zone list rebuilt from Watchfloor's catalog at 3ab3a28.** The retired zone `17_Horn_of_Africa` keeps its reason without a name. Text only; keys, countries and map points unchanged.
 
 **Tests:** `python tests/test_kit.py`, `python tests/test_history.py` and `node tests/test_js.mjs`.

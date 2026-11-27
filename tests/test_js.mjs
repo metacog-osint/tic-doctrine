@@ -1,6 +1,6 @@
 // Browser-module tests (Node, no dependencies): node tests/test_js.mjs
 import assert from "node:assert/strict";
-import { termFor, likelihoodLabel, judgmentChips, lifelineStatus, ladderRung, changeText, indicatorStyle, countryPoint, actorStyle, actorLabel, tips, tipMatches, asOfDateLabel, eventInterval, seaName, zoneName, VOCAB } from "../js/tic-doctrine.js";
+import { eventState, coverageClass, termFor, likelihoodLabel, judgmentChips, lifelineStatus, ladderRung, changeText, indicatorStyle, countryPoint, actorStyle, actorLabel, tips, tipMatches, asOfDateLabel, eventInterval, seaName, zoneName, VOCAB } from "../js/tic-doctrine.js";
 
 const cases = { 0: "almost_no_chance", 0.05: "very_unlikely", 0.2: "unlikely", 0.45: "roughly_even_chance",
   0.55: "roughly_even_chance", 0.551: "likely", 0.8: "likely", 0.801: "very_likely", 0.95: "very_likely", 0.951: "almost_certain", 1: "almost_certain" };
@@ -86,4 +86,20 @@ assert.equal(zoneName("11_Iran_Red_Sea"), "Iran & Red Sea");
 assert.equal(zoneName("17_Horn_of_Africa"), "Ethiopia & Eritrea / Somalia");
 assert.equal(zoneName("99_Nowhere"), null);
 assert.equal(VOCAB.last_change.raised.length > 0, true);
+// Kit 0.6.13: the event ladder and the coverage classes.
+assert.equal(eventState({ tier: "anomaly" }), null, "a measurement is outside the ladder");
+assert.equal(eventState({ corroboration: { state: "reported" } }).state, "lead", "earlier name");
+const ver = eventState({ properties: { corroboration: { state: "corroborated", basis: "official", party_claim: false } } });
+assert.equal(ver.label, "Verified");
+assert.equal(ver.basis_label, "an official source within its own remit");
+assert.equal(ver.claim, null);
+assert.ok(ver.url.endsWith("/docs/event-ladder.md"));
+assert.ok(ver.rule.startsWith("ladder-1: "));
+const claim = eventState({ corroboration: { state: "lead", party_claim: true } });
+assert.equal(claim.claim_label, "Party claim");
+assert.equal(claim.basis, null);
+assert.equal(eventState({ corroboration: { state: "lead", state_media: true } }).claim, "state_media");
+assert.equal(eventState({ corroboration: { state: "rumoured" } }), null);
+assert.deepEqual([0, 1, 2, 3, 7].map((n) => coverageClass(n).id), ["none", "few", "few", "several", "several"]);
+assert.equal(coverageClass(0).label, "Not monitored");
 console.log("test_js.mjs: all passed");
