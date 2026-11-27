@@ -1113,6 +1113,8 @@ class Vendoring(unittest.TestCase):
             check = lambda: subprocess.run([sys.executable, str(kit / "tic.py"), "kitcheck"],  # noqa: E731
                                            capture_output=True).returncode
             self.assertEqual(check(), 0)
+            self.assertFalse((kit / "docs" / "significance.md").exists(), "the draft note is not vendored")
+            self.assertTrue((kit / "docs" / "event-ladder.md").exists())
             doc = kit / "docs" / "language-key.md"
             # what a Windows checkout does: LF first, so a file that is already CRLF stays CRLF, not \r\r\n
             doc.write_bytes(doc.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))

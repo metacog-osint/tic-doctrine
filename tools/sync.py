@@ -17,6 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PARTS = ["tic.py", "vocab", "geo", "python/tic_doctrine", "js", "schema", "docs", "LICENSE", "README.md"]
 SKIP = {"__pycache__"}
+# Draft notes that no program reads stay in the kit repo and are not copied into programs.
+NOT_VENDORED = {"docs/significance.md"}
 
 
 def files(base: Path):
@@ -26,7 +28,8 @@ def files(base: Path):
             yield p
         elif p.is_dir():
             for f in sorted(p.rglob("*")):
-                if f.is_file() and not SKIP & set(f.parts):
+                if (f.is_file() and not SKIP & set(f.parts)
+                        and f.relative_to(base).as_posix() not in NOT_VENDORED):
                     yield f
 
 
