@@ -131,19 +131,31 @@ def check_signal(sig, err) -> None:
 
 def check_corroboration(c, published, err, p=None, note=None) -> None:
     """An event item's corroboration member: the ladder lead, confirmed, verified (kit 0.6.13, docs/event-ladder.md),
-    read with its kit 0.6.2 names reported and corroborated. Errors, plus a note for the earlier names."""
+    read with its kit 0.6.2 names reported and corroborated. Errors, plus a note for the earlier names. The two rules
+    0.6.13 added (a claim is verified only on origins; a claim keeps tier routine) are notes, not errors, for an item
+    that uses the earlier names, which passed without them through 0.6.12 (kit 0.6.17)."""
     if not isinstance(c, dict):
         err(GENERAL, "corroboration must be an object")
         return
     p = p or {}
     raw_state, basis = c.get("state"), c.get("basis")
     earlier = vocab.load("event_ladder")["earlier_names"]
-    state = earlier.get(raw_state, raw_state)
-    if raw_state not in vocab.enum("corroboration_state"):
+    if not isinstance(raw_state, str) or raw_state not in vocab.enum("corroboration_state"):
         err(GENERAL, f"corroboration.state={raw_state!r} not in {sorted(vocab.enum('corroboration_state'))}")
+        raw_state = None
     elif raw_state in earlier and note:
-        note(f"corroboration.state {raw_state!r} is the kit 0.6.2 name of {state!r} (docs/event-ladder.md)")
-    if basis is not None and basis not in vocab.enum("corroboration_basis"):
+        note(f"corroboration.state {raw_state!r} is the kit 0.6.2 name of {earlier[raw_state]!r} "
+             "(docs/event-ladder.md)")
+    state = earlier.get(raw_state, raw_state)
+    old = raw_state in earlier and note is not None
+
+    def ladder_err(msg):
+        if old:
+            note(msg + " (an error under the names lead and verified, kit 0.6.13)")
+        else:
+            err(GENERAL, msg)
+
+    if basis is not None and (not isinstance(basis, str) or basis not in vocab.enum("corroboration_basis")):
         err(GENERAL, f"corroboration.basis={basis!r} not in {sorted(vocab.enum('corroboration_basis'))}")
     n = c.get("origins")
     if not (isinstance(n, int) and not isinstance(n, bool) and n >= 1):
@@ -193,14 +205,14 @@ def check_corroboration(c, published, err, p=None, note=None) -> None:
             if not (isinstance(c.get("geolocation"), str) and c["geolocation"] in ids):
                 err(GENERAL, "verified on geolocation needs geolocation: the id of one of the item's sources")
         if claim and basis != "origins":
-            err(GENERAL, "a party's claim or state media is verified only on origins outside them, never on "
-                         f"{basis}")
+            ladder_err("a party's claim or state media is verified only on origins outside them, never on "
+                       f"{basis}")
         if claim and not (n is not None and n >= 2):
             err(GENERAL, "a party's claim or state media is verified only by an origin outside them: origins of 2 "
                          "or more")
     if claim and state != "verified" and p.get("tier") in ("anomaly", "warning"):
-        err(GENERAL, "an item resting only on a party's claim or on state media raises nothing on its own: "
-                     "tier routine until it is verified")
+        ladder_err("an item resting only on a party's claim or on state media raises nothing on its own: "
+                   "tier routine until it is verified")
     if basis != "official" and c.get("official") is not None:
         err(GENERAL, "corroboration.official is the issuer's id only when basis is official; otherwise null")
     if basis != "geolocation" and c.get("geolocation") is not None:

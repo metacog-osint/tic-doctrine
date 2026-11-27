@@ -384,6 +384,25 @@ class Tips(unittest.TestCase):
             if p["status"] == "live":
                 self.assertTrue(p["feed"].startswith("https://") and p.get("terms") and p.get("stale_hours"), p["id"])
 
+    def test_registry_layers(self):
+        """Kit 0.6.18: every program names its one home layer, the hub's seven-layer model, so COP can count layers
+        the way the hub draws them. family stays COP's colour grouping and does not decide the layer."""
+        self.assertEqual([l["key"] for l in tips.layers()],
+                         ["systems", "human", "cyber", "ems", "space", "air", "land"])
+        keys = {l["key"] for l in tips.layers()}
+        for p in tips.registry()["programs"]:
+            self.assertIn("layer", p, p["id"])
+            self.assertIn(p["layer"], keys | {"all", None}, p["id"])
+            if p["status"] == "live" and p["id"] not in ("cop", "verdict"):
+                self.assertIn(p["layer"], keys, p["id"])
+        self.assertEqual(tips.program_layer("cop"), "all")
+        self.assertEqual(tips.program_layer("verdict"), "all")
+        # One family, two layers: Noisefloor is the spectrum, Orbit and Launch are space.
+        self.assertEqual({tips.program_entry(i)["family"] for i in ("noisefloor", "orbit", "launch")},
+                         {"Spectrum and space"})
+        self.assertEqual([tips.program_layer(i) for i in ("noisefloor", "orbit", "launch")], ["ems", "space", "space"])
+        self.assertIsNone(tips.program_layer("no-such-program"))
+
     def test_matching_areas_and_self(self):
         found = tips.tips(self.items(), INTERESTS, now=NOW)
         got = {(t["interest_id"], t["item_id"], tuple(t["areas"])) for t in found}
@@ -1062,6 +1081,85 @@ class Kit0613(unittest.TestCase):
         self.assertEqual((row["independent"], row["class"], row["set_aside"]), (1, "few", []))
         self.assertTrue(ladder.is_derived({"source_type": "Machine Summary "}))
         self.assertFalse(ladder.is_derived({"source_type": "official notice"}))
+
+
+class Kit0617(unittest.TestCase):
+    """Kit 0.6.17: a place read only through set-aside or suite sources is not "Not monitored"; the two ladder rules
+    added in 0.6.13 are notes for feeds that use the 0.6.2 names; no dated quotation in the vocabularies."""
+
+    def setUp(self):
+        self.strike = copy.deepcopy(_by_id(GOOD21, "example-strike-2026-10-30-odesa-port"))
+        self.kev = copy.deepcopy(_by_id(GOOD21, "example-kev-2026-10-30"))
+
+    @staticmethod
+    def item(prog, *srcs, **kw):
+        return {"properties": {"program": prog, "sources": list(srcs), **kw}}
+
+    def errs(self, item):
+        return " | ".join(m for s, sev, m in contract.check(item) if sev == "error")
+
+    def notes(self, item):
+        return " | ".join(m for s, sev, m in contract.check(item) if sev == "warning")
+
+    def test_state_media_only_is_no_independent_source(self):
+        row = ladder.coverage_place("x", "Example", [self.item(
+            "watchfloor", {"id": "c", "publisher": "Agency", "owner": "state", "source_type": "news wire"})])
+        self.assertEqual((row["independent"], row["class"]), (0, "no_independent"))
+        self.assertEqual(ladder.coverage_label(row["class"]), "No independent source")
+        self.assertEqual(row["programs"], ["watchfloor"])
+        self.assertEqual([g["why"] for g in row["set_aside"]], ["state_media"])
+
+    def test_party_claim_only_is_no_independent_source(self):
+        row = ladder.coverage_place("x", "Example", [
+            self.item("watchfloor", {"id": "mod", "publisher": "Ministry", "independence_group": "x-gov"},
+                      corroboration={"state": "lead", "party_claim": True})])
+        self.assertEqual((row["independent"], row["class"]), (0, "no_independent"))
+        self.assertEqual([g["why"] for g in row["set_aside"]], ["party_claim"])
+
+    def test_suite_sources_only_name_the_program_and_are_listed(self):
+        row = ladder.coverage_place("x", "Example", [
+            self.item("vis", {"id": "ephemeris", "publisher": "Vis", "source_type": "derived"})])
+        self.assertEqual((row["independent"], row["class"], row["set_aside"]), (0, "no_independent", []))
+        self.assertEqual(row["programs"], ["vis"])
+        self.assertEqual(row["not_counted"], [{"id": "Vis", "label": "Vis", "programs": ["vis"]}])
+        mixed = ladder.coverage_place("x", "Example", [
+            self.item("vis", {"id": "ephemeris", "publisher": "Vis", "source_type": "derived"}),
+            self.item("cordon", {"id": "a", "publisher": "US State Department"})])
+        self.assertEqual((mixed["class"], mixed["programs"]), ("few", ["cordon", "vis"]))
+
+    def test_nothing_held_is_still_not_monitored(self):
+        row = ladder.coverage_place("y", "Empty", [])
+        self.assertEqual((row["class"], row["set_aside"], row["not_counted"]), ("none", [], []))
+        self.assertEqual(ladder.coverage_label("none"), "Not monitored")
+        self.assertEqual([ladder.coverage_class(0), ladder.coverage_class(0, 2), ladder.coverage_class(2, 5)],
+                         ["none", "no_independent", "few"])
+
+    def test_earlier_names_keep_passing_the_two_0613_rules_with_a_note(self):
+        c = self.kev["properties"]["corroboration"]
+        c.update(party_claim=True, origins=2)
+        self.assertIn("never on official", self.errs(self.kev), "an error under the new names")
+        c.update(state="corroborated")
+        c["corroborated_at"] = c.pop("verified_at")
+        self.assertEqual(self.errs(self.kev), "")
+        self.assertIn("never on official", self.notes(self.kev))
+        s = self.strike["properties"]
+        s["tier"] = "anomaly"
+        self.assertIn("raises nothing on its own", self.errs(self.strike))
+        s["corroboration"]["state"] = "reported"
+        self.assertNotIn("raises nothing", self.errs(self.strike))
+        self.assertIn("raises nothing on its own", self.notes(self.strike))
+
+    def test_a_state_of_the_wrong_type_is_an_error_not_a_crash(self):
+        for bad in (["lead"], {"id": "lead"}):
+            self.strike["properties"]["corroboration"]["state"] = bad
+            self.assertIn("corroboration.state", self.errs(self.strike))
+        self.strike["properties"]["corroboration"].update(state="lead", basis=["origins"])
+        self.assertIn("corroboration.basis", self.errs(self.strike))
+
+    def test_no_dated_quotation_in_the_vocabularies_or_schema(self):
+        quote = re.compile(r"\(\d{1,2} [A-Z][a-z]{2} \d{4}: ['\"]")
+        for path in [*sorted((ROOT / "vocab").glob("*.json")), ROOT / "schema" / "feed-item-v2.schema.json"]:
+            self.assertIsNone(quote.search(path.read_text(encoding="utf-8")), path.name)
 
 
 class Zones(unittest.TestCase):

@@ -1428,6 +1428,13 @@ export const VOCAB = {
         "label": "Not monitored",
         "min": 0,
         "max": 0
+      },
+      {
+        "id": "no_independent",
+        "label": "No independent source",
+        "min": 0,
+        "max": 0,
+        "uncounted": true
       }
     ]
   },
@@ -2004,10 +2011,20 @@ export function eventState(item) {
   };
 }
 
-/** The coverage table's class for a count of independent source groups: {id, label}. */
-export function coverageClass(independent) {
-  const n = Number(independent) || 0;
-  const c = VOCAB.event_ladder.coverage.find((x) => n >= x.min && (x.max === null || n <= x.max));
+/** The coverage table's class: {id, label}. Pass a tic-coverage/1 row, or a count of independent source groups and
+ * the count of groups read but set aside or not counted (kit 0.6.17: none independent but some read is
+ * no_independent, "No independent source", not "Not monitored"). */
+export function coverageClass(independent, uncounted = 0) {
+  let n = independent, u = uncounted;
+  if (independent && typeof independent === "object") {
+    n = independent.independent;
+    u = (independent.set_aside || []).length + (independent.not_counted || []).length;
+  }
+  n = Number(n) || 0;
+  u = Number(u) || 0;
+  const classes = VOCAB.event_ladder.coverage;
+  const c = n <= 0 && u > 0 ? classes.find((x) => x.uncounted)
+    : classes.find((x) => !x.uncounted && n >= x.min && (x.max === null || n <= x.max));
   return c ? { id: c.id, label: c.label } : { id: "none", label: "Not monitored" };
 }
 

@@ -201,7 +201,8 @@
     "values": {
       "several": "Three or more independent source groups.",
       "few": "One or two independent source groups.",
-      "none": "Not monitored: no source read for the place."
+      "none": "Not monitored: no source read for the place.",
+      "no_independent": "No independent source (kit 0.6.17): sources were read for the place, but every one was set aside (state media, a party's claim) or is the suite's own."
     }
   }
 }
