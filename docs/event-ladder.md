@@ -1,6 +1,6 @@
 # Lead, confirmed, verified: the event ladder and the coverage table
 
-Kit 0.6.13 (27 Nov 2026). The one place the suite defines how sure it is that a reported event happened, the rule
+Kit 0.6.13 (27 Nov 2026; derived sources not counted from 0.6.14). The one place the suite defines how sure it is that a reported event happened, the rule
 that moves a report up, how claims by a party to a conflict and by state media are handled, and the table that says
 how well each watched place is covered. Feeds carry the state in the `corroboration` member of the
 [feed contract](feed-contract-v2.md); pages show it with a link to this page.
@@ -108,7 +108,10 @@ by place.
 | `none` | Not monitored | No source read for the place |
 
 **Counting.** Count independence groups, not outlets: `sources[].independence_group`, or the publisher where a
-source has none. Count only sources read on time; a stale copy does not count. Groups of state media (a source whose
+source has none. Count only sources read on time; a stale copy does not count. Sources the suite makes itself are
+not sources about the place and are not counted: a program's own reading, computation, model or machine summary
+(`source_type` `suite_program`, `derived`, `model` or `machine summary`, listed in
+[`vocab/event_ladder.json`](../vocab/event_ladder.json)). Groups of state media (a source whose
 `owner` is `state` and that is media) and the sources of items resting only on a party's claim or on state media are
 listed but set aside: they never raise a place's class. Each table prints how it was counted and when.
 

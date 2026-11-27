@@ -1049,6 +1049,20 @@ class Kit0613(unittest.TestCase):
         self.assertEqual(row["programs"], ["cordon", "relief", "watchfloor"])
         self.assertEqual(ladder.coverage_place("y", "Empty", [])["class"], "none")
 
+    def test_coverage_does_not_count_the_suites_own_sources(self):
+        def item(prog, *srcs):
+            return {"properties": {"program": prog, "sources": list(srcs)}}
+        items = [item("context", {"id": "gdelt", "publisher": "The GDELT Project", "source_type": "aggregator"},
+                      {"id": "context-ai", "publisher": "Context", "source_type": "machine summary"}),
+                 item("wake", {"id": "headwind", "publisher": "Headwind", "source_type": "suite_program"}),
+                 item("vis", {"id": "ephemeris", "publisher": "Vis", "source_type": "Derived"}),
+                 item("orbit", {"id": "m", "publisher": "Orbit", "source_type": "model"})]
+        row = ladder.coverage_place("x", "Example", items)
+        self.assertEqual([g["id"] for g in row["groups"]], ["The GDELT Project"])
+        self.assertEqual((row["independent"], row["class"], row["set_aside"]), (1, "few", []))
+        self.assertTrue(ladder.is_derived({"source_type": "Machine Summary "}))
+        self.assertFalse(ladder.is_derived({"source_type": "official notice"}))
+
 
 class Zones(unittest.TestCase):
     """Kit 0.6.1: the shared zone list (D4), built from Watchfloor's catalog."""
