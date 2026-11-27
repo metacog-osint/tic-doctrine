@@ -1,0 +1,49 @@
+{
+ "catalog": "tic-catalog/1",
+ "program": "readout",
+ "measured_at": "2026-11-26T00:10:00Z",
+ "stores": [
+  {
+   "id": "readout-history",
+   "store": "Statements history",
+   "location": {
+    "value": {
+     "kind": "git",
+     "where": "github.com/metacog-osint/readout: history"
+    },
+    "status": "measured",
+    "how": "the history step in Readout's update workflow (.github/workflows/update.yml) at commit 4130857; the repository is not created yet"
+   },
+   "schema": {
+    "value": null,
+    "status": "unverified",
+    "why": "Readout is not deployed yet; nothing has been written to this store to measure"
+   },
+   "method_version": {
+    "value": "readout-0.1",
+    "status": "measured",
+    "how": "method_version on every item Readout's build writes (readout/feed.py METHOD), read from the code, not from a live feed"
+   },
+   "licence": {
+    "value": "registry:readout",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "Readout is not deployed yet; nothing has been written to this store to measure"
+   },
+   "first_date": {
+    "value": null,
+    "status": "unverified",
+    "why": "Readout is not deployed yet; nothing has been written to this store to measure"
+   },
+   "independent_copies": {
+    "value": null,
+    "status": "unverified",
+    "why": "Readout is not deployed yet; nothing has been written to this store to measure"
+   }
+  }
+ ]
+}
