@@ -54,12 +54,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane relief-raw (read 2026-11-27)"
    },
    "schema": {
     "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "76 assets, 67.8 MB"
+    "how": "144 assets, 130.4 MB, 72 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -72,19 +72,61 @@
     "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
    },
    "cadence": {
-    "value": "about every 2.4 h",
+    "value": "about every 2.0 h",
     "status": "measured",
-    "how": "median gap between 38 asset upload times; replaced assets show only their latest time"
+    "how": "median gap between snapshot times, per lane (read 2026-11-27)"
    },
    "first_date": {
     "value": "2026-11-19",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; relief-raw: newest snapshot (2026-11-27 04:22Z, 26 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
+   }
+  },
+  {
+   "id": "relief-archive-appeals",
+   "store": "Appeals archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API, archive lane relief-appeals (read 2026-11-27)"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "22 assets, 1.5 MB, 11 snapshots (read 2026-11-27)"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "archive copy; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:relief",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; archive lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": "about every 5.5 h",
+    "status": "measured",
+    "how": "median gap between snapshot times, per lane (read 2026-11-27)"
+   },
+   "first_date": {
+    "value": "2026-11-24",
+    "status": "measured",
+    "how": "earliest surviving snapshot"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "one copy, in the private archive; relief-appeals: newest snapshot (2026-11-27 04:22Z, 1 file) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   }
  ]

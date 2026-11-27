@@ -42,7 +42,7 @@
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
+    "how": "at least one copy confirmed here; local clones are not counted; private archive lane launch-copies: newest snapshot (2026-11-27 04:19Z, 2,595 files) read back from its tar members and matched by sha256, on the same GitHub account, so not counted; private archive lane launch-history: newest snapshot (2026-11-27 04:14Z, 14 files) read back from its tar members and matched by sha256, on the same GitHub account, so not counted (read 2026-11-27)"
    }
   },
   {
@@ -96,12 +96,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane launch-source (read 2026-11-27)"
    },
    "schema": {
     "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "2 assets, 0.3 MB"
+    "how": "2 assets, 0.3 MB, 1 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -116,17 +116,17 @@
    "cadence": {
     "value": null,
     "status": "unverified",
-    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+    "why": "too few snapshots to show a cadence"
    },
    "first_date": {
     "value": "2026-11-19",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; launch-source: newest snapshot (2026-11-19 04:10Z, 9 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   },
   {
@@ -169,6 +169,90 @@
     "value": 1,
     "status": "measured",
     "how": "at least one copy confirmed here; other copies were not compared"
+   }
+  },
+  {
+   "id": "launch-archive-payloads",
+   "store": "Payload rates archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API, archive lane launch-payloads (read 2026-11-27)"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "2 assets, 0.0 MB, 1 snapshots (read 2026-11-27)"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "archive copy; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:launch",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; archive lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "too few snapshots to show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-27",
+    "status": "measured",
+    "how": "earliest surviving snapshot"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "one copy, in the private archive; launch-payloads: newest snapshot (2026-11-27 04:23Z, 2 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
+   }
+  },
+  {
+   "id": "launch-archive-state",
+   "store": "Run state archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API, archive lane launch-state (read 2026-11-27)"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "2 assets, 0.5 MB, 1 snapshots (read 2026-11-27)"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "archive copy; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:launch",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; archive lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "too few snapshots to show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-27",
+    "status": "measured",
+    "how": "earliest surviving snapshot"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "one copy, in the private archive; launch-state: newest snapshot (2026-11-27 04:15Z, 5 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   }
  ]

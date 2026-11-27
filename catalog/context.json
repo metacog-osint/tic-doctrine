@@ -40,9 +40,9 @@
     "how": "first document id in name order"
    },
    "independent_copies": {
-    "value": 1,
+    "value": 2,
     "status": "measured",
-    "how": "point-in-time recovery off and 0 backup schedules"
+    "how": "point-in-time recovery off and 0 backup schedules; private archive lane context-firestore: newest snapshot (2026-11-27 04:21Z, 17 files) read back from its tar members and matched by sha256, on GitHub, a separate provider (read 2026-11-27)"
    }
   }
  ]

@@ -138,12 +138,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane noisefloor-collectors (read 2026-11-27)"
    },
    "schema": {
     "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "10 assets, 3825.9 MB"
+    "how": "14 assets, 3,908.8 MB, 6 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -156,19 +156,19 @@
     "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
    },
    "cadence": {
-    "value": null,
-    "status": "unverified",
-    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+    "value": "about every 24.0 h",
+    "status": "measured",
+    "how": "median gap between snapshot times, per lane (read 2026-11-27)"
    },
    "first_date": {
     "value": "2026-11-19",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; noisefloor-collectors: newest snapshot not compared: reading the newest snapshot back needs 3,895 MB of downloads, over this run's 800 MB limit; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   },
   {
@@ -180,12 +180,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane noisefloor-nisar (read 2026-11-27)"
    },
    "schema": {
-    "value": "files: .json, .tar.gz",
+    "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "8 assets, 51.1 MB"
+    "how": "10 assets, 57.7 MB, 5 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -200,17 +200,17 @@
    "cadence": {
     "value": null,
     "status": "unverified",
-    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+    "why": "too few snapshots to show a cadence"
    },
    "first_date": {
     "value": "2026-11-19",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; noisefloor-nisar: newest snapshot (2026-11-25 11:39Z, 308 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   },
   {
@@ -222,12 +222,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane noisefloor-baltico (read 2026-11-27)"
    },
    "schema": {
     "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "2 assets, 0.1 MB"
+    "how": "6 assets, 0.2 MB, 3 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -242,17 +242,17 @@
    "cadence": {
     "value": null,
     "status": "unverified",
-    "why": "asset upload times are too few or come in batches, so they do not show a cadence"
+    "why": "too few snapshots to show a cadence"
    },
    "first_date": {
     "value": "2026-11-23",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; noisefloor-baltico: newest snapshot (2026-11-25 11:45Z, 54 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   },
   {
@@ -295,6 +295,48 @@
     "value": null,
     "status": "unverified",
     "why": "not re-read in this pass"
+   }
+  },
+  {
+   "id": "noisefloor-archive-sensors",
+   "store": "Sensor data archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API, archive lane noisefloor-sensors (read 2026-11-27)"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "8 assets, 6,937.3 MB, 2 snapshots (read 2026-11-27)"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "archive copy; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:noisefloor",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; archive lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "too few snapshots to show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-24",
+    "status": "measured",
+    "how": "earliest surviving snapshot"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "one copy, in the private archive; noisefloor-sensors: newest snapshot not compared: reading the newest snapshot back needs 6,931 MB of downloads, over this run's 800 MB limit; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   }
  ]

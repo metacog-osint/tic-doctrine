@@ -40,9 +40,9 @@
     "how": "earliest entity_changelog row; other tables may start elsewhere"
    },
    "independent_copies": {
-    "value": null,
-    "status": "unverified",
-    "why": "platform backup settings were not read"
+    "value": 2,
+    "status": "measured",
+    "how": "platform backup settings were not read; private archive lane vigil-pgdump: newest snapshot (2026-11-25 15:20Z, 1 file) read back from its tar members and matched by sha256, on GitHub, a separate provider (read 2026-11-27)"
    }
   }
  ]
