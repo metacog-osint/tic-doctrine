@@ -173,6 +173,11 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 
 **0.6.11 (24 Nov 2026): neutral attributions.** Dated notes in the schema, vocabularies, templates, docs and tools no longer name a person: each keeps its date ("(15 Nov 2026)"), and a rule or decision is "the suite's". Wording only; no field, value or rule changes.
 
+**0.6.19 (27 Nov 2026): Relief's terms line names links from the ten-year IFRC GO read.** Relief's public history
+keeps an index of the ten-year read (appeal id, record hash and IFRC's link) besides its counts, so `terms` now says
+"counts and links only from the ten-year read" (it read "counts only"). The full records stay out of public files.
+Registry text only.
+
 **0.6.18 (27 Nov 2026): each program's home layer in the registry.** `vocab/programs.json` (registry version 1.1)
 lists the seven layers of the operational environment as the hub draws them (`layers`: systems, human, cyber, ems,
 space, air, land, top to bottom), and every program names its one home `layer`: a layer key, `all` for a program that
