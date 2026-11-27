@@ -40,6 +40,9 @@ def block() -> str:
         },
         "last_change": vocab("enums")["last_change"]["values"],
         "place_basis": vocab("enums")["place_basis"]["values"],
+        "event_ladder": {k: vocab("event_ladder")[k]
+                         for k in ("url", "rule", "states", "earlier_names", "basis_labels", "claim_labels")}
+                        | {"coverage": vocab("event_ladder")["coverage"]["classes"]},
         "zones": {z["key"]: {"name": z["name"], "countries": z["countries"]} for z in vocab("zones")["zones"]},
         "zones_retired": {z["key"]: {"on": z["on"], "into": z["into"]} for z in vocab("zones")["retired"]},
         "seas": {s["slug"]: s["name"]

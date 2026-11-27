@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "python"))
 
-from tic_doctrine import CONTRACT_REV, confidence, contract, likelihood, lint, registers, tips, vocab, withhold  # noqa: E402
+from tic_doctrine import CONTRACT_REV, confidence, contract, ladder, likelihood, lint, registers, tips, vocab, withhold  # noqa: E402
 from tic_doctrine.confidence import Evidence  # noqa: E402
 
 GOOD = json.loads((ROOT / "tests" / "fixtures" / "good.geojson").read_text(encoding="utf-8"))
@@ -856,7 +856,7 @@ class Kit062(unittest.TestCase):
     def test_corroboration_shape(self):
         c = self.kev["properties"]["corroboration"]
         for change, needle in (
-                ({"state": "confirmed"}, "corroboration.state"),
+                ({"state": "rumoured"}, "corroboration.state"),
                 ({"basis": "rumour"}, "corroboration.basis"),
                 ({"origins": 0}, "at least 1"),
                 ({"origins": True}, "at least 1"),
@@ -865,14 +865,14 @@ class Kit062(unittest.TestCase):
                 ({"basis": "origins", "official": None}, "origins of 2 or more"),
                 ({"basis": "origins"}, "only when basis is official"),
                 ({"basis": None}, "names its basis"),
-                ({"corroborated_at": None}, "needs corroborated_at"),
-                ({"corroborated_at": "2026-10-29T00:00:00Z"}, "before first_reported_at"),
-                ({"corroborated_at": "2026-10-31T00:00:00Z", "first_reported_at": "2026-10-29T00:00:00Z"},
+                ({"verified_at": None}, "needs verified_at"),
+                ({"verified_at": "2026-10-29T00:00:00Z"}, "before first_reported_at"),
+                ({"verified_at": "2026-10-31T00:00:00Z", "first_reported_at": "2026-10-29T00:00:00Z"},
                  "after published_at"),
                 ({"first_reported_at": "yesterday"}, "first_reported_at must be a UTC time"),
                 ({"party_claim": "yes"}, "true or false"),
-                ({"party_claim": True}, "outside the party"),
-                ({"state": "reported"}, "basis and corroborated_at null")):
+                ({"party_claim": True}, "outside them"),
+                ({"state": "reported"}, "a lead has basis")):
             f = copy.deepcopy(self.kev)
             f["properties"]["corroboration"] = dict(c, **change)
             self.assertIn(needle, self.errs(f), change)
@@ -936,6 +936,118 @@ class Kit062(unittest.TestCase):
         ev = Evidence(independent_lines=3, method_scored=confidence.method_scored(scores, "vis"))
         self.assertEqual(assess(ev)["level"], "high")
         self.assertEqual(assess(Evidence(independent_lines=3))["level"], "moderate")
+
+
+class Kit0613(unittest.TestCase):
+    """Kit 0.6.13: the event ladder (lead, confirmed, verified) and the coverage table (docs/event-ladder.md)."""
+
+    def setUp(self):
+        self.kev = copy.deepcopy(_by_id(GOOD21, "example-kev-2026-10-30"))
+        self.strike = copy.deepcopy(_by_id(GOOD21, "example-strike-2026-10-30-odesa-port"))
+        self.assertEqual(self.kev["properties"]["corroboration"]["rule"], ladder.rule())
+
+    def errs(self, item):
+        return " | ".join(m for s, sev, m in contract.check(item) if sev == "error")
+
+    def notes(self, item):
+        return " | ".join(m for s, sev, m in contract.check(item) if sev == "warning")
+
+    def test_new_names_pass_and_old_names_are_noted(self):
+        self.assertEqual(self.errs(self.kev), "")
+        self.assertEqual(self.errs(self.strike), "")
+        self.assertNotIn("kit 0.6.2 name", self.notes(self.kev))
+        old = copy.deepcopy(self.kev)
+        c = old["properties"]["corroboration"]
+        c.update(state="corroborated", rule="corroborate-1: two independent origins, or one official source within "
+                                           "its remit")
+        c["corroborated_at"] = c.pop("verified_at")
+        self.assertEqual(self.errs(old), "")
+        self.assertEqual(ladder.state_of(old), "verified")
+        self.assertIn("kit 0.6.2 name of 'verified'", self.notes(old))
+
+    def test_states_read_the_same_under_both_names(self):
+        self.assertEqual(ladder.state_of(self.kev), "verified")
+        self.assertEqual(ladder.state_of({"corroboration": {"state": "reported"}}), "lead")
+        self.assertEqual(ladder.state_of(self.strike), "lead")
+        self.assertIsNone(ladder.state_of({"properties": {"tier": "anomaly"}}))
+        self.assertTrue(ladder.rests_on_claim(self.strike))
+        self.assertFalse(ladder.rests_on_claim(self.kev))
+
+    def test_enums_and_ladder_vocab_agree(self):
+        v = vocab.load("event_ladder")
+        ids = [s["id"] for s in v["states"]]
+        self.assertEqual(ids, ["lead", "confirmed", "verified"])
+        self.assertEqual(vocab.enum("corroboration_state"), set(ids) | set(v["earlier_names"]))
+        self.assertTrue(v["rule"]["text"].startswith(v["rule"]["id"] + ": "))
+        self.assertEqual(set(v["basis_labels"]), vocab.enum("corroboration_basis"))
+        self.assertEqual({c["id"] for c in v["coverage"]["classes"]}, vocab.enum("coverage_class"))
+        doc = " ".join((ROOT / "docs" / "event-ladder.md").read_text(encoding="utf-8").replace("> ", "").split())
+        self.assertIn(v["rule"]["text"].replace("ladder-1: ", "**ladder-1:** "), doc)
+        self.assertTrue(v["url"].endswith("/docs/event-ladder.md"))
+
+    def test_confirmed_needs_a_reviewer(self):
+        c = self.strike["properties"]["corroboration"]
+        c.update(state="confirmed", confirmed_at="2026-10-30T05:00:00Z", party_claim=False)
+        self.assertIn("human_review must be 'full'", self.errs(self.strike))
+        self.strike["properties"]["human_review"] = "full"
+        self.assertEqual(self.errs(self.strike), "")
+        c["confirmed_at"] = None
+        self.assertIn("needs confirmed_at", self.errs(self.strike))
+        c.update(confirmed_at="2026-10-30T05:00:00Z", basis="origins")
+        self.assertIn("not verified yet", self.errs(self.strike))
+
+    def test_verified_rules(self):
+        for change, needle in (
+                ({"basis": "geolocation", "official": None}, "geolocation needs geolocation"),
+                ({"basis": "geolocation", "official": None, "geolocation": "nope"}, "geolocation needs geolocation"),
+                ({"geolocation": "cisa-kev"}, "only when basis is geolocation"),
+                ({"verified_at": None}, "needs verified_at"),
+                ({"corroborated_at": "2026-10-30T00:00:00Z"}, "use one"),
+                ({"confirmed_at": "soon"}, "confirmed_at must be a UTC time"),
+                ({"state_media": True}, "never on official"),
+                ({"state_media": "no"}, "state_media must be true or false")):
+            f = copy.deepcopy(self.kev)
+            f["properties"]["corroboration"].update(change)
+            self.assertIn(needle, self.errs(f), change)
+        f = copy.deepcopy(self.kev)
+        f["properties"]["corroboration"].update(basis="geolocation", official=None, geolocation="cisa-kev")
+        self.assertEqual(self.errs(f), "")
+
+    def test_claims_raise_nothing_alone(self):
+        self.strike["properties"]["tier"] = "anomaly"
+        self.assertIn("raises nothing on its own", self.errs(self.strike))
+        c = self.strike["properties"]["corroboration"]
+        c.update(state="verified", basis="origins", origins=1, verified_at="2026-10-30T06:00:00Z")
+        self.assertIn("origins of 2 or more", self.errs(self.strike))
+        c["origins"] = 2
+        self.assertNotIn("raises nothing", self.errs(self.strike))
+        self.assertFalse(ladder.rests_on_claim(self.strike))
+
+    def test_lead_with_a_basis_fails(self):
+        self.strike["properties"]["corroboration"]["basis"] = "origins"
+        self.assertIn("a lead has basis", self.errs(self.strike))
+
+    def test_coverage_classes(self):
+        self.assertEqual([ladder.coverage_class(n) for n in (0, 1, 2, 3, 9)],
+                         ["none", "few", "few", "several", "several"])
+        self.assertEqual(ladder.coverage_label("none"), "Not monitored")
+
+    def test_coverage_place_sets_aside_claims_and_state_media(self):
+        def item(prog, *srcs, **kw):
+            return {"properties": {"program": prog, "sources": list(srcs), **kw}}
+        items = [item("cordon", {"id": "a", "publisher": "US State Department", "independence_group": "us-gov"}),
+                 item("relief", {"id": "b", "publisher": "IFRC"}),
+                 item("watchfloor", {"id": "c", "publisher": "Agency", "owner": "state", "source_type": "news media"}),
+                 self.strike["properties"] | {"program": "watchfloor"},
+                 item("relief", {"id": "b2", "publisher": "IFRC"})]
+        row = ladder.coverage_place("x", "Example", items)
+        self.assertEqual(row["independent"], 2)
+        self.assertEqual(row["class"], "few")
+        self.assertEqual([g["id"] for g in row["groups"]], ["IFRC", "us-gov"])
+        self.assertEqual({g["id"]: g["why"] for g in row["set_aside"]},
+                         {"Agency": "state_media", "ru-gov": "party_claim", "ua-gov": "party_claim"})
+        self.assertEqual(row["programs"], ["cordon", "relief", "watchfloor"])
+        self.assertEqual(ladder.coverage_place("y", "Empty", [])["class"], "none")
 
 
 class Zones(unittest.TestCase):
