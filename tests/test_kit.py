@@ -384,6 +384,25 @@ class Tips(unittest.TestCase):
             if p["status"] == "live":
                 self.assertTrue(p["feed"].startswith("https://") and p.get("terms") and p.get("stale_hours"), p["id"])
 
+    def test_registry_layers(self):
+        """Kit 0.6.18: every program names its one home layer, the hub's seven-layer model, so COP can count layers
+        the way the hub draws them. family stays COP's colour grouping and does not decide the layer."""
+        self.assertEqual([l["key"] for l in tips.layers()],
+                         ["systems", "human", "cyber", "ems", "space", "air", "land"])
+        keys = {l["key"] for l in tips.layers()}
+        for p in tips.registry()["programs"]:
+            self.assertIn("layer", p, p["id"])
+            self.assertIn(p["layer"], keys | {"all", None}, p["id"])
+            if p["status"] == "live" and p["id"] not in ("cop", "verdict"):
+                self.assertIn(p["layer"], keys, p["id"])
+        self.assertEqual(tips.program_layer("cop"), "all")
+        self.assertEqual(tips.program_layer("verdict"), "all")
+        # One family, two layers: Noisefloor is the spectrum, Orbit and Launch are space.
+        self.assertEqual({tips.program_entry(i)["family"] for i in ("noisefloor", "orbit", "launch")},
+                         {"Spectrum and space"})
+        self.assertEqual([tips.program_layer(i) for i in ("noisefloor", "orbit", "launch")], ["ems", "space", "space"])
+        self.assertIsNone(tips.program_layer("no-such-program"))
+
     def test_matching_areas_and_self(self):
         found = tips.tips(self.items(), INTERESTS, now=NOW)
         got = {(t["interest_id"], t["item_id"], tuple(t["areas"])) for t in found}

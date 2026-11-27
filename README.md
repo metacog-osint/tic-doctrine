@@ -13,7 +13,7 @@ drawn on one map (COP) and scored (Verdict).
 | `geo/` | Country outlines and label points, US state outlines, and the sea gazetteer (`seas.json`, Natural Earth's named marine areas, public domain) |
 | `python/tic_doctrine/` | Likelihood, confidence, contract checks, the tradecraft linter, register checks, source health, withholding counts, tips between programs, the history log (standard library only) |
 | `js/tic-doctrine.js` | The same likelihood, confidence, lifeline, ladder and tip-matching logic for web pages (ES module, no dependencies) |
-| `vocab/programs.json` | The suite registry: every program, its feed, and the datasets it owns |
+| `vocab/programs.json` | The suite registry: every program, its feed, its home layer, and the datasets it owns |
 | `docs/` | The contract, the reader's language key, the confidence rubric, the sources-and-withholding page, the history log format, the significance method for closures and official warnings (draft) |
 | `templates/doctrine/` | A program's registers: requirements, indicators and warning problems, assumptions, function map, sources, method |
 | `tools/` | `sync.py` copies the kit into a program as `doctrine/kit/`; `build_js.py` and `build_schema.py` regenerate from `vocab/` |
@@ -172,6 +172,13 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 **0.6.10 (21 Nov 2026): Wake's licence in the program register.** `terms` now says "Wake code GNU AGPL-3.0" (it read "code MIT"), matching Wake's LICENSE. Registry text only.
 
 **0.6.11 (24 Nov 2026): neutral attributions.** Dated notes in the schema, vocabularies, templates, docs and tools no longer name a person: each keeps its date ("(15 Nov 2026)"), and a rule or decision is "the suite's". Wording only; no field, value or rule changes.
+
+**0.6.18 (27 Nov 2026): each program's home layer in the registry.** `vocab/programs.json` (registry version 1.1)
+lists the seven layers of the operational environment as the hub draws them (`layers`: systems, human, cyber, ems,
+space, air, land, top to bottom), and every program names its one home `layer`: a layer key, `all` for a program that
+reads every layer (COP, Verdict), or null for one outside the drawing (Dead Drop). `tips.layers()` and
+`tips.program_layer(id)` read them. `family` is unchanged: it stays COP's colour and preset grouping, and one family
+can span two layers (Noisefloor is the spectrum; Orbit and Launch are space). Additive: no field changes meaning.
 
 **0.6.17 (27 Nov 2026): "No independent source" in the coverage table, and earlier ladder names keep passing.**
 - A place whose only sources are set aside (state media, a party's claim) or are the suite's own is now class
