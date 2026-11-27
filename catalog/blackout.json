@@ -44,6 +44,48 @@
     "status": "measured",
     "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
    }
+  },
+  {
+   "id": "blackout-archive-netblocks",
+   "store": "NetBlocks post archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API, archive lane blackout-netblocks (read 2026-11-27)"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "2 assets, 0.1 MB, 1 snapshots (read 2026-11-27)"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "archive copy; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:blackout",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; archive lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "too few snapshots to show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-24",
+    "status": "measured",
+    "how": "earliest surviving snapshot"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "one copy, in the private archive; blackout-netblocks: newest snapshot (2026-11-24 15:47Z, 1 file) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
+   }
   }
  ]
 }

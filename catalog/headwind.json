@@ -42,7 +42,7 @@
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; local clones are not counted"
+    "how": "at least one copy confirmed here; local clones are not counted; private archive lane headwind-history: newest snapshot (2026-11-27 03:55Z, 16 files) read back from its tar members and matched by sha256, on the same GitHub account, so not counted (read 2026-11-27)"
    }
   },
   {
@@ -84,7 +84,7 @@
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "at least one copy confirmed here; a second copy on the same GitHub account would not be independent; private archive lane headwind-state: newest snapshot (2026-11-27 03:56Z, 3 files) read back from its tar members and matched by sha256, on the same GitHub account, so not counted (read 2026-11-27)"
    }
   },
   {
@@ -96,12 +96,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane headwind-raw (read 2026-11-27)"
    },
    "schema": {
     "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "92 assets, 458.0 MB"
+    "how": "164 assets, 830.1 MB, 82 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -114,19 +114,61 @@
     "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
    },
    "cadence": {
-    "value": "about every 1.9 h",
+    "value": "about every 1.6 h",
     "status": "measured",
-    "how": "median gap between 46 asset upload times; replaced assets show only their latest time"
+    "how": "median gap between snapshot times, per lane (read 2026-11-27)"
    },
    "first_date": {
     "value": "2026-11-19",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; headwind-raw: newest snapshot (2026-11-27 03:55Z, 73 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
+   }
+  },
+  {
+   "id": "headwind-archive-site",
+   "store": "Site files archive",
+   "location": {
+    "value": {
+     "kind": "github-release",
+     "where": "private GitHub repository, release assets"
+    },
+    "status": "measured",
+    "how": "GitHub releases API, archive lane headwind-site (read 2026-11-27)"
+   },
+   "schema": {
+    "value": "files: .tar.gz, .json",
+    "status": "measured",
+    "how": "4 assets, 1.4 MB, 2 snapshots (read 2026-11-27)"
+   },
+   "method_version": {
+    "value": null,
+    "status": "unverified",
+    "why": "archive copy; no method version is recorded for this store"
+   },
+   "licence": {
+    "value": "registry:headwind",
+    "status": "measured",
+    "how": "program terms in vocab/programs.json; archive lanes keep each source's own terms, not broken out per store"
+   },
+   "cadence": {
+    "value": null,
+    "status": "unverified",
+    "why": "too few snapshots to show a cadence"
+   },
+   "first_date": {
+    "value": "2026-11-27",
+    "status": "measured",
+    "how": "earliest surviving snapshot"
+   },
+   "independent_copies": {
+    "value": 1,
+    "status": "measured",
+    "how": "one copy, in the private archive; headwind-site: newest snapshot (2026-11-27 03:56Z, 26 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   }
  ]

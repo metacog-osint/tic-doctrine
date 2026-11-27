@@ -54,12 +54,12 @@
      "where": "private GitHub repository, release assets"
     },
     "status": "measured",
-    "how": "GitHub releases API"
+    "how": "GitHub releases API, archive lane undertow-raw (read 2026-11-27)"
    },
    "schema": {
     "value": "files: .tar.gz, .json",
     "status": "measured",
-    "how": "86 assets, 9.4 MB"
+    "how": "154 assets, 15.8 MB, 77 snapshots (read 2026-11-27)"
    },
    "method_version": {
     "value": null,
@@ -72,19 +72,19 @@
     "how": "program terms in vocab/programs.json; raw lanes keep each source's own terms, not broken out per store"
    },
    "cadence": {
-    "value": "about every 2.2 h",
+    "value": "about every 2.0 h",
     "status": "measured",
-    "how": "median gap between 42 asset upload times; replaced assets show only their latest time"
+    "how": "median gap between snapshot times, per lane (read 2026-11-27)"
    },
    "first_date": {
     "value": "2026-11-19",
     "status": "measured",
-    "how": "earliest surviving asset upload"
+    "how": "earliest surviving snapshot"
    },
    "independent_copies": {
     "value": 1,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; a second copy on the same GitHub account would not be independent"
+    "how": "one copy, in the private archive; undertow-raw: newest snapshot (2026-11-27 04:13Z, 13 files) read back from its tar members and matched by sha256; a second copy on the same GitHub account would not be independent (read 2026-11-27)"
    }
   }
  ]

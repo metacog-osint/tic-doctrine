@@ -40,9 +40,9 @@
     "why": "needs a full object listing"
    },
    "independent_copies": {
-    "value": 1,
+    "value": 2,
     "status": "measured",
-    "how": "at least one copy confirmed here; other copies were not compared; no versioning, and 7-day soft delete is not a separate copy"
+    "how": "at least one copy confirmed here; no versioning, and 7-day soft delete is not a separate copy; private archive lane watchfloor-bucket: newest snapshot (2026-11-27 04:22Z, 3,858 files) read back from its tar members and matched by sha256, on GitHub, a separate provider (read 2026-11-27)"
    }
   }
  ]
