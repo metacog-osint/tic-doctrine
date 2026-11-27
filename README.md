@@ -173,6 +173,10 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 
 **0.6.11 (24 Nov 2026): neutral attributions.** Dated notes in the schema, vocabularies, templates, docs and tools no longer name a person: each keeps its date ("(15 Nov 2026)"), and a rule or decision is "the suite's". Wording only; no field, value or rule changes.
 
+**0.6.15 (27 Nov 2026): the draft significance note stays in the kit repo.** `tools/sync.py` no longer copies
+`docs/significance.md` (a draft that no program reads) into programs, so a program's `KIT.json` doesn't list it.
+No other file changes.
+
 **0.6.14 (27 Nov 2026): the coverage table counts only outside sources.** `ladder.coverage_place()` no longer
 counts sources the suite makes itself (`source_type` suite_program, derived, model or machine summary, listed in
 `vocab/event_ladder.json`). A program citing another program's reading, or its own model or summary, does not add an
