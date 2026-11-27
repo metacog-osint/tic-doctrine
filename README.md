@@ -173,6 +173,11 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 
 **0.6.11 (24 Nov 2026): neutral attributions.** Dated notes in the schema, vocabularies, templates, docs and tools no longer name a person: each keeps its date ("(15 Nov 2026)"), and a rule or decision is "the suite's". Wording only; no field, value or rule changes.
 
+**0.6.14 (27 Nov 2026): the coverage table counts only outside sources.** `ladder.coverage_place()` no longer
+counts sources the suite makes itself (`source_type` suite_program, derived, model or machine summary, listed in
+`vocab/event_ladder.json`). A program citing another program's reading, or its own model or summary, does not add an
+independent source for a place.
+
 **0.6.13 (27 Nov 2026): the event ladder and the coverage table.** [`docs/event-ladder.md`](docs/event-ladder.md)
 defines, in one place, the states lead, confirmed and verified for event reports, the promotion rule `ladder-1`, the
 rule that a party's claims and state media never verify or raise an item alone, and the coverage-table format

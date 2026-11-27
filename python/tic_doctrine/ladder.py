@@ -57,6 +57,13 @@ def coverage_label(cls: str) -> str:
     return {c["id"]: c["label"] for c in _v()["coverage"]["classes"]}.get(cls, cls)
 
 
+def is_derived(src: dict) -> bool:
+    """True for a source the suite makes itself (a program's own reading, computation, model or machine summary):
+    it is not a source about the place, so the coverage table does not count it."""
+    kind = str(src.get("source_type") or "").strip().lower()
+    return kind in {k.lower() for k in _v()["coverage"]["not_counted_source_types"]}
+
+
 def _is_state_media(src: dict) -> bool:
     if src.get("owner") != "state":
         return False
@@ -78,7 +85,7 @@ def coverage_place(place: str, name: str, items: list[dict]) -> dict:
     """One tic-coverage/1 row from the items held for a place. Pass only items read on time: stale copies do not count.
 
     Each item is a contract item (or its properties); its program is `program` (or `cop_program` where a consumer
-    renames). Groups of state media, and every source of an item resting only on a party's claim or on state media,
+    renames). Sources the suite makes itself (is_derived) are not counted. Groups of state media, and every source of an item resting only on a party's claim or on state media,
     are listed under set_aside and never count toward the class.
     """
     groups, aside, programs = {}, {}, set()
@@ -92,7 +99,7 @@ def coverage_place(place: str, name: str, items: list[dict]) -> dict:
             why_item = "party_claim" if c.get("party_claim") is True else "state_media"
         for src in p.get("sources") or []:
             g = source_group(src)
-            if not g:
+            if not g or is_derived(src):
                 continue
             why = why_item or ("state_media" if _is_state_media(src) else None)
             bucket = aside if why else groups
