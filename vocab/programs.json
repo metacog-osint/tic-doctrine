@@ -44,7 +44,7 @@
       "feed": "https://elements.theintelligence.company/data/feed.geojson", "site": "https://elements.theintelligence.company/",
       "terms": "Elements code GNU AGPL-3.0; content per source", "fresh_hours": 12, "stale_hours": 48,
       "owns": ["USGS earthquakes", "USGS volcano alerts", "GDACS", "Copernicus EMS", "NASA FIRMS fire and heat detections",
-               "NOAA NHC", "planned: NWS and SPC, radiation"]
+               "NOAA NHC", "NRC Event Notification Reports and Power Reactor Status Report (placed at FEMA reactor coordinates)", "planned: NWS and SPC"]
     },
     {
       "id": "cordon", "name": "Cordon", "status": "live", "family": "Notices and advisories",
@@ -52,16 +52,16 @@
       "terms": "Cordon code GNU AGPL-3.0; content per source; Japan Ministry of Foreign Affairs overseas safety open data: Government Standard Terms 2.0, compatible with CC BY 4.0 (free to reuse including commercially, with the source line “出典：外務省 海外安全情報オープンデータ” and the page URL, and a note that the content was edited or processed; never presented as made by the State; terms page ezairyu.mofa.go.jp/html/opendata/support/terms.html, read 25 Nov 2026); Netherlands travel advice: CC0 1.0 as listed on data.overheid.nl (dataset Reisadviezen op nederlandwereldwijd.nl, read 25 Nov 2026), credited to the Ministerie van Buitenlandse Zaken", "fresh_hours": 6, "stale_hours": 24,
       "extra": {"events": "https://cordon.theintelligence.company/data/events.json"},
       "owns": ["US State Department travel advisories", "US embassy departure status and security alerts",
-               "EASA conflict-zone information bulletins", "NGA navigational warnings (MSI)", "planned: FAA NOTAMs, NAVAREA text",
+               "EASA conflict-zone information bulletins", "NGA navigational warnings (MSI)", "FAA NOTAM Management Service (NMS-API): the suite's one NOTAM reader; feed items for the international NOTAMs it ranks notable or significant; space-operations NOTAMs for Launch (/data/notams/launch.json)", "planned: NAVAREA text",
                "Japan overseas safety information (Ministry of Foreign Affairs: danger levels and embassy and consulate notices)", "Netherlands travel advice (colour codes)"]
     },
     {
       "id": "vis", "name": "Vis", "status": "live", "family": "Weather",
       "feed": "https://vis.theintelligence.company/data/feed.geojson", "site": "https://vis.theintelligence.company",
-      "terms": "Vis code GNU AGPL-3.0; Open-Meteo ensemble data CC BY 4.0 (free for non-commercial use), carrying NOAA NCEP GEFS (US public domain) and ECMWF open data (CC BY 4.0)",
+      "terms": "Vis code GNU AGPL-3.0; Open-Meteo ensemble data CC BY 4.0 (free for non-commercial use), carrying NOAA NCEP GEFS (US public domain) and ECMWF open data (CC BY 4.0); NOAA Aviation Weather Center METARs (US Government work)",
       "fresh_hours": 20, "stale_hours": 48, "warning_problem_prefix": "VS-WP",
       "owns": ["ensemble weather forecasts (Open-Meteo: NOAA GEFS, ECMWF IFS) at named airfields and ports in Watchfloor's zones",
-               "sun and moon illumination at those points (computed)", "planned: scoring against station METARs"]
+               "sun and moon illumination at those points (computed)", "scoring against station METARs (NOAA Aviation Weather Center)", "thunderstorm hazard from CAPE and rain (on trial, capped at Yellow)"]
     },
     {
       "id": "blackout", "name": "Blackout", "status": "live", "family": "Networks",
@@ -131,8 +131,8 @@
     },
     {"id": "wake", "name": "Wake", "status": "live", "status_note": "PortWatch chokepoint lane (wake-2.0), live 15 Nov 2026. Read and deployed by hand once a week until the IMF permits automated pulls", "family": "Maritime", "warning_problem_prefix": "WK-WP",
      "feed": "https://wake.theintelligence.company/data/feed.geojson", "site": "https://wake.theintelligence.company",
-     "terms": "Wake code GNU AGPL-3.0; IMF PortWatch data under the IMF's terms of use (reuse with attribution, a transformation stated; automated bulk download needs the IMF's permission)", "fresh_hours": 240, "stale_hours": 408,
-     "owns": ["vessel transits through 28 maritime chokepoints (IMF PortWatch)", "AIS gaps and loitering over cables and pipelines (planned)", "Global Fishing Watch (planned)", "IMB piracy reports (planned)", "port throughput (IMF PortWatch, planned)"]},
+     "terms": "Wake code GNU AGPL-3.0; IMF PortWatch data under the IMF's terms of use (reuse with attribution, a transformation stated; automated bulk download needs the IMF's permission); Digitraffic AIS (Fintraffic) CC BY 4.0; OpenStreetMap subsea lines ODbL", "fresh_hours": 240, "stale_hours": 408,
+     "owns": ["vessel transits through 28 maritime chokepoints (IMF PortWatch)", "AIS gaps and slow spells over Baltic cables and pipelines (Digitraffic)", "Global Fishing Watch (planned)", "UKMTO maritime security incident reports", "planned: piracy reports beyond UKMTO (ICC IMB needs written permission)", "port calls (IMF PortWatch ports)"]},
     {
       "id": "verdict", "name": "Verdict", "status": "live", "family": "Scoring",
       "feed": "https://metacog-osint.github.io/verdict/data/calendar.geojson", "site": "https://metacog-osint.github.io/verdict/",
