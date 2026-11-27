@@ -102,4 +102,11 @@ assert.equal(eventState({ corroboration: { state: "lead", state_media: true } })
 assert.equal(eventState({ corroboration: { state: "rumoured" } }), null);
 assert.deepEqual([0, 1, 2, 3, 7].map((n) => coverageClass(n).id), ["none", "few", "few", "several", "several"]);
 assert.equal(coverageClass(0).label, "Not monitored");
+// Kit 0.6.17: none independent but some read is "No independent source".
+assert.deepEqual(coverageClass(0, 1), { id: "no_independent", label: "No independent source" });
+assert.equal(coverageClass(2, 4).id, "few");
+assert.equal(coverageClass({ independent: 0, set_aside: [{ id: "x" }], not_counted: [] }).id, "no_independent");
+assert.equal(coverageClass({ independent: 0, set_aside: [], not_counted: [{ id: "vis" }] }).id, "no_independent");
+assert.equal(coverageClass({ independent: 0, set_aside: [] }).id, "none");
+assert.equal(coverageClass({ independent: 3, set_aside: [{ id: "x" }] }).id, "several");
 console.log("test_js.mjs: all passed");

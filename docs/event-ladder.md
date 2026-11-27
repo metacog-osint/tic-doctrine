@@ -1,6 +1,6 @@
 # Lead, confirmed, verified: the event ladder and the coverage table
 
-Kit 0.6.13 (27 Nov 2026; derived sources not counted from 0.6.14). The one place the suite defines how sure it is that a reported event happened, the rule
+Kit 0.6.13 (27 Nov 2026; derived sources not counted from 0.6.14; "No independent source" from 0.6.17). The one place the suite defines how sure it is that a reported event happened, the rule
 that moves a report up, how claims by a party to a conflict and by state media are handled, and the table that says
 how well each watched place is covered. Feeds carry the state in the `corroboration` member of the
 [feed contract](feed-contract-v2.md); pages show it with a link to this page.
@@ -80,7 +80,10 @@ The `corroboration` member, on event items only:
 
 **Earlier names (kit 0.6.2).** `reported` is the earlier name of `lead` and `corroborated` of `verified`, with
 `corroborated_at` for `verified_at` and the rule `corroborate-1`. Feeds that use them still pass; the linter notes the
-earlier names, and `ladder.state_of()` (Python) and `eventState()` (browser module) read both.
+earlier names, and `ladder.state_of()` (Python) and `eventState()` (browser module) read both. Two rules below are
+new in kit 0.6.13 (a party claim is verified only on origins, and keeps tier `routine` until verified). For an item
+that uses the earlier names they are notes, not errors, so a feed that passed under 0.6.12 still passes (kit 0.6.17);
+under the names `lead` and `verified` they are errors.
 
 The linter checks, as errors:
 - a lead has no basis, no `confirmed_at` and no `verified_at`;
@@ -105,13 +108,18 @@ by place.
 |---|---|---|
 | `several` | Several independent sources | 3 or more independent source groups |
 | `few` | One or two sources | 1 or 2 independent source groups |
+| `no_independent` | No independent source | No independent group, but sources were read for the place: every one was set aside or is the suite's own (kit 0.6.17) |
 | `none` | Not monitored | No source read for the place |
+
+A place that only state media, a party's claim or a suite program reports on is `no_independent`, not `none`:
+someone was watching it, but nothing independent of those sources reports there.
 
 **Counting.** Count independence groups, not outlets: `sources[].independence_group`, or the publisher where a
 source has none. Count only sources read on time; a stale copy does not count. Sources the suite makes itself are
 not sources about the place and are not counted: a program's own reading, computation, model or machine summary
 (`source_type` `suite_program`, `derived`, `model` or `machine summary`, listed in
-[`vocab/event_ladder.json`](../vocab/event_ladder.json)). Groups of state media (a source whose
+[`vocab/event_ladder.json`](../vocab/event_ladder.json)); they are listed under `not_counted`, and the item's
+program is still named in `programs`. Groups of state media (a source whose
 `owner` is `state` and that is media) and the sources of items resting only on a party's claim or on state media are
 listed but set aside: they never raise a place's class. Each table prints how it was counted and when.
 
@@ -122,24 +130,27 @@ listed but set aside: they never raise a place's class. Each table prints how it
   "format": "tic-coverage/1",
   "generated_at": "2026-11-27T04:20:00Z",
   "basis": "independence groups behind the items held for each place at the snapshot, read on time",
-  "rule": "several: 3 or more independent groups; few: 1 or 2; none: not monitored",
+  "rule": "several: 3 or more independent groups; few: 1 or 2; no_independent: none, but sources were read and set aside or not counted; none: not monitored",
   "places": [
     {"place": "example", "name": "Example place", "class": "few", "independent": 2,
      "groups": [{"id": "us-state-department", "label": "US Department of State", "programs": ["cordon"]},
                 {"id": "ifrc", "label": "IFRC", "programs": ["relief"]}],
      "set_aside": [{"id": "example-state-media", "label": "Example state agency", "programs": ["watchfloor"],
                     "why": "state_media"}],
-     "programs": ["cordon", "relief", "watchfloor"]}
+     "not_counted": [{"id": "Vis", "label": "Vis", "programs": ["vis"]}],
+     "programs": ["cordon", "relief", "vis", "watchfloor"]}
   ]
 }
 ```
 
-`ladder.coverage_place()` builds one row from a place's items and `ladder.coverage_class()` gives the class.
-Shown as a table:
+`not_counted` is new in kit 0.6.17; a reader of an earlier table treats it as empty.
+`ladder.coverage_place()` builds one row from a place's items and `ladder.coverage_class(independent, uncounted)`
+gives the class, where `uncounted` is the number of groups set aside or not counted. In the browser module,
+`coverageClass(row)` takes a row (or the same two counts) and returns its id and label. Shown as a table:
 
 | Place | Coverage | Independent groups | Programs |
 |---|---|---|---|
-| Example place | One or two sources | 2 (1 set aside) | Cordon, Relief, Watchfloor |
+| Example place | One or two sources | 2 (1 set aside, 1 not counted) | Cordon, Relief, Vis, Watchfloor |
 
 **Limits.** The table counts sources, not their quality or how often they report. Built from the items a consumer
 holds, it misses a source that watches a place but has nothing to report there that day, so its counts are a lower

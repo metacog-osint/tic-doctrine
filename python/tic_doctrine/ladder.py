@@ -45,10 +45,14 @@ def rests_on_claim(item: dict) -> bool:
     return bool(c.get("party_claim") is True or c.get("state_media") is True) and state_of(item) != "verified"
 
 
-def coverage_class(independent: int) -> str:
-    """several (3 or more independent groups), few (1 or 2) or none (not monitored)."""
-    for cl in _v()["coverage"]["classes"]:
-        if independent >= cl["min"] and (cl["max"] is None or independent <= cl["max"]):
+def coverage_class(independent: int, uncounted: int = 0) -> str:
+    """several (3 or more independent groups), few (1 or 2), no_independent (none, but `uncounted` groups were read and
+    set aside or are the suite's own, kit 0.6.17) or none (not monitored)."""
+    classes = _v()["coverage"]["classes"]
+    if independent <= 0 and uncounted > 0:
+        return next(cl["id"] for cl in classes if cl.get("uncounted"))
+    for cl in classes:
+        if not cl.get("uncounted") and independent >= cl["min"] and (cl["max"] is None or independent <= cl["max"]):
             return cl["id"]
     return "none"
 
@@ -85,10 +89,12 @@ def coverage_place(place: str, name: str, items: list[dict]) -> dict:
     """One tic-coverage/1 row from the items held for a place. Pass only items read on time: stale copies do not count.
 
     Each item is a contract item (or its properties); its program is `program` (or `cop_program` where a consumer
-    renames). Sources the suite makes itself (is_derived) are not counted. Groups of state media, and every source of an item resting only on a party's claim or on state media,
-    are listed under set_aside and never count toward the class.
+    renames). Sources the suite makes itself (is_derived) are not counted: they are listed under not_counted (kit
+    0.6.17). Groups of state media, and every source of an item resting only on a party's claim or on state media, are
+    listed under set_aside and never count toward the class. A place with no independent group but some set aside or
+    not counted is no_independent, not none: something was read there.
     """
-    groups, aside, programs = {}, {}, set()
+    groups, aside, own, programs = {}, {}, {}, set()
     for it in items:
         p = _props(it)
         prog = p.get("cop_program") or p.get("program")
@@ -99,10 +105,10 @@ def coverage_place(place: str, name: str, items: list[dict]) -> dict:
             why_item = "party_claim" if c.get("party_claim") is True else "state_media"
         for src in p.get("sources") or []:
             g = source_group(src)
-            if not g or is_derived(src):
+            if not g:
                 continue
-            why = why_item or ("state_media" if _is_state_media(src) else None)
-            bucket = aside if why else groups
+            why = None if is_derived(src) else why_item or ("state_media" if _is_state_media(src) else None)
+            bucket = own if is_derived(src) else aside if why else groups
             row = bucket.setdefault(g[0], {"id": g[0], "label": g[1], "programs": set()} | ({"why": why} if why else {}))
             if prog:
                 row["programs"].add(prog)
@@ -115,5 +121,5 @@ def coverage_place(place: str, name: str, items: list[dict]) -> dict:
         return [dict(r, programs=sorted(r["programs"])) for _, r in sorted(b.items())]
 
     n = len(groups)
-    return {"place": place, "name": name, "class": coverage_class(n), "independent": n,
-            "groups": rows(groups), "set_aside": rows(aside), "programs": sorted(programs)}
+    return {"place": place, "name": name, "class": coverage_class(n, len(aside) + len(own)), "independent": n,
+            "groups": rows(groups), "set_aside": rows(aside), "not_counted": rows(own), "programs": sorted(programs)}

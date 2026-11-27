@@ -173,6 +173,21 @@ traffic by network). `terms` already credits Cloudflare Radar data CC BY-NC 4.0.
 
 **0.6.11 (24 Nov 2026): neutral attributions.** Dated notes in the schema, vocabularies, templates, docs and tools no longer name a person: each keeps its date ("(15 Nov 2026)"), and a rule or decision is "the suite's". Wording only; no field, value or rule changes.
 
+**0.6.17 (27 Nov 2026): "No independent source" in the coverage table, and earlier ladder names keep passing.**
+- A place whose only sources are set aside (state media, a party's claim) or are the suite's own is now class
+  `no_independent`, "No independent source", not `none`, "Not monitored": something was read there.
+  `ladder.coverage_place()` lists the suite's own sources under a new `not_counted` member and names their programs in
+  `programs` (before, an item whose sources were all the suite's own left its program out).
+  `ladder.coverage_class(independent, uncounted=0)` and the browser module's `coverageClass(independent, uncounted)` or
+  `coverageClass(row)` give the class; called with a count alone they answer as before.
+- The two ladder rules added in 0.6.13 (a party's claim or state media is verified only on origins; such an item keeps
+  tier routine until verified) are notes, not errors, for an item that uses the 0.6.2 names `reported` and
+  `corroborated`, so a feed that passed under 0.6.12 passes with the same errors. Under the names `lead` and
+  `verified` they stay errors.
+- `corroboration.state` or `basis` given as a list or an object is reported as an error instead of stopping the
+  linter.
+- The actor vocabulary's note (and the schema built from it) states its rule plainly instead of quoting.
+
 **0.6.15 (27 Nov 2026): the draft significance note stays in the kit repo.** `tools/sync.py` no longer copies
 `docs/significance.md` (a draft that no program reads) into programs, so a program's `KIT.json` doesn't list it.
 No other file changes.
